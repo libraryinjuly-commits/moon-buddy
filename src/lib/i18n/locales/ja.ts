@@ -575,6 +575,12 @@ export const jaLocale: LocaleContent = {
     tabCalendar: "カレンダー",
     tabGacha: "カード",
     tabReport: "レポート",
+    livePeriodSwitchTitle: "ライブ状態スイッチ",
+    livePeriodOn: "生理中",
+    livePeriodOff: "平常時",
+    livePeriodDayUnit: "日目",
+    livePeriodStartButton: "🩸 生理が本当に始まった",
+    livePeriodEndButton: "✨ 今日生理が終わった",
   },
   phaseLabels: {
     menstrual: "生理期",

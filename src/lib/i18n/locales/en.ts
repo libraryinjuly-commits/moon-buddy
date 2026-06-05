@@ -576,6 +576,12 @@ export const enLocale: LocaleContent = {
     tabCalendar: "Calendar",
     tabGacha: "Gacha",
     tabReport: "Report",
+    livePeriodSwitchTitle: "Live Status Switch",
+    livePeriodOn: "On period",
+    livePeriodOff: "Not on period",
+    livePeriodDayUnit: " day",
+    livePeriodStartButton: "🩸 My period actually started",
+    livePeriodEndButton: "✨ My period ended today",
   },
   phaseLabels: {
     menstrual: "Menstrual",

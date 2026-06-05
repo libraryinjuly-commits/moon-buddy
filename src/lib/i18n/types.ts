@@ -102,6 +102,12 @@ export interface LocaleUI {
   tabCalendar: string;
   tabGacha: string;
   tabReport: string;
+  livePeriodSwitchTitle: string;
+  livePeriodOn: string;
+  livePeriodOff: string;
+  livePeriodDayUnit: string;
+  livePeriodStartButton: string;
+  livePeriodEndButton: string;
 }
 
 export interface LocaleContent {

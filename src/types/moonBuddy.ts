@@ -14,6 +14,15 @@ export type Language = "KO" | "EN" | "JA";
 
 export type CyclePhase = "menstrual" | "follicular" | "ovulation" | "luteal";
 
+export type MenstruationStatus = "NOT_PERIOD" | "ON_PERIOD";
+
+export interface LivePeriodState {
+  status: MenstruationStatus;
+  actualStartDate: string | null;
+  activePeriodId: string | null;
+  characterMessage: string;
+}
+
 export interface LiveMoodEntry {
   time: string;
   mood: LiveMood;
@@ -65,6 +74,7 @@ export interface MoonBuddyData {
   periods: PeriodRecord[];
   moodLogs: MoodLog[];
   liveMoodLogs: DailyLiveMoods[];
+  livePeriod: LivePeriodState;
   character: CharacterState;
   luna: LunaState;
   settings: UserSettings;

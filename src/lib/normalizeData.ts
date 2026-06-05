@@ -1,6 +1,7 @@
 import { getDefaultSettings } from "@/lib/cycle";
 import { normalizeLanguage } from "@/lib/i18n";
 import { LIVE_MOODS, migrateLegacyLiveMood } from "@/lib/liveMood";
+import { getLivePeriodMessage } from "@/lib/livePeriod";
 import type { LiveMood, MoonBuddyData } from "@/types/moonBuddy";
 
 const VALID_LIVE_MOODS = new Set<LiveMood>(LIVE_MOODS);
@@ -9,6 +10,12 @@ export const DEFAULT_DATA: MoonBuddyData = {
   periods: [],
   moodLogs: [],
   liveMoodLogs: [],
+  livePeriod: {
+    status: "NOT_PERIOD",
+    actualStartDate: null,
+    activePeriodId: null,
+    characterMessage: getLivePeriodMessage("idle", "KO"),
+  },
   character: {
     level: 1,
     exp: 0,
@@ -30,6 +37,20 @@ export function normalizeData(data: MoonBuddyData): MoonBuddyData {
       ...DEFAULT_DATA.luna,
       ...data.luna,
       collection: data.luna?.collection ?? [],
+    },
+    livePeriod: {
+      ...DEFAULT_DATA.livePeriod,
+      ...data.livePeriod,
+      status:
+        data.livePeriod?.status === "ON_PERIOD" ? "ON_PERIOD" : "NOT_PERIOD",
+      actualStartDate: data.livePeriod?.actualStartDate ?? null,
+      activePeriodId: data.livePeriod?.activePeriodId ?? null,
+      characterMessage:
+        data.livePeriod?.characterMessage ??
+        getLivePeriodMessage(
+          data.livePeriod?.status === "ON_PERIOD" ? "onPeriod" : "idle",
+          normalizeLanguage(data.settings?.language ?? "KO"),
+        ),
     },
     liveMoodLogs: (data.liveMoodLogs ?? []).map((day) => ({
       ...day,

@@ -11,6 +11,7 @@ import { ConditionGuide } from "@/components/ConditionGuide";
 import { CyclePhaseBadge } from "@/components/CyclePhaseBadge";
 import { CycleSettings } from "@/components/CycleSettings";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { LivePeriodSwitch } from "@/components/LivePeriodSwitch";
 import { LunaGachaSection } from "@/components/LunaGachaSection";
 import { MoonAdviceCard } from "@/components/MoonAdviceCard";
 import { MoodLogger } from "@/components/MoodLogger";
@@ -48,6 +49,10 @@ export default function Home() {
     temperamentTheme,
     todayMood,
     todayLiveEntries,
+    menstruationStatus,
+    periodDay,
+    characterMessage,
+    toggleMenstruation,
     addPeriod,
     deletePeriod,
     logMood,
@@ -137,6 +142,7 @@ export default function Home() {
   const vocative = getDisplayName(data.settings.userName, data.settings.language);
   const phaseLabel = cycleInfo ? locale.phaseLabels[cycleInfo.phase] : null;
   const moodLabel = todayMood ? locale.moodLabels[todayMood] : null;
+  const homeSpeech = liveSpeech ?? characterMessage ?? dialogue.speech;
 
   return (
     <div
@@ -190,16 +196,36 @@ export default function Home() {
               daysCountUnit={ui.daysCountUnit}
               daysUntilCount={cycleInfo?.daysUntilNextPeriod ?? null}
               status={cycleInsight.status}
-              phase={cycleInfo?.phase ?? null}
-              phaseLabel={phaseLabel}
-              dayOfCycle={cycleInfo?.dayOfCycle ?? null}
+              phase={
+                menstruationStatus === "ON_PERIOD"
+                  ? "menstrual"
+                  : (cycleInfo?.phase ?? null)
+              }
+              phaseLabel={
+                menstruationStatus === "ON_PERIOD"
+                  ? locale.phaseLabels.menstrual
+                  : phaseLabel
+              }
+              dayOfCycle={
+                menstruationStatus === "ON_PERIOD"
+                  ? periodDay
+                  : (cycleInfo?.dayOfCycle ?? null)
+              }
+            />
+
+            <LivePeriodSwitch
+              status={menstruationStatus}
+              periodDay={periodDay}
+              ui={ui}
+              theme={temperamentTheme}
+              onToggle={toggleMenstruation}
             />
 
             <CharacterRoom
               mascot={mascot}
               level={data.character.level}
-              speech={dialogue.speech}
-              liveSpeech={liveSpeech}
+              speech={homeSpeech}
+              liveSpeech={null}
               thankSpeech={thankSpeech}
               buddyIdentity={buddyIdentity}
               thankTrigger={thankTrigger}

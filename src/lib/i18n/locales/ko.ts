@@ -125,6 +125,12 @@ export const koLocale: LocaleContent = {
     tabCalendar: "캘린더",
     tabGacha: "카드 뽑기",
     tabReport: "분석 리포트",
+    livePeriodSwitchTitle: "라이브 상태 스위치",
+    livePeriodOn: "생리 중",
+    livePeriodOff: "평상 시",
+    livePeriodDayUnit: "일차",
+    livePeriodStartButton: "🩸 실제 생리 시작했어요",
+    livePeriodEndButton: "✨ 오늘 생리가 끝났어요",
   },
   phaseLabels: {
     menstrual: "생리기",

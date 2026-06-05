@@ -1,11 +1,15 @@
 "use client";
 
+import { useMemo } from "react";
+
 import { useCycle } from "@/hooks/useCycle";
 import { useDialogue } from "@/hooks/useDialogue";
+import { useLivePeriod } from "@/hooks/useLivePeriod";
 import { useLuna } from "@/hooks/useLuna";
 import { useMood } from "@/hooks/useMood";
 import { useMoonBuddyStorage } from "@/hooks/useMoonBuddyStorage";
 import { useSettings } from "@/hooks/useSettings";
+import { getMascotConfig } from "@/lib/mascot";
 
 export function useMoonBuddy() {
   const { data, setData, isLoaded } = useMoonBuddyStorage();
@@ -21,7 +25,7 @@ export function useMoonBuddy() {
     deleteDayRecord,
   } = useMood(data, setData);
   const {
-    mascot,
+    mascot: baseMascot,
     dialogue,
     thankSpeech,
     buddyIdentity,
@@ -32,6 +36,19 @@ export function useMoonBuddy() {
     data,
     setData,
   );
+  const {
+    menstruationStatus,
+    periodDay,
+    characterMessage,
+    toggleMenstruation,
+  } = useLivePeriod(data, setData, isLoaded);
+
+  const mascot = useMemo(() => {
+    if (menstruationStatus === "ON_PERIOD") {
+      return getMascotConfig("menstrual", data.settings.mbti);
+    }
+    return baseMascot;
+  }, [menstruationStatus, baseMascot, data.settings.mbti]);
 
   return {
     data,
@@ -46,6 +63,10 @@ export function useMoonBuddy() {
     temperamentTheme,
     todayMood,
     todayLiveEntries,
+    menstruationStatus,
+    periodDay,
+    characterMessage,
+    toggleMenstruation,
     addPeriod,
     deletePeriod,
     logMood,

@@ -15,6 +15,8 @@ export type {
   UserSettings,
   MoonBuddyData,
   CycleInfo,
+  MenstruationStatus,
+  LivePeriodState,
 } from "@/types/moonBuddy";
 
 export type AppTab = "home" | "calendar" | "gacha" | "report";
