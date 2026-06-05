@@ -3,15 +3,20 @@
 
 $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path $PSScriptRoot -Parent
-$git = Join-Path $repoRoot ".tools\mingit\cmd\git.exe"
-$gh = Join-Path $repoRoot ".tools\bin\gh.exe"
+$gitCandidates = @(
+  "C:\Program Files\Git\cmd\git.exe",
+  (Join-Path $repoRoot ".tools\mingit\cmd\git.exe")
+)
+$ghCandidates = @(
+  "C:\Program Files\GitHub CLI\gh.exe",
+  (Join-Path $repoRoot ".tools\bin\gh.exe")
+)
 
-if (-not (Test-Path $git)) {
-  Write-Error "Portable git not found at $git. Re-run setup or install Git for Windows."
-}
-if (-not (Test-Path $gh)) {
-  Write-Error "Portable gh not found at $gh. Download GitHub CLI first."
-}
+$git = $gitCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+$gh = $ghCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+
+if (-not $git) { Write-Error "git not found. Install Git for Windows first." }
+if (-not $gh) { Write-Error "gh not found. Install GitHub CLI first." }
 
 Set-Location $repoRoot
 
