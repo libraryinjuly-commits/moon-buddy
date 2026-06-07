@@ -282,8 +282,6 @@ export default function Home() {
         {activeTab === "profile" && (
           <ProfileTab
             settings={data.settings}
-            character={data.character}
-            buddyIdentity={buddyIdentity}
             locale={locale}
             theme={temperamentTheme}
             onSave={handleProfileSave}

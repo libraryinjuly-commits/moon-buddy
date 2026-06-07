@@ -1,3 +1,4 @@
+import { formatPeriodDayLabel } from "@/lib/cycleDisplay";
 import type { LocaleUI } from "@/lib/i18n/types";
 import type { MenstruationStatus, TemperamentTheme } from "@/types";
 
@@ -8,24 +9,20 @@ interface LivePeriodSwitchProps {
   theme: TemperamentTheme;
   onToggle: () => void;
   compact?: boolean;
-  rhythmPhaseLabel?: string | null;
 }
 
 export function LivePeriodSwitch({
   status,
-  periodDay: _periodDay,
+  periodDay,
   ui,
   theme,
   onToggle,
   compact = false,
-  rhythmPhaseLabel = null,
 }: LivePeriodSwitchProps) {
   const isOnPeriod = status === "ON_PERIOD";
 
   const statusLine = isOnPeriod
-    ? rhythmPhaseLabel
-      ? `${ui.rhythmCycleLabel} · ${rhythmPhaseLabel}`
-      : ui.livePeriodOn
+    ? formatPeriodDayLabel(ui, periodDay)
     : ui.rhythmLogHint;
 
   if (compact) {

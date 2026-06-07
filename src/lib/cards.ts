@@ -33,7 +33,7 @@ export const CARD_DATABASE: MoonCardDefinition[] = [
     name: "인간 샌드백 달 친구",
     rarity: "Super Rare",
     description:
-      "주인님의 포근한 단계 짜증과 분노를 다 받아내기 위해 비장하게 무장했습니다.",
+      "주인님의 생리 전 짜증과 분노를 다 받아내기 위해 비장하게 무장했습니다.",
     secretMessage: "오늘 짜증 나는 일 있었죠? 저를 마구 꼬집으셔도 괜찮아요! 🥊",
     emoji: "🦖",
   },

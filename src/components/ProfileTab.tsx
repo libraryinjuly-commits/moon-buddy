@@ -1,20 +1,12 @@
 "use client";
 
-import { CharacterStats } from "@/components/CharacterStats";
 import { ProfileSetup } from "@/components/ProfileSetup";
 import type { LocaleContent } from "@/lib/i18n/types";
 import { isProfileComplete } from "@/lib/profile";
-import type {
-  BuddyIdentity,
-  CharacterState,
-  TemperamentTheme,
-  UserSettings,
-} from "@/types";
+import type { TemperamentTheme, UserSettings } from "@/types";
 
 interface ProfileTabProps {
   settings: UserSettings;
-  character: CharacterState;
-  buddyIdentity: BuddyIdentity;
   locale: LocaleContent;
   theme: TemperamentTheme;
   onSave: (
@@ -27,8 +19,6 @@ interface ProfileTabProps {
 
 export function ProfileTab({
   settings,
-  character,
-  buddyIdentity,
   locale,
   theme,
   onSave,
@@ -53,15 +43,6 @@ export function ProfileTab({
         accentSoft={theme.accentSoft}
         variant={profileComplete ? "edit" : "onboarding"}
       />
-
-      {profileComplete && (
-        <CharacterStats
-          character={character}
-          buddyIdentity={buddyIdentity}
-          theme={theme}
-          ui={ui}
-        />
-      )}
     </div>
   );
 }

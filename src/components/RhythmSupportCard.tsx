@@ -1,6 +1,7 @@
 "use client";
 
 import { LivePeriodSwitch } from "@/components/LivePeriodSwitch";
+import { formatFactualCycleLabel } from "@/lib/cycleDisplay";
 import type { LocaleUI } from "@/lib/i18n/types";
 import type { CyclePhase, MenstruationStatus, TemperamentTheme } from "@/types";
 
@@ -25,6 +26,12 @@ export function RhythmSupportCard({
   theme,
   onTogglePeriod,
 }: RhythmSupportCardProps) {
+  const factualLabel = formatFactualCycleLabel(ui, {
+    status,
+    phaseLabel,
+    periodDay,
+  });
+
   return (
     <section
       className={`flex-shrink-0 rounded-2xl border px-3 py-2.5 shadow-sm ${theme.accentSoft} ${theme.accentBorder} opacity-95`}
@@ -32,9 +39,9 @@ export function RhythmSupportCard({
       <p className={`text-[10px] font-semibold ${theme.accentMuted}`}>
         {ui.rhythmCardTitle}
       </p>
-      {phase && phaseLabel && (
+      {phase && factualLabel && (
         <p className={`mt-0.5 text-[10px] font-medium ${theme.accentMuted}`}>
-          {phaseLabel}
+          {factualLabel}
         </p>
       )}
       <p className={`mt-1 text-xs leading-relaxed ${theme.accentText}`}>
@@ -48,7 +55,6 @@ export function RhythmSupportCard({
           ui={ui}
           theme={theme}
           onToggle={onTogglePeriod}
-          rhythmPhaseLabel={phaseLabel}
           compact
         />
       </div>

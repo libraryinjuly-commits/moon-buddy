@@ -67,11 +67,6 @@ export interface LocaleUI {
   moonAdvice: string;
   conditionGuide: string;
   moodTag: string;
-  growthRecord: string;
-  currentEpithet: string;
-  moodLogs: string;
-  nextEpithet: string;
-  maxEpithet: string;
   todayMood: string;
   todayMoodDesc: string;
   periodRecord: string;
@@ -140,7 +135,6 @@ export interface LocaleUI {
   tabProfile: string;
   profileEditTitle: string;
   profileEditDesc: string;
-  profileReportTitle: string;
   livePeriodSwitchTitle: string;
   livePeriodOn: string;
   livePeriodOff: string;

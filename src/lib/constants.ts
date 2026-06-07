@@ -20,8 +20,8 @@ export const MOOD_OPTIONS: { value: Mood; label: string; emoji: string }[] = [
 ];
 
 export const PHASE_LABELS = {
-  menstrual: "휴식 단계",
-  follicular: "성장 단계",
-  ovulation: "반짝임 단계",
-  luteal: "포근한 단계",
+  menstrual: "생리기",
+  follicular: "여포기",
+  ovulation: "배란기",
+  luteal: "황체기",
 } as const;

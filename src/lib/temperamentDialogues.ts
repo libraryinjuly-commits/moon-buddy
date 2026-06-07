@@ -9,7 +9,7 @@ type TemperamentDialogueSet = Record<CyclePhase, PhaseDialogues>;
 const NF_DIALOGUES: TemperamentDialogueSet = {
   menstrual: {
     great: {
-      guide: "휴식 단계에도 컨디션이 좋다면 가벼운 스트레칭이나 산책을 해보세요. 무리한 운동은 피하는 게 좋아요.",
+      guide: "생리 중에도 컨디션이 좋다면 가벼운 스트레칭이나 산책을 해보세요. 무리한 운동은 피하는 게 좋아요.",
       speech: "{name}, 오늘 기운이 좋아 보여! 그래도 몸은 부드럽게 돌봐주자. 수고한 나에게 칭찬 한마디 해줘.",
     },
     good: {
@@ -29,8 +29,8 @@ const NF_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 오늘 정말 고생 많았어. 네 몸이 지금 제일 힘든 때니까, 나 자신에게 가장 다정하게 대해줘.",
     },
     default: {
-      guide: "휴식 단계에는 몸이 예민해질 수 있어요. 휴식과 따뜻한 관리에 신경 써 주세요.",
-      speech: "{name}, 휴식 단계구나. 오늘은 무리하지 말고 몸이 편한 것부터 챙기자.",
+      guide: "생리 기간에는 몸이 예민해질 수 있어요. 휴식과 따뜻한 관리에 신경 써 주세요.",
+      speech: "{name}, 생리 기간이구나. 오늘은 무리하지 말고 몸이 편한 것부터 챙기자.",
     },
   },
   follicular: {
@@ -55,7 +55,7 @@ const NF_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 오늘 마음이 무겁구나. 괜찮아, 이런 날도 있는 거야. 내가 옆에 있을게.",
     },
     default: {
-      guide: "에너지가 서서히 올라오는 성장 단계예요. 새로운 시작에 좋은 시기랍니다.",
+      guide: "에너지가 서서히 올라오는 여포기예요. 새로운 시작에 좋은 시기랍니다.",
       speech: "{name}, 몸이 조금씩 힘을 되찾고 있어. 오늘은 네 페이스대로 가볍게 시작해 보자.",
     },
   },
@@ -73,7 +73,7 @@ const NF_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 괜찮은 하루네. 딱 좋은 페이스로 가고 있어. 오늘도 응원해!",
     },
     low: {
-      guide: "반짝임 단계에도 컨디션 기복이 있을 수 있어요. 충분한 수분과 휴식을 챙겨 주세요.",
+      guide: "배란기에도 컨디션 기복이 있을 수 있어요. 충분한 수분과 휴식을 챙겨 주세요.",
       speech: "{name}, 오늘은 조금 지친 것 같아. 괜찮아, 잠깐 쉬어가도 충분히 잘하고 있어.",
     },
     bad: {
@@ -81,13 +81,13 @@ const NF_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 힘든 날이구나. 오늘은 나를 위한 날로 삼아도 괜찮아. 내가 곁에 있을게.",
     },
     default: {
-      guide: "에너지가 가장 높은 반짝임 단계예요. 활동적인 일정을 계획하기 좋은 때랍니다.",
+      guide: "에너지가 가장 높은 배란기예요. 활동적인 일정을 계획하기 좋은 때랍니다.",
       speech: "{name}, 지금이 제일 활력 넘치는 시기야! 오늘 하고 싶은 일 하나 정해볼까?",
     },
   },
   luteal: {
     great: {
-      guide: "컨디션이 좋아도 포근한 단계 후반에는 피로가 올 수 있어요. 일정에 여유를 두세요.",
+      guide: "컨디션이 좋아도 황체기 후반에는 피로가 올 수 있어요. 일정에 여유를 두세요.",
       speech: "{name}, 오늘도 기분 좋아 보여! 이 좋은 기분, 소중히 간직하자.",
     },
     good: {
@@ -107,8 +107,8 @@ const NF_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 정말 많이 힘들었겠다. 오늘은 세상에서 네가 제일 소중한 사람이야. 내가 꼭 안아줄게.",
     },
     default: {
-      guide: "포근한 단계에는 감정과 몸의 변화가 올 수 있어요. 자기 돌봄에 신경 써 주세요.",
-      speech: "{name}, 포근한 단계라 몸이 예민할 수 있어. 오늘은 네 마음이 편한 것부터 챙기자.",
+      guide: "황체기에는 감정과 몸의 변화가 올 수 있어요. 자기 돌봄에 신경 써 주세요.",
+      speech: "{name}, 황체기라 몸이 예민할 수 있어. 오늘은 네 마음이 편한 것부터 챙기자.",
     },
   },
 };
@@ -116,8 +116,8 @@ const NF_DIALOGUES: TemperamentDialogueSet = {
 const NT_DIALOGUES: TemperamentDialogueSet = {
   menstrual: {
     great: {
-      guide: "휴식 단계에도 컨디션이 좋다면 가벼운 스트레칭이나 산책을 해보세요. 무리한 운동은 피하는 게 좋아요.",
-      speech: "{name}, 컨디션 양호해 보여. 다만 휴식 단계엔 강도 낮은 활동이 적합해. 수분 섭취 체크해 둬.",
+      guide: "생리 중에도 컨디션이 좋다면 가벼운 스트레칭이나 산책을 해보세요. 무리한 운동은 피하는 게 좋아요.",
+      speech: "{name}, 컨디션 양호해 보여. 다만 생리 중엔 강도 낮은 활동이 적합해. 수분 섭취 체크해 둬.",
     },
     good: {
       guide: "따뜻한 음식과 충분한 수분 섭취가 도움이 돼요. 복부를 따뜻하게 해주면 더 편안해질 거예요.",
@@ -136,8 +136,8 @@ const NT_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 컨디션 낮음. 휴식이 최우선이고, 증상 지속 시 전문의 상담을 권장해.",
     },
     default: {
-      guide: "휴식 단계에는 몸이 예민해질 수 있어요. 휴식과 따뜻한 관리에 신경 써 주세요.",
-      speech: "{name}, 현재 휴식 단계야. 오늘은 회복 모드로 전환하는 게 합리적이야.",
+      guide: "생리 기간에는 몸이 예민해질 수 있어요. 휴식과 따뜻한 관리에 신경 써 주세요.",
+      speech: "{name}, 현재 생리 기간이야. 오늘은 회복 모드로 전환하는 게 합리적이야.",
     },
   },
   follicular: {
@@ -162,8 +162,8 @@ const NT_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 기분 지수 낮아. 원인 분석보다 수면과 가벼운 산책부터 해보자.",
     },
     default: {
-      guide: "에너지가 서서히 올라오는 성장 단계예요. 새로운 시작에 좋은 시기랍니다.",
-      speech: "{name}, 성장 단계로 들어왔어. 에너지가 올라오는 구간, 가벼운 목표 설정해 봐.",
+      guide: "에너지가 서서히 올라오는 여포기예요. 새로운 시작에 좋은 시기랍니다.",
+      speech: "{name}, 여포기 진입이야. 에너지가 올라오는 구간, 가벼운 목표 설정해 봐.",
     },
   },
   ovulation: {
@@ -180,7 +180,7 @@ const NT_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 전반적으로 양호해. 스케줄 과밀만 피하면 돼.",
     },
     low: {
-      guide: "반짝임 단계에도 컨디션 기복이 있을 수 있어요. 충분한 수분과 휴식을 챙겨 주세요.",
+      guide: "배란기에도 컨디션 기복이 있을 수 있어요. 충분한 수분과 휴식을 챙겨 주세요.",
       speech: "{name}, 피크 구간인데 피로감 있어. 수분 보충하고 30분 정도 쉬어.",
     },
     bad: {
@@ -188,13 +188,13 @@ const NT_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 컨디션 낮아. 오늘 일정 재조정하고 회복에 집중해.",
     },
     default: {
-      guide: "에너지가 가장 높은 반짝임 단계예요. 활동적인 일정을 계획하기 좋은 때랍니다.",
-      speech: "{name}, 반짝임 단계야. 활력 최고조 구간, 핵심 일정 처리하기 좋아.",
+      guide: "에너지가 가장 높은 배란기예요. 활동적인 일정을 계획하기 좋은 때랍니다.",
+      speech: "{name}, 배란기야. 활력 최고조 구간, 핵심 일정 처리하기 좋아.",
     },
   },
   luteal: {
     great: {
-      guide: "컨디션이 좋아도 포근한 단계 후반에는 피로가 올 수 있어요. 일정에 여유를 두세요.",
+      guide: "컨디션이 좋아도 황체기 후반에는 피로가 올 수 있어요. 일정에 여유를 두세요.",
       speech: "{name}, 지금은 양호하지만 후반 피로 대비해서 일정 여유 확보해 둬.",
     },
     good: {
@@ -214,8 +214,8 @@ const NT_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 감정 기복 심할 수 있어. 혼자 처리하지 말고 도움 요청해도 돼.",
     },
     default: {
-      guide: "포근한 단계에는 감정과 몸의 변화가 올 수 있어요. 자기 돌봄에 신경 써 주세요.",
-      speech: "{name}, 포근한 단계야. 호르몬 변동 구간, 자기 돌봄 우선순위 올려둬.",
+      guide: "황체기에는 감정과 몸의 변화가 올 수 있어요. 자기 돌봄에 신경 써 주세요.",
+      speech: "{name}, 황체기야. 호르몬 변동 구간, 자기 돌봄 우선순위 올려둬.",
     },
   },
 };
@@ -223,7 +223,7 @@ const NT_DIALOGUES: TemperamentDialogueSet = {
 const SJ_DIALOGUES: TemperamentDialogueSet = {
   menstrual: {
     great: {
-      guide: "휴식 단계에도 컨디션이 좋다면 가벼운 스트레칭이나 산책을 해보세요. 무리한 운동은 피하는 게 좋아요.",
+      guide: "생리 중에도 컨디션이 좋다면 가벼운 스트레칭이나 산책을 해보세요. 무리한 운동은 피하는 게 좋아요.",
       speech: "{name}, 컨디션 좋네! 오늘 루틴은 가벼운 스트레칭 10분 + 따뜻한 차 한 잔으로 정리하자.",
     },
     good: {
@@ -243,8 +243,8 @@ const SJ_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 오늘은 휴식 일정에 넣어도 괜찮아. 필요하면 병원 일정도 검토하자.",
     },
     default: {
-      guide: "휴식 단계에는 몸이 예민해질 수 있어요. 휴식과 따뜻한 관리에 신경 써 주세요.",
-      speech: "{name}, 휴식 단계야. 오늘 루틴은 휴식·보온·수분 섭취 순서로 챙기자.",
+      guide: "생리 기간에는 몸이 예민해질 수 있어요. 휴식과 따뜻한 관리에 신경 써 주세요.",
+      speech: "{name}, 생리 기간이야. 오늘 루틴은 휴식·보온·수분 섭취 순서로 챙기자.",
     },
   },
   follicular: {
@@ -269,8 +269,8 @@ const SJ_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 기분이 가라앉는 날이야. 산책 15분 + 일찍 자기, 이 두 가지만 해보자.",
     },
     default: {
-      guide: "에너지가 서서히 올라오는 성장 단계예요. 새로운 시작에 좋은 시기랍니다.",
-      speech: "{name}, 성장 단계 시작이야. 이번 주 작은 목표 하나 세워볼까?",
+      guide: "에너지가 서서히 올라오는 여포기예요. 새로운 시작에 좋은 시기랍니다.",
+      speech: "{name}, 여포기 시작이야. 이번 주 작은 목표 하나 세워볼까?",
     },
   },
   ovulation: {
@@ -287,7 +287,7 @@ const SJ_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 전반적으로 좋아. 일정에 30분 여유 버퍼 넣어두면 더 안정적이야.",
     },
     low: {
-      guide: "반짝임 단계에도 컨디션 기복이 있을 수 있어요. 충분한 수분과 휴식을 챙겨 주세요.",
+      guide: "배란기에도 컨디션 기복이 있을 수 있어요. 충분한 수분과 휴식을 챙겨 주세요.",
       speech: "{name}, 피크인데 피곤하네. 오늘은 일정 중간에 휴식 30분 꼭 넣자.",
     },
     bad: {
@@ -295,13 +295,13 @@ const SJ_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 오늘은 일정 재조정하자. 몸 돌보기가 우선이야.",
     },
     default: {
-      guide: "에너지가 가장 높은 반짝임 단계예요. 활동적인 일정을 계획하기 좋은 때랍니다.",
-      speech: "{name}, 반짝임 단계야. 이번 주 핵심 할 일 리스트 정리하기 딱 좋은 때야.",
+      guide: "에너지가 가장 높은 배란기예요. 활동적인 일정을 계획하기 좋은 때랍니다.",
+      speech: "{name}, 배란기야. 이번 주 핵심 할 일 리스트 정리하기 딱 좋은 때야.",
     },
   },
   luteal: {
     great: {
-      guide: "컨디션이 좋아도 포근한 단계 후반에는 피로가 올 수 있어요. 일정에 여유를 두세요.",
+      guide: "컨디션이 좋아도 황체기 후반에는 피로가 올 수 있어요. 일정에 여유를 두세요.",
       speech: "{name}, 지금은 좋지만 후반 피로 대비해서 일정 여유 미리 확보해두자.",
     },
     good: {
@@ -321,8 +321,8 @@ const SJ_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 힘든 날이야. 혼자 버티지 말고, 믿을 수 있는 사람에게 연락해도 괜찮아.",
     },
     default: {
-      guide: "포근한 단계에는 감정과 몸의 변화가 올 수 있어요. 자기 돌봄에 신경 써 주세요.",
-      speech: "{name}, 포근한 단계야. 오늘은 자기 돌봄 루틴을 우선순위에 올려두자.",
+      guide: "황체기에는 감정과 몸의 변화가 올 수 있어요. 자기 돌봄에 신경 써 주세요.",
+      speech: "{name}, 황체기야. 오늘은 자기 돌봄 루틴을 우선순위에 올려두자.",
     },
   },
 };
@@ -330,7 +330,7 @@ const SJ_DIALOGUES: TemperamentDialogueSet = {
 const SP_DIALOGUES: TemperamentDialogueSet = {
   menstrual: {
     great: {
-      guide: "휴식 단계에도 컨디션이 좋다면 가벼운 스트레칭이나 산책을 해보세요. 무리한 운동은 피하는 게 좋아요.",
+      guide: "생리 중에도 컨디션이 좋다면 가벼운 스트레칭이나 산책을 해보세요. 무리한 운동은 피하는 게 좋아요.",
       speech: "{name}, 기운 넘치네~! 그래도 오늘은 가볍게만 놀자. 무거운 거 들지 마!",
     },
     good: {
@@ -350,8 +350,8 @@ const SP_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 오늘 진짜 고생했어… 일단 푹 쉬어. 필요하면 병원 가도 괜찮아!",
     },
     default: {
-      guide: "휴식 단계에는 몸이 예민해질 수 있어요. 휴식과 따뜻한 관리에 신경 써 주세요.",
-      speech: "{name}, 휴식 단계구나~ 오늘은 편한 옷 입고 맛있는 거 먹고 쉬자!",
+      guide: "생리 기간에는 몸이 예민해질 수 있어요. 휴식과 따뜻한 관리에 신경 써 주세요.",
+      speech: "{name}, 생리 기간이구나~ 오늘은 편한 옷 입고 맛있는 거 먹고 쉬자!",
     },
   },
   follicular: {
@@ -376,7 +376,7 @@ const SP_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 마음이 무겁구나… 가볍게 산책이라도 할래? 같이 가자~",
     },
     default: {
-      guide: "에너지가 서서히 올라오는 성장 단계예요. 새로운 시작에 좋은 시기랍니다.",
+      guide: "에너지가 서서히 올라오는 여포기예요. 새로운 시작에 좋은 시기랍니다.",
       speech: "{name}, 몸이 살아나고 있어! 오늘 뭐 재밌는 거 해볼까?",
     },
   },
@@ -394,7 +394,7 @@ const SP_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 괜찮은 하루~! 너무 바쁘게만 안 돌리면 돼!",
     },
     low: {
-      guide: "반짝임 단계에도 컨디션 기복이 있을 수 있어요. 충분한 수분과 휴식을 챙겨 주세요.",
+      guide: "배란기에도 컨디션 기복이 있을 수 있어요. 충분한 수분과 휴식을 챙겨 주세요.",
       speech: "{name}, 좀 지친 것 같아. 물 마시고 잠깐 누워있자~",
     },
     bad: {
@@ -402,13 +402,13 @@ const SP_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 힘든 날이구나… 오늘은 나만을 위한 날로 하자!",
     },
     default: {
-      guide: "에너지가 가장 높은 반짝임 단계예요. 활동적인 일정을 계획하기 좋은 때랍니다.",
+      guide: "에너지가 가장 높은 배란기예요. 활동적인 일정을 계획하기 좋은 때랍니다.",
       speech: "{name}, 지금이 제일 신나는 때야! 오늘 뭐 할지 같이 정해볼까?",
     },
   },
   luteal: {
     great: {
-      guide: "컨디션이 좋아도 포근한 단계 후반에는 피로가 올 수 있어요. 일정에 여유를 두세요.",
+      guide: "컨디션이 좋아도 황체기 후반에는 피로가 올 수 있어요. 일정에 여유를 두세요.",
       speech: "{name}, 기분 좋네~! 근데 나중에 피곤해질 수 있으니까 일정 여유 있게!",
     },
     good: {
@@ -428,8 +428,8 @@ const SP_DIALOGUES: TemperamentDialogueSet = {
       speech: "{name}, 진짜 많이 힘들었겠다… 혼자가 아니야, 내가 있잖아!",
     },
     default: {
-      guide: "포근한 단계에는 감정과 몸의 변화가 올 수 있어요. 자기 돌봄에 신경 써 주세요.",
-      speech: "{name}, 포근한 단계라 몸이 예민할 수 있어~ 오늘은 편한 게 최고야!",
+      guide: "황체기에는 감정과 몸의 변화가 올 수 있어요. 자기 돌봄에 신경 써 주세요.",
+      speech: "{name}, 황체기라 몸이 예민할 수 있어~ 오늘은 편한 게 최고야!",
     },
   },
 };

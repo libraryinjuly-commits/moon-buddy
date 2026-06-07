@@ -7,9 +7,9 @@ export const LIVE_PERIOD_MESSAGES: Record<
   KO: {
     idle: "{userName}님, 오늘 하루는 어떠셨나요? 언제나 옆에서 들어드릴게요. 🤍",
     onPeriod:
-      "{userName}님, 휴식 단계가 시작됐군요… 따뜻하게 쉬어 가요. 찜질팩도 준비해 둘게요. 🤍",
+      "{userName}님, 생리가 시작됐군요… 따뜻하게 쉬어 가요. 찜질팩도 준비해 둘게요. 🤍",
     ended:
-      "{userName}님, 이번 리듬도 정말 고생 많으셨어요! 🤍 이제 에너지가 조금씩 돌아오는 성장 단계가 올 테니, 천천히 함께 쉬어 가요. ✨",
+      "{userName}님, 이번 주기도 정말 고생 많으셨어요! 🤍 이제 몸이 조금씩 가벼워지는 여포기가 올 테니, 천천히 함께 쉬어 가요. ✨",
   },
   EN: {
     idle: "How was your day? I am always right here to listen. 🤍",
