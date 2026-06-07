@@ -37,28 +37,6 @@ export function ShareBottomSheet({
 
   if (!open) return null;
 
-  async function handleKakao() {
-    if (!isKakaoShareAvailable()) {
-      onError?.(ui.shareKakaoUnavailable);
-      return;
-    }
-    const shareUrl = window.location.href;
-    if (!shareUrl) {
-      onError?.(ui.shareKakaoFailed);
-      return;
-    }
-
-    setBusy("kakao");
-    try {
-      await shareViaKakao(shareUrl);
-      onClose();
-    } catch {
-      onError?.(ui.shareKakaoFailed);
-    } finally {
-      setBusy(null);
-    }
-  }
-
   async function handleCopyLink() {
     setBusy("copy");
     try {
@@ -107,8 +85,30 @@ export function ShareBottomSheet({
         <div className="flex min-h-[9.5rem] flex-col justify-center gap-3">
           <button
             type="button"
-            onClick={handleKakao}
             disabled={busy !== null}
+            onClick={async () => {
+              if (!isKakaoShareAvailable()) {
+                onError?.(ui.shareKakaoUnavailable);
+                return;
+              }
+
+              const currentUrl = window.location.href;
+
+              if (!currentUrl || !/^https?:\/\//.test(currentUrl)) {
+                onError?.(ui.shareKakaoFailed);
+                return;
+              }
+
+              setBusy("kakao");
+              try {
+                await shareViaKakao(currentUrl);
+                onClose();
+              } catch {
+                onError?.(ui.shareKakaoFailed);
+              } finally {
+                setBusy(null);
+              }
+            }}
             className="flex w-full min-h-[3.75rem] items-center gap-3.5 rounded-2xl bg-[#FEE500] px-4 py-4 text-left font-bold text-[#191919] shadow-lg shadow-[#FEE500]/20 transition active:scale-[0.99] disabled:opacity-60"
           >
             <KakaoIcon />

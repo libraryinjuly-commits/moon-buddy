@@ -1,32 +1,28 @@
 import type { Language } from "@/lib/i18n/types";
 
 const DEFAULT_NAMES: Record<Language, string> = {
-  KO: "친구야",
+  KO: "친구님",
   EN: "friend",
   JA: "ともだち",
 };
 
-/** 받침 유무에 따라 자연스러운 호격 조사(아/야)를 붙여요. KO 전용 */
-export function getVocativeName(name: string): string {
+const DEFAULT_NAME_BASE: Record<Language, string> = {
+  KO: "친구",
+  EN: "friend",
+  JA: "ともだち",
+};
+
+/** `{userName}님` 템플릿용 — 이름만 반환 (님은 템플릿에 포함) */
+export function getUserNameBase(name: string, language: Language): string {
   const trimmed = name.trim();
-  if (!trimmed) return DEFAULT_NAMES.KO;
-
-  const lastChar = trimmed[trimmed.length - 1];
-  const code = lastChar.charCodeAt(0);
-
-  if (code < 0xac00 || code > 0xd7a3) {
-    return `${trimmed}야`;
-  }
-
-  const jong = (code - 0xac00) % 28;
-  const particle = jong === 0 ? "야" : "아";
-  return `${trimmed}${particle}`;
+  return trimmed || DEFAULT_NAME_BASE[language];
 }
 
 export function getDisplayName(name: string, language: Language): string {
   const trimmed = name.trim();
   if (!trimmed) return DEFAULT_NAMES[language];
-  if (language === "KO") return getVocativeName(trimmed);
+  if (language === "KO") return `${trimmed}님`;
+  if (language === "JA") return `${trimmed}さん`;
   return trimmed;
 }
 
@@ -35,7 +31,9 @@ export function applyNameForLanguage(
   name: string,
   language: Language,
 ): string {
-  return template.replaceAll("{name}", getDisplayName(name, language));
+  return template
+    .replaceAll("{userName}", getUserNameBase(name, language))
+    .replaceAll("{name}", getDisplayName(name, language));
 }
 
 /** @deprecated Use applyNameForLanguage with language parameter */

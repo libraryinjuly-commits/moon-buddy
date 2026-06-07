@@ -50,6 +50,11 @@ export function getDialogue(
   };
 }
 
+export function getHomeGreetings(language: string): string[] {
+  const pack = getDialoguePack(language);
+  return pack.homeGreetings;
+}
+
 export function getThankSpeech(
   userName: string,
   mbti: string,

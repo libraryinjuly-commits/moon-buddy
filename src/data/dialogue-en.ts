@@ -6,4 +6,5 @@ export const dialogueEn: DialoguePack = {
   welcomeSpeech: enLocale.welcomeSpeech,
   thankSpeech: enLocale.thankSpeech,
   dialogues: enLocale.dialogues,
+  homeGreetings: [],
 };

@@ -1,3 +1,4 @@
+import { getHomeGreetings } from "@/lib/dialogueEngine";
 import { applySpeechTemplate } from "@/lib/persona";
 import { getPersonaSpeechLines } from "@/lib/personaSpeechLines";
 import type {
@@ -22,6 +23,12 @@ export function buildBuddySpeechPool(
   const lines = getPersonaSpeechLines(language, temperament);
   const pool: string[] = [];
 
+  pool.push(
+    ...getHomeGreetings(language).map((line) =>
+      personalize(line, context, language),
+    ),
+  );
+
   if (menstruationStatus === "ON_PERIOD") {
     pool.push(...lines.onPeriod.map((line) => personalize(line, context, language)));
   }
@@ -42,7 +49,11 @@ function personalize(
   context: BuddySpeechContext,
   language: Language,
 ): string {
-  if (!line.includes("{name}") && !line.includes("{characterName}")) {
+  if (
+    !line.includes("{name}") &&
+    !line.includes("{userName}") &&
+    !line.includes("{characterName}")
+  ) {
     return line;
   }
   return applySpeechTemplate(line, {

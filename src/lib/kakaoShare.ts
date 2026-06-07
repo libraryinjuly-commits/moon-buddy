@@ -1,7 +1,6 @@
 import type { KakaoSDK } from "@/types/kakao";
 
 import {
-  getAppOrigin,
   KAKAO_SHARE_BUTTON,
   KAKAO_SHARE_DESCRIPTION,
   SHARE_TITLE,
@@ -18,11 +17,16 @@ const DEFAULT_SHARE_IMAGE =
 
 let sdkLoadPromise: Promise<KakaoSDK> | null = null;
 
-function getShareImageUrl(): string {
+function resolveShareImageUrl(currentUrl: string): string {
   const custom = process.env.NEXT_PUBLIC_SHARE_IMAGE_URL;
   if (custom) return custom;
-  const origin = getAppOrigin();
-  return origin ? `${origin}/og-share.png` : DEFAULT_SHARE_IMAGE;
+
+  try {
+    const origin = new URL(currentUrl).origin;
+    return `${origin}/og-share.png`;
+  } catch {
+    return DEFAULT_SHARE_IMAGE;
+  }
 }
 
 function loadKakaoSdk(): Promise<KakaoSDK> {
@@ -79,30 +83,38 @@ function loadKakaoSdk(): Promise<KakaoSDK> {
   return sdkLoadPromise;
 }
 
-export async function shareViaKakao(shareUrl: string): Promise<void> {
-  if (!shareUrl.trim()) {
+/**
+ * @param currentUrl - Must be captured in the click handler via window.location.href
+ */
+export async function shareViaKakao(currentUrl: string): Promise<void> {
+  if (!currentUrl.trim()) {
     throw new Error("Share URL is unavailable.");
   }
 
+  if (!/^https?:\/\//.test(currentUrl)) {
+    throw new Error("Share URL must be an absolute HTTP(S) address.");
+  }
+
   const kakao = await loadKakaoSdk();
+  const imageUrl = resolveShareImageUrl(currentUrl);
 
   kakao.Share.sendDefault({
     objectType: "feed",
     content: {
       title: SHARE_TITLE,
       description: KAKAO_SHARE_DESCRIPTION,
-      imageUrl: getShareImageUrl(),
+      imageUrl,
       link: {
-        webUrl: shareUrl,
-        mobileWebUrl: shareUrl,
+        webUrl: currentUrl,
+        mobileWebUrl: currentUrl,
       },
     },
     buttons: [
       {
         title: KAKAO_SHARE_BUTTON,
         link: {
-          webUrl: shareUrl,
-          mobileWebUrl: shareUrl,
+          webUrl: currentUrl,
+          mobileWebUrl: currentUrl,
         },
       },
     ],

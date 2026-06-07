@@ -1,5 +1,5 @@
 import type { Language, TemperamentGroup } from "@/types";
-import { getDisplayName } from "@/lib/nameParticle";
+import { getDisplayName, getUserNameBase } from "@/lib/nameParticle";
 
 export interface PersonaDefinition {
   personaLabel: string;
@@ -110,6 +110,7 @@ export function applySpeechTemplate(
 ): string {
   const { userName, characterName, language } = context;
   return template
+    .replaceAll("{userName}", getUserNameBase(userName, language))
     .replaceAll("{characterName}", characterName)
     .replaceAll("{name}", getDisplayName(userName, language));
 }

@@ -5,11 +5,11 @@ export const LIVE_PERIOD_MESSAGES: Record<
   Record<"idle" | "onPeriod" | "ended", string>
 > = {
   KO: {
-    idle: "주인님, 오늘 하루는 어떠셨나요? 제가 언제나 옆에서 들어드릴게요. 🤍",
+    idle: "{userName}님, 오늘 하루는 어떠셨나요? 언제나 옆에서 들어드릴게요. 🤍",
     onPeriod:
-      "주인님, 진짜 시작하셨군요... 많이 아프거나 처지지 않게 제가 따뜻한 온열 찜질팩을 준비해 둘게요. 🩸",
+      "{userName}님, 시작하셨군요… 많이 아프거나 처지지 않게 따뜻한 온열 찜질팩을 준비해 둘게요. 🩸",
     ended:
-      "주인님, 이번 주기도 정말 고생 많으셨어요! 🤍 이제 몸이 훨씬 가벼워지는 황금기(여포기)가 올 테니 저랑 신나게 놀아요! ✨",
+      "{userName}님, 이번 주기도 정말 고생 많으셨어요! 🤍 이제 몸이 조금씩 가벼워지는 여포기가 올 테니, 천천히 함께 쉬어 가요. ✨",
   },
   EN: {
     idle: "How was your day? I am always right here to listen. 🤍",
