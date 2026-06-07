@@ -22,6 +22,7 @@ interface CalendarTabProps {
   onAddPeriod: (startDate: string, endDate: string | null) => boolean;
   onDeletePeriod: (periodId: string) => void;
   onSaveSettings: (settings: UserSettings) => void;
+  embedded?: boolean;
 }
 
 export function CalendarTab({
@@ -38,11 +39,18 @@ export function CalendarTab({
   onAddPeriod,
   onDeletePeriod,
   onSaveSettings,
+  embedded = false,
 }: CalendarTabProps) {
   const { ui } = locale;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pb-1.5">
+    <div
+      className={
+        embedded
+          ? "flex flex-col gap-2"
+          : "flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pb-1.5"
+      }
+    >
       <RecordCalendar
         dailyMoodLogs={data.dailyMoodLogs}
         periodHistory={data.periodHistory}

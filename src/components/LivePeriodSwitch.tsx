@@ -7,6 +7,7 @@ interface LivePeriodSwitchProps {
   ui: LocaleUI;
   theme: TemperamentTheme;
   onToggle: () => void;
+  compact?: boolean;
 }
 
 export function LivePeriodSwitch({
@@ -15,8 +16,32 @@ export function LivePeriodSwitch({
   ui,
   theme,
   onToggle,
+  compact = false,
 }: LivePeriodSwitchProps) {
   const isOnPeriod = status === "ON_PERIOD";
+
+  if (compact) {
+    return (
+      <div>
+        <p className={`mb-1.5 text-[9px] font-medium ${theme.accentMuted}`}>
+          {isOnPeriod
+            ? `${ui.livePeriodOn} · ${periodDay}${ui.livePeriodDayUnit}`
+            : ui.rhythmLogHint}
+        </p>
+        <button
+          type="button"
+          onClick={onToggle}
+          className={`w-full rounded-lg py-2 text-xs font-semibold text-white transition active:scale-[0.98] ${
+            isOnPeriod
+              ? "bg-gradient-to-r from-teal-400/90 to-emerald-500/90"
+              : `${theme.accentButton} opacity-90`
+          }`}
+        >
+          {isOnPeriod ? ui.livePeriodEndButton : ui.livePeriodStartButton}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <section className="flex-shrink-0">

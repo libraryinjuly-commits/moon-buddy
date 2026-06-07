@@ -122,8 +122,15 @@ export interface LocaleUI {
   liveMoodTimelineTitle: string;
   liveMoodTimelineEmpty: string;
   tabHome: string;
-  tabCalendar: string;
-  tabInsights: string;
+  tabJourney: string;
+  journeyTabDesc: string;
+  journeyEmotionTitle: string;
+  journeyRhythmTitle: string;
+  journeyTimelineTitle: string;
+  moodFeedTitle: string;
+  rhythmCardTitle: string;
+  rhythmLogHint: string;
+  todayRhythm: string;
   insightsTabDesc: string;
   insightMoodLogs: string;
   insightMoodDays: string;
@@ -177,10 +184,13 @@ export interface LocaleUI {
   constellationComingSoonDesc: string;
 }
 
+export type RhythmPhaseBrief = Record<CyclePhase, string> & { default: string };
+
 export interface LocaleContent {
   language: Language;
   ui: LocaleUI;
   phaseLabels: Record<CyclePhase, string>;
+  rhythmPhaseBrief: RhythmPhaseBrief;
   moodLabels: Record<Mood, string>;
   moodEmojis: Record<Mood, string>;
   liveMoodLabels: Record<LiveMood, string>;

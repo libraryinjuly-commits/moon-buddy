@@ -8,9 +8,7 @@ import { DevTools } from "@/components/dev/DevTools";
 import { AppHeader } from "@/components/AppHeader";
 import { CharacterRoom } from "@/components/CharacterRoom";
 import { StarCollectionPage } from "@/components/stars/StarCollectionPage";
-import { CalendarTab } from "@/components/CalendarTab";
-import { InsightsTab } from "@/components/InsightsTab";
-import { LivePeriodSwitch } from "@/components/LivePeriodSwitch";
+import { JourneyTab } from "@/components/JourneyTab";
 import { ProfileTab } from "@/components/ProfileTab";
 import { TabBar } from "@/components/TabBar";
 import { useBuddySpeech } from "@/hooks/useBuddySpeech";
@@ -18,6 +16,7 @@ import { useMoonBuddy } from "@/hooks/useMoonBuddy";
 import { companionStageToDisplayLevel } from "@/lib/companionLifecycle";
 import { getCustomAdviceTitle } from "@/lib/characterAdviceTitle";
 import { getCycleInsight } from "@/lib/cycleInsights";
+import { getRhythmBriefMessage } from "@/lib/rhythmMessaging";
 import { getCurrentCycleMoodStats } from "@/lib/insightsStats";
 import { isProfileComplete } from "@/lib/profile";
 import type { AppTab, LiveMood } from "@/types";
@@ -85,11 +84,10 @@ export default function Home() {
         icon: <Star strokeWidth={2.25} aria-hidden />,
         label: ui.tabStars,
       },
-      { id: "calendar" as const, emoji: "📅", label: ui.tabCalendar },
       {
-        id: "insights" as const,
+        id: "journey" as const,
         icon: <Sparkles strokeWidth={2.25} aria-hidden />,
-        label: ui.tabInsights,
+        label: ui.tabJourney,
       },
       {
         id: "profile" as const,
@@ -139,13 +137,19 @@ export default function Home() {
   );
 
   const pageBg = PAGE_BG[temperamentTheme.group] ?? PAGE_BG.NF;
-  const phaseLabel = cycleInfo ? locale.phaseLabels[cycleInfo.phase] : null;
+  const phaseLabel = homePhase ? locale.phaseLabels[homePhase] : null;
   const moodLabel = todayDominantMood
     ? locale.liveMoodLabels[todayDominantMood]
     : null;
   const customAdviceTitle = getCustomAdviceTitle(
     data.settings.buddyCustomName,
     ui,
+  );
+
+  const rhythmMessage = getRhythmBriefMessage(
+    homePhase,
+    data.settings.language,
+    buddyIdentity.customName,
   );
 
   function handleProfileSave(
@@ -209,15 +213,7 @@ export default function Home() {
 
       <main className="flex min-h-0 flex-1 flex-col overflow-hidden px-2.5">
         {activeTab === "home" && (
-          <div className="flex h-full min-h-0 flex-col gap-1.5 overflow-hidden pb-0.5">
-            <LivePeriodSwitch
-              status={menstruationStatus}
-              periodDay={periodDay}
-              ui={ui}
-              theme={temperamentTheme}
-              onToggle={toggleMenstruation}
-            />
-
+          <div className="flex h-full min-h-0 flex-col overflow-hidden pb-0.5">
             <CharacterRoom
               mascot={mascot}
               companionStage={companion.currentStage}
@@ -239,6 +235,12 @@ export default function Home() {
               fortuneIsOpenedToday={fortuneIsOpenedToday}
               fortuneTodayMessage={fortuneTodayMessage}
               onOpenFortuneCookie={openFortuneCookie}
+              rhythmMessage={rhythmMessage}
+              cyclePhase={homePhase}
+              phaseLabel={phaseLabel}
+              menstruationStatus={menstruationStatus}
+              periodDay={periodDay}
+              onTogglePeriod={toggleMenstruation}
             />
           </div>
         )}
@@ -253,13 +255,19 @@ export default function Home() {
           />
         )}
 
-        {activeTab === "calendar" && (
-          <CalendarTab
+        {activeTab === "journey" && (
+          <JourneyTab
             data={data}
             locale={locale}
             theme={temperamentTheme}
             cycleInfo={cycleInfo}
-            selectedDate={selectedCalendarDate}
+            cycleInsight={cycleInsight}
+            phaseLabel={phaseLabel}
+            dialogue={dialogue}
+            moodLabel={moodLabel}
+            moodStats={moodStats}
+            customAdviceTitle={customAdviceTitle}
+            selectedCalendarDate={selectedCalendarDate}
             onSelectDate={setSelectedCalendarDate}
             onCloseSheet={() => setSelectedCalendarDate(null)}
             onToggleDayPeriod={toggleDayPeriod}
@@ -268,21 +276,6 @@ export default function Home() {
             onAddPeriod={addPeriod}
             onDeletePeriod={deletePeriod}
             onSaveSettings={updateSettings}
-          />
-        )}
-
-        {activeTab === "insights" && (
-          <InsightsTab
-            locale={locale}
-            theme={temperamentTheme}
-            analysisTitle={ui.analysisReportTitle}
-            customAdviceTitle={customAdviceTitle}
-            cycleInsight={cycleInsight}
-            cycleInfo={cycleInfo}
-            phaseLabel={phaseLabel}
-            dialogue={dialogue}
-            moodLabel={moodLabel}
-            moodStats={moodStats}
           />
         )}
 

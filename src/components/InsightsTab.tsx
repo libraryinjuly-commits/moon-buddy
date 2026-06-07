@@ -23,6 +23,9 @@ interface InsightsTabProps {
   dialogue: DialogueContent;
   moodLabel: string | null;
   moodStats: CycleMoodStats;
+  hidePageHeader?: boolean;
+  hideDaysUntil?: boolean;
+  rhythmSectionTitle?: string;
 }
 
 export function InsightsTab({
@@ -36,6 +39,9 @@ export function InsightsTab({
   dialogue,
   moodLabel,
   moodStats,
+  hidePageHeader = false,
+  hideDaysUntil = false,
+  rhythmSectionTitle,
 }: InsightsTabProps) {
   const { ui } = locale;
   const topMoodLabel = moodStats.topMood
@@ -46,15 +52,23 @@ export function InsightsTab({
     : null;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pb-1.5">
-      <div className="px-0.5 pt-0.5">
-        <h1 className={`text-base font-bold ${theme.accentText}`}>
-          {ui.tabInsights}
-        </h1>
-        <p className={`mt-0.5 text-xs ${theme.accentMuted}`}>
-          {ui.insightsTabDesc}
-        </p>
-      </div>
+    <div
+      className={
+        hidePageHeader
+          ? "flex flex-col gap-3"
+          : "flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pb-1.5"
+      }
+    >
+      {!hidePageHeader && (
+        <div className="px-0.5 pt-0.5">
+          <h1 className={`text-base font-bold ${theme.accentText}`}>
+            {ui.tabJourney}
+          </h1>
+          <p className={`mt-0.5 text-xs ${theme.accentMuted}`}>
+            {ui.journeyTabDesc}
+          </p>
+        </div>
+      )}
 
       <section
         className={`rounded-2xl border ${theme.accentBorder} bg-white/85 p-3 shadow-sm backdrop-blur-sm`}
@@ -62,20 +76,8 @@ export function InsightsTab({
         <h2 className={`mb-2 text-sm font-bold ${theme.accentText}`}>
           {analysisTitle}
         </h2>
-        <TodayStatusCard
-          title={ui.todayStatus}
-          dayUnit={ui.dayUnit}
-          daysUntilLabel={ui.daysUntilPeriod}
-          daysCountUnit={ui.daysCountUnit}
-          daysUntilCount={cycleInfo?.daysUntilNextPeriod ?? null}
-          status={cycleInsight.status}
-          phase={cycleInfo?.phase ?? null}
-          phaseLabel={phaseLabel}
-          dayOfCycle={cycleInfo?.dayOfCycle ?? null}
-          compact
-        />
         <div
-          className={`mt-2 grid grid-cols-3 gap-2 rounded-xl ${theme.accentSoft} p-2.5`}
+          className={`grid grid-cols-3 gap-2 rounded-xl ${theme.accentSoft} p-2.5`}
         >
           <div className="text-center">
             <p className={`text-[10px] ${theme.accentMuted}`}>
@@ -104,6 +106,28 @@ export function InsightsTab({
             </p>
           </div>
         </div>
+      </section>
+
+      <section
+        className={`rounded-2xl border ${theme.accentBorder} bg-white/85 p-3 shadow-sm backdrop-blur-sm`}
+      >
+        <h2 className={`mb-2 text-sm font-bold ${theme.accentText}`}>
+          {rhythmSectionTitle ?? ui.journeyRhythmTitle}
+        </h2>
+        <TodayStatusCard
+          title={ui.todayRhythm}
+          dayUnit={ui.dayUnit}
+          daysUntilLabel={ui.daysUntilPeriod}
+          daysCountUnit={ui.daysCountUnit}
+          daysUntilCount={cycleInfo?.daysUntilNextPeriod ?? null}
+          status={cycleInsight.status}
+          phase={cycleInfo?.phase ?? null}
+          phaseLabel={phaseLabel}
+          dayOfCycle={cycleInfo?.dayOfCycle ?? null}
+          compact
+          hideDaysUntil={hideDaysUntil}
+          hideCycleDay={hideDaysUntil}
+        />
       </section>
 
       <section
