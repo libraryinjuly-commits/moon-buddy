@@ -84,7 +84,7 @@ export function PeriodDaySheet({
           className={`mt-4 flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-3 py-3 ${theme.accentBorder} ${theme.accentSoft}`}
         >
           <span className={`text-sm font-medium ${theme.accentText}`}>
-            🩸 {ui.periodToggleLabel}
+            {ui.periodToggleLabel}
           </span>
           <button
             type="button"

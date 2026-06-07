@@ -39,7 +39,10 @@ export function CompanionGrowthCard({
         <span
           className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${theme.badgeBg} text-white`}
         >
-          {growthProgress}%
+          {ui.companionGrowthNextProgress.replace(
+            "{percent}",
+            String(stageProgress),
+          )}
         </span>
       </div>
 

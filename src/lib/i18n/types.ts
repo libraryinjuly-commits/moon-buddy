@@ -162,6 +162,8 @@ export interface LocaleUI {
   close: string;
   tabStars: string;
   companionGrowthLabel: string;
+  companionGrowthNextProgress: string;
+  rhythmCycleLabel: string;
   companionStages: Record<CompanionStage, string>;
   ascensionReadyHint: string;
   ascensionTitle: string;

@@ -16,7 +16,7 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: "문 버디",
-  description: "생리 주기를 기록하고 기분을 남기며 달 친구를 키워보세요.",
+  description: "감정과 함께 자라는 나만의 동반자, 문 버디.",
 };
 
 export const viewport: Viewport = {
