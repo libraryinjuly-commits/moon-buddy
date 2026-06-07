@@ -1,11 +1,14 @@
 import type { MbtiTypeTitles } from "@/lib/mbtiTitles";
 import type { SpeechVariants } from "@/lib/pickVariant";
 import type {
+  CompanionStage,
   CycleInsight,
   CyclePhase,
+  EmotionScale,
   Language,
   LiveMood,
   Mood,
+  StarType,
   TemperamentGroup,
 } from "@/types";
 
@@ -39,6 +42,16 @@ export interface LocaleUI {
   withBuddy: string;
   buddyPersona: string;
   shareCopiedToast: string;
+  shareSheetTitle: string;
+  shareSheetClose: string;
+  shareKakao: string;
+  shareCopyLink: string;
+  shareSystem: string;
+  shareKakaoUnavailable: string;
+  shareKakaoFailed: string;
+  shareCopyFailed: string;
+  shareSystemUnavailable: string;
+  shareSystemFailed: string;
   fortuneCookieLabel: string;
   fortuneCookieOpenedLabel: string;
   fortuneCookieTitle: string;
@@ -142,6 +155,30 @@ export interface LocaleUI {
   periodDayCount: string;
   averageCycleLabel: string;
   speechTapHint: string;
+  mascotTapHint: string;
+  close: string;
+  tabStars: string;
+  companionGrowthLabel: string;
+  companionStages: Record<CompanionStage, string>;
+  ascensionReadyHint: string;
+  ascensionTitle: string;
+  ascensionDialogues: string[];
+  ascensionBecomingStar: string;
+  ascensionComplete: string;
+  ascensionContinue: string;
+  ascensionMeetNewSeed: string;
+  starCollectionTitle: string;
+  starCollectionDesc: string;
+  starGalleryTab: string;
+  starConstellationTab: string;
+  starCollectionEmptyTitle: string;
+  starCollectionEmptyDesc: string;
+  starMoodBreakdown: string;
+  starDominantEmotion: string;
+  starTypes: Record<StarType, string>;
+  emotionScales: Record<EmotionScale, string>;
+  constellationComingSoonTitle: string;
+  constellationComingSoonDesc: string;
 }
 
 export interface LocaleContent {

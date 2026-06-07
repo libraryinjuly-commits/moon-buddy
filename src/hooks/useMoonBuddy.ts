@@ -2,8 +2,10 @@
 
 import { useMemo } from "react";
 
+import { useCompanion } from "@/hooks/useCompanion";
 import { useCycle } from "@/hooks/useCycle";
 import { useDialogue } from "@/hooks/useDialogue";
+import { useStarCollection } from "@/hooks/useStarCollection";
 import { useLivePeriod } from "@/hooks/useLivePeriod";
 import { useFortuneCookie } from "@/hooks/useFortuneCookie";
 import { useMood } from "@/hooks/useMood";
@@ -16,6 +18,8 @@ export function useMoonBuddy() {
   const { data, setData, isLoaded } = useMoonBuddyStorage();
 
   const { cycleInfo } = useCycle(data, setData);
+  const companionApi = useCompanion(data, setData, cycleInfo);
+  const starCollectionApi = useStarCollection(data, setData);
   const {
     toggleDayPeriod,
     startPeriod,
@@ -27,6 +31,7 @@ export function useMoonBuddy() {
   const { todayDominantMood, todayMoodEntries, logLiveMood } = useMood(
     data,
     setData,
+    cycleInfo,
   );
   const {
     mascot: baseMascot,
@@ -68,6 +73,7 @@ export function useMoonBuddy() {
 
   return {
     data,
+    setData,
     isLoaded,
     locale,
     cycleInfo,
@@ -94,5 +100,16 @@ export function useMoonBuddy() {
     fortuneIsOpenedToday,
     fortuneTodayMessage,
     openFortuneCookie,
+    companion: companionApi.companion,
+    stageProgress: companionApi.stageProgress,
+    cycleComplete: companionApi.cycleComplete,
+    readyToAscend: companionApi.readyToAscend,
+    ascensionPending: companionApi.ascensionPending,
+    checkAscension: companionApi.checkAscension,
+    finishAscension: companionApi.finishAscension,
+    stars: starCollectionApi.stars,
+    starCount: starCollectionApi.starCount,
+    preferredStarView: starCollectionApi.preferredView,
+    setPreferredStarView: starCollectionApi.setPreferredView,
   };
 }

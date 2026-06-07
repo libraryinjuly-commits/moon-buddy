@@ -4,6 +4,8 @@ import { syncLivePeriodFromHistory } from "@/lib/livePeriodSync";
 import { LIVE_MOODS, migrateLegacyLiveMood } from "@/lib/liveMood";
 import { getLivePeriodMessage } from "@/lib/livePeriod";
 import { createPeriodId } from "@/lib/periodHistory";
+import { createNewCompanion } from "@/lib/companionLifecycle";
+import { applyV2Fields } from "@/lib/migrations/v1ToV2";
 import { normalizeMbti } from "@/lib/mbti";
 import type {
   DailyMoodLogEntry,
@@ -100,7 +102,16 @@ function normalizePeriodHistory(data: LegacyMoonBuddyData): PeriodHistoryEntry[]
   return history.sort((a, b) => b.startDate.localeCompare(a.startDate));
 }
 
+const todayForDefault = () => {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
 export const DEFAULT_DATA: MoonBuddyData = {
+  schemaVersion: 2,
   periodHistory: [],
   dailyMoodLogs: [],
   livePeriod: {
@@ -109,6 +120,8 @@ export const DEFAULT_DATA: MoonBuddyData = {
     activePeriodId: null,
     characterMessage: getLivePeriodMessage("idle", "KO"),
   },
+  companion: createNewCompanion(todayForDefault()),
+  starCollection: { stars: [], preferredView: "gallery" },
   character: {
     level: 1,
     exp: 0,
@@ -131,7 +144,7 @@ export function normalizeData(data: LegacyMoonBuddyData): MoonBuddyData {
     data.livePeriod?.characterMessage,
   );
 
-  return {
+  const base: MoonBuddyData = {
     ...DEFAULT_DATA,
     ...data,
     periodHistory,
@@ -159,5 +172,14 @@ export function normalizeData(data: LegacyMoonBuddyData): MoonBuddyData {
       language,
       mbti: normalizeMbti(data.settings?.mbti ?? ""),
     },
+    schemaVersion: data.schemaVersion ?? 1,
+    companion: data.companion ?? DEFAULT_DATA.companion,
+    starCollection: data.starCollection ?? DEFAULT_DATA.starCollection,
   };
+
+  if (base.schemaVersion < 2) {
+    return applyV2Fields(base);
+  }
+
+  return base;
 }

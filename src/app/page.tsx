@@ -1,10 +1,13 @@
 "use client";
 
-import { Sparkles, User } from "lucide-react";
+import { Sparkles, Star, User } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { AscensionModal } from "@/components/companion/AscensionModal";
+import { DevTools } from "@/components/dev/DevTools";
 import { AppHeader } from "@/components/AppHeader";
 import { CharacterRoom } from "@/components/CharacterRoom";
+import { StarCollectionPage } from "@/components/stars/StarCollectionPage";
 import { CalendarTab } from "@/components/CalendarTab";
 import { InsightsTab } from "@/components/InsightsTab";
 import { LivePeriodSwitch } from "@/components/LivePeriodSwitch";
@@ -12,6 +15,7 @@ import { ProfileTab } from "@/components/ProfileTab";
 import { TabBar } from "@/components/TabBar";
 import { useBuddySpeech } from "@/hooks/useBuddySpeech";
 import { useMoonBuddy } from "@/hooks/useMoonBuddy";
+import { companionStageToDisplayLevel } from "@/lib/companionLifecycle";
 import { getCustomAdviceTitle } from "@/lib/characterAdviceTitle";
 import { getCycleInsight } from "@/lib/cycleInsights";
 import { getCurrentCycleMoodStats } from "@/lib/insightsStats";
@@ -28,6 +32,7 @@ const PAGE_BG: Record<string, string> = {
 export default function Home() {
   const {
     data,
+    setData,
     isLoaded,
     locale,
     cycleInfo,
@@ -52,9 +57,18 @@ export default function Home() {
     fortuneIsOpenedToday,
     fortuneTodayMessage,
     openFortuneCookie,
+    companion,
+    stageProgress,
+    ascensionPending,
+    finishAscension,
+    stars,
+    starCount,
+    preferredStarView,
+    setPreferredStarView,
   } = useMoonBuddy();
 
   const [activeTab, setActiveTab] = useState<AppTab | null>(null);
+  const [showAscension, setShowAscension] = useState(false);
   const [thankTrigger, setThankTrigger] = useState(0);
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<string | null>(
     null,
@@ -66,6 +80,11 @@ export default function Home() {
   const tabs = useMemo(
     () => [
       { id: "home" as const, emoji: "🏠", label: ui.tabHome },
+      {
+        id: "stars" as const,
+        icon: <Star strokeWidth={2.25} aria-hidden />,
+        label: ui.tabStars,
+      },
       { id: "calendar" as const, emoji: "📅", label: ui.tabCalendar },
       {
         id: "insights" as const,
@@ -86,6 +105,12 @@ export default function Home() {
 
     setActiveTab(isProfileComplete(data.settings) ? "home" : "profile");
   }, [isLoaded, activeTab, data.settings]);
+
+  useEffect(() => {
+    if (ascensionPending) {
+      setShowAscension(true);
+    }
+  }, [ascensionPending]);
 
   const homePhase =
     menstruationStatus === "ON_PERIOD" ? "menstrual" : (cycleInfo?.phase ?? null);
@@ -149,25 +174,38 @@ export default function Home() {
     liveSpeechTimer.current = window.setTimeout(() => setLiveSpeech(null), 5000);
   }
 
+  const shellClass =
+    "relative mx-auto flex h-full w-full max-w-[450px] flex-col overflow-hidden shadow-xl ring-1 ring-black/5 md:my-auto md:h-[calc(100dvh-1.5rem)] md:max-h-[900px] md:rounded-[2rem]";
+
+  const devTools = isLoaded ? (
+    <DevTools
+      companion={companion}
+      starCount={starCount}
+      language={data.settings.language}
+      setData={setData}
+      onTriggerAscension={() => setShowAscension(true)}
+    />
+  ) : null;
+
   if (!isLoaded || activeTab === null) {
     return (
-      <div className="mx-auto flex h-full w-full max-w-[450px] flex-col overflow-hidden rounded-none bg-white/40 shadow-xl ring-1 ring-black/5 md:my-auto md:h-[calc(100dvh-1.5rem)] md:max-h-[900px] md:rounded-[2rem]">
-        <AppHeader shareCopiedMessage={ui.shareCopiedToast} />
+      <div
+        className={`${shellClass} rounded-none bg-white/40`}
+      >
+        <AppHeader ui={ui} />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-violet-600">{ui.loading}</p>
         </div>
+        {devTools}
       </div>
     );
   }
 
   return (
     <div
-      className={`mx-auto flex h-full w-full max-w-[450px] flex-col overflow-hidden bg-gradient-to-b shadow-xl ring-1 ring-black/5 md:my-auto md:h-[calc(100dvh-1.5rem)] md:max-h-[900px] md:rounded-[2rem] ${pageBg}`}
+      className={`${shellClass} bg-gradient-to-b ${pageBg}`}
     >
-      <AppHeader
-        logoColorClass={temperamentTheme.accentText}
-        shareCopiedMessage={ui.shareCopiedToast}
-      />
+      <AppHeader logoColorClass={temperamentTheme.accentText} ui={ui} />
 
       <main className="flex min-h-0 flex-1 flex-col overflow-hidden px-2.5">
         {activeTab === "home" && (
@@ -182,7 +220,11 @@ export default function Home() {
 
             <CharacterRoom
               mascot={mascot}
-              level={data.character.level}
+              companionStage={companion.currentStage}
+              displayLevel={companionStageToDisplayLevel(companion.currentStage)}
+              growthProgress={companion.growthProgress}
+              stageProgress={stageProgress}
+              ascensionPending={ascensionPending}
               speech={buddySpeech}
               liveSpeech={liveSpeech}
               thankSpeech={thankSpeech}
@@ -191,14 +233,24 @@ export default function Home() {
               locale={locale}
               theme={temperamentTheme}
               onLiveMood={handleLiveMood}
-              onSpeechClick={onSpeechTap}
+              onMascotTap={onSpeechTap}
               canCycleSpeech={canCycle}
-              speechTapHint={ui.speechTapHint}
+              mascotTapHint={ui.mascotTapHint}
               fortuneIsOpenedToday={fortuneIsOpenedToday}
               fortuneTodayMessage={fortuneTodayMessage}
               onOpenFortuneCookie={openFortuneCookie}
             />
           </div>
+        )}
+
+        {activeTab === "stars" && (
+          <StarCollectionPage
+            stars={stars}
+            preferredView={preferredStarView}
+            locale={locale}
+            theme={temperamentTheme}
+            onChangeView={setPreferredStarView}
+          />
         )}
 
         {activeTab === "calendar" && (
@@ -252,6 +304,17 @@ export default function Home() {
         theme={temperamentTheme}
         onChange={(tab) => setActiveTab(tab)}
       />
+
+      <AscensionModal
+        open={showAscension}
+        companionName={buddyIdentity.customName}
+        locale={locale}
+        theme={temperamentTheme}
+        onComplete={() => finishAscension()}
+        onClose={() => setShowAscension(false)}
+      />
+
+      {devTools}
     </div>
   );
 }

@@ -3,15 +3,23 @@
 import { useCallback, useMemo } from "react";
 
 import type { SetMoonBuddyData } from "@/hooks/types";
+import {
+  applyFeedToCompanion,
+  isAscensionReady,
+  markAscensionPending,
+} from "@/lib/companionLifecycle";
 import { getDominantMoodForDate, getMoodEntriesForDate } from "@/lib/dailyMood";
 import { getLiveMoodReaction } from "@/lib/liveMood";
 import { getTemperamentFromMbti } from "@/lib/mbti";
 import { resolveCharacterName, getPersonaDefinition } from "@/lib/persona";
-import { addExp, LIVE_MOOD_EXP } from "@/lib/rewards";
 import { getTodayDateString } from "@/lib/storage";
-import type { LiveMood, MoonBuddyData } from "@/types/moonBuddy";
+import type { CycleInfo, LiveMood, MoonBuddyData } from "@/types/moonBuddy";
 
-export function useMood(data: MoonBuddyData, setData: SetMoonBuddyData) {
+export function useMood(
+  data: MoonBuddyData,
+  setData: SetMoonBuddyData,
+  cycleInfo: CycleInfo | null = null,
+) {
   const todayDominantMood = useMemo(() => {
     const today = getTodayDateString();
     return getDominantMoodForDate(data.dailyMoodLogs, today);
@@ -34,24 +42,41 @@ export function useMood(data: MoonBuddyData, setData: SetMoonBuddyData) {
         persona.defaultBuddyName,
       );
 
-      setData((prev) => ({
-        ...prev,
-        dailyMoodLogs: [...prev.dailyMoodLogs, entry],
-        character: addExp(
-          {
+      setData((prev) => {
+        const { companion: fedCompanion } = applyFeedToCompanion(
+          prev.companion,
+          mood,
+        );
+
+        const withCycle: typeof fedCompanion = {
+          ...fedCompanion,
+          cycleId: fedCompanion.cycleId ?? prev.periodHistory[0]?.id ?? null,
+        };
+
+        const nextCompanion = isAscensionReady(
+          { ...withCycle, ascensionPending: false },
+          cycleInfo,
+        )
+          ? markAscensionPending(withCycle)
+          : withCycle;
+
+        return {
+          ...prev,
+          dailyMoodLogs: [...prev.dailyMoodLogs, entry],
+          companion: nextCompanion,
+          character: {
             ...prev.character,
             totalMoodLogs: prev.character.totalMoodLogs + 1,
           },
-          LIVE_MOOD_EXP,
-        ),
-      }));
+        };
+      });
 
       return getLiveMoodReaction(mood, settings.language, temperament, {
         userName: settings.userName,
         characterName,
       });
     },
-    [data, setData],
+    [data, setData, cycleInfo],
   );
 
   return {

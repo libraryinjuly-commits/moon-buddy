@@ -1,3 +1,5 @@
+import type { CompanionState, StarCollectionState } from "@/types/companion";
+
 export type Mood = "great" | "good" | "okay" | "low" | "bad";
 
 export type LiveMood =
@@ -88,10 +90,15 @@ export interface UserSettings {
 }
 
 export interface MoonBuddyData {
+  schemaVersion: number;
   periodHistory: PeriodHistoryEntry[];
   dailyMoodLogs: DailyMoodLogEntry[];
   livePeriod: LivePeriodState;
+  companion: CompanionState;
+  starCollection: StarCollectionState;
+  /** @deprecated Kept for migration; UI uses companion lifecycle */
   character: CharacterState;
+  /** @deprecated Legacy gacha — not used in companion flow */
   luna: LunaState;
   fortuneCookie: DailyFortuneCookie | null;
   settings: UserSettings;

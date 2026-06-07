@@ -1,5 +1,6 @@
 "use client";
 
+import { CompanionGrowthCard } from "@/components/companion/CompanionGrowthCard";
 import { FortuneCookieFloating } from "@/components/FortuneCookieFloating";
 import { MascotCharacter } from "@/components/MascotCharacter";
 import { QuickMoodButtons } from "@/components/QuickMoodButtons";
@@ -7,6 +8,7 @@ import { LIVE_MOODS } from "@/lib/liveMood";
 import type { LocaleContent } from "@/lib/i18n/types";
 import type {
   BuddyIdentity,
+  CompanionStage,
   LiveMood,
   MascotConfig,
   TemperamentTheme,
@@ -14,7 +16,11 @@ import type {
 
 interface CharacterRoomProps {
   mascot: MascotConfig;
-  level: number;
+  companionStage: CompanionStage;
+  displayLevel: number;
+  growthProgress: number;
+  stageProgress: number;
+  ascensionPending?: boolean;
   speech: string;
   liveSpeech: string | null;
   thankSpeech: string;
@@ -23,9 +29,9 @@ interface CharacterRoomProps {
   locale: LocaleContent;
   theme: TemperamentTheme;
   onLiveMood: (mood: LiveMood) => void;
-  onSpeechClick?: () => void;
+  onMascotTap?: () => void;
   canCycleSpeech?: boolean;
-  speechTapHint?: string;
+  mascotTapHint?: string;
   fortuneIsOpenedToday: boolean;
   fortuneTodayMessage: string | null;
   onOpenFortuneCookie: () => string;
@@ -33,7 +39,11 @@ interface CharacterRoomProps {
 
 export function CharacterRoom({
   mascot,
-  level,
+  companionStage,
+  displayLevel,
+  growthProgress,
+  stageProgress,
+  ascensionPending,
   speech,
   liveSpeech,
   thankSpeech,
@@ -42,9 +52,9 @@ export function CharacterRoom({
   locale,
   theme,
   onLiveMood,
-  onSpeechClick,
+  onMascotTap,
   canCycleSpeech,
-  speechTapHint,
+  mascotTapHint,
   fortuneIsOpenedToday,
   fortuneTodayMessage,
   onOpenFortuneCookie,
@@ -55,8 +65,19 @@ export function CharacterRoom({
     label: locale.liveMoodLabels[mood],
   }));
 
+  const stageLabel = locale.ui.companionStages[companionStage];
+
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
+      <CompanionGrowthCard
+        stage={companionStage}
+        stageProgress={stageProgress}
+        growthProgress={growthProgress}
+        locale={locale}
+        theme={theme}
+        ascensionPending={ascensionPending}
+      />
+
       <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center px-1">
         <FortuneCookieFloating
           isOpenedToday={fortuneIsOpenedToday}
@@ -68,16 +89,18 @@ export function CharacterRoom({
         />
         <MascotCharacter
           mascot={mascot}
-          level={level}
+          level={displayLevel}
+          companionStage={companionStage}
+          stageLabel={stageLabel}
           speech={liveSpeech ?? speech}
           thankSpeech={thankSpeech}
           buddyIdentity={buddyIdentity}
           thankTrigger={thankTrigger}
           compact
           showTitle={false}
-          onSpeechClick={onSpeechClick}
+          onMascotTap={onMascotTap}
           canCycleSpeech={canCycleSpeech}
-          speechTapHint={speechTapHint}
+          mascotTapHint={mascotTapHint}
         />
       </div>
 

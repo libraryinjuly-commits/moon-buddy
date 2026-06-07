@@ -21,7 +21,18 @@ export type {
   LivePeriodState,
 } from "@/types/moonBuddy";
 
-export type AppTab = "home" | "calendar" | "insights" | "profile";
+export type AppTab = "home" | "stars" | "calendar" | "insights" | "profile";
+
+export type {
+  CompanionStage,
+  CompanionState,
+  EmotionScale,
+  MoodStatistics,
+  StarCollectionView,
+  StarCollectionState,
+  StarMemory,
+  StarType,
+} from "@/types/companion";
 
 export type MascotPhase = CyclePhase | "default";
 
