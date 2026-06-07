@@ -3,7 +3,11 @@
 import { Link2, X } from "lucide-react";
 import { useState } from "react";
 
-import { isKakaoShareAvailable, shareViaKakao } from "@/lib/kakaoShare";
+import {
+  isKakaoShareAvailable,
+  KAKAO_LOG_PREFIX,
+  shareViaKakao,
+} from "@/lib/kakaoShare";
 import { copyShareUrl } from "@/lib/share";
 import type { LocaleUI } from "@/lib/i18n/types";
 
@@ -87,7 +91,14 @@ export function ShareBottomSheet({
             type="button"
             disabled={busy !== null}
             onClick={async () => {
+              console.log(KAKAO_LOG_PREFIX, "Share button clicked", {
+                component: "ShareBottomSheet",
+                pageUrl: window.location.href,
+                pageHost: window.location.hostname,
+              });
+
               if (!isKakaoShareAvailable()) {
+                console.warn(KAKAO_LOG_PREFIX, "Share unavailable: not in browser");
                 onError?.(ui.shareKakaoUnavailable);
                 return;
               }
@@ -96,7 +107,8 @@ export function ShareBottomSheet({
               try {
                 await shareViaKakao();
                 onClose();
-              } catch {
+              } catch (error) {
+                console.error(KAKAO_LOG_PREFIX, "Share flow failed", error);
                 onError?.(ui.shareKakaoFailed);
               } finally {
                 setBusy(null);
