@@ -9,11 +9,36 @@ export const KAKAO_SHARE_DESCRIPTION =
 
 export const KAKAO_SHARE_BUTTON = "문버디 만나러 가기";
 
+/**
+ * Live browser URL at call time — used for Kakao links and clipboard copy.
+ * Must be invoked in the browser right before sharing (never cached at build).
+ */
+export function getLiveShareUrl(): string {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  const { href, protocol } = window.location;
+
+  if (!href || href === "about:blank") {
+    return "";
+  }
+
+  if (protocol !== "http:" && protocol !== "https:") {
+    return "";
+  }
+
+  try {
+    return new URL(href).href;
+  } catch {
+    return href;
+  }
+}
+
 /** Current page URL in the browser; build-time fallback on the server. */
 export function getAppShareUrl(): string {
-  if (typeof window !== "undefined") {
-    return window.location.href;
-  }
+  const live = getLiveShareUrl();
+  if (live) return live;
   return process.env.NEXT_PUBLIC_APP_URL ?? "";
 }
 

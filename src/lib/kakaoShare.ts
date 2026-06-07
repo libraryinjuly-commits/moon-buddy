@@ -2,6 +2,7 @@ import type { KakaoSDK } from "@/types/kakao";
 
 import {
   getAppOrigin,
+  getLiveShareUrl,
   KAKAO_SHARE_BUTTON,
   KAKAO_SHARE_DESCRIPTION,
   SHARE_TITLE,
@@ -26,15 +27,20 @@ function getShareImageUrl(): string {
   return origin ? `${origin}/og-share.png` : DEFAULT_SHARE_IMAGE;
 }
 
-/** Feed card + button links — always the live page URL the user is on. */
-function getKakaoShareLink(): KakaoLinkObject {
-  if (typeof window === "undefined") {
-    const fallback = process.env.NEXT_PUBLIC_APP_URL ?? "";
-    return { mobileWebUrl: fallback, webUrl: fallback };
-  }
+/** Fresh link object — Kakao SDK may mutate link props; never reuse one instance. */
+function createKakaoLink(url: string): KakaoLinkObject {
+  return {
+    webUrl: url,
+    mobileWebUrl: url,
+  };
+}
 
-  const url = window.location.href;
-  return { mobileWebUrl: url, webUrl: url };
+function resolveKakaoShareUrl(): string {
+  const url = getLiveShareUrl();
+  if (!url) {
+    throw new Error("Share URL is unavailable.");
+  }
+  return url;
 }
 
 function loadKakaoSdk(): Promise<KakaoSDK> {
@@ -93,11 +99,9 @@ function loadKakaoSdk(): Promise<KakaoSDK> {
 
 export async function shareViaKakao(): Promise<void> {
   const kakao = await loadKakaoSdk();
-  const link = getKakaoShareLink();
 
-  if (!link.webUrl || !link.mobileWebUrl) {
-    throw new Error("Share URL is unavailable.");
-  }
+  // Read the live URL immediately before sendDefault — never use build-time env vars.
+  const shareUrl = resolveKakaoShareUrl();
 
   kakao.Share.sendDefault({
     objectType: "feed",
@@ -105,12 +109,12 @@ export async function shareViaKakao(): Promise<void> {
       title: SHARE_TITLE,
       description: KAKAO_SHARE_DESCRIPTION,
       imageUrl: getShareImageUrl(),
-      link,
+      link: createKakaoLink(shareUrl),
     },
     buttons: [
       {
         title: KAKAO_SHARE_BUTTON,
-        link,
+        link: createKakaoLink(shareUrl),
       },
     ],
   });
