@@ -78,16 +78,16 @@ export async function shareViaKakao(): Promise<void> {
       description: KAKAO_SHARE_DESCRIPTION,
       imageUrl: "https://moon-buddy-6zxk.vercel.app/og-share.png",
       link: {
-        webUrl: "https://moon-buddy-6zxk.vercel.app/",
-        mobileWebUrl: "https://moon-buddy-6zxk.vercel.app/",
+        webUrl: "https://moon-buddy-6zxk.vercel.app",
+        mobileWebUrl: "https://moon-buddy-6zxk.vercel.app",
       },
     },
     buttons: [
       {
         title: KAKAO_SHARE_BUTTON,
         link: {
-          webUrl: "https://moon-buddy-6zxk.vercel.app/",
-          mobileWebUrl: "https://moon-buddy-6zxk.vercel.app/",
+          webUrl: "https://moon-buddy-6zxk.vercel.app",
+          mobileWebUrl: "https://moon-buddy-6zxk.vercel.app",
         },
       },
     ],

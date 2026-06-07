@@ -9,53 +9,6 @@ export const KAKAO_SHARE_DESCRIPTION =
 
 export const KAKAO_SHARE_BUTTON = "문버디 만나러 가기";
 
-/**
- * Live browser URL at call time — used for Kakao links and clipboard copy.
- * Must be invoked in the browser right before sharing (never cached at build).
- */
-export function getLiveShareUrl(): string {
-  if (typeof window === "undefined") {
-    return "";
-  }
-
-  const { href, protocol } = window.location;
-
-  if (!href || href === "about:blank") {
-    return "";
-  }
-
-  if (protocol !== "http:" && protocol !== "https:") {
-    return "";
-  }
-
-  try {
-    return new URL(href).href;
-  } catch {
-    return href;
-  }
-}
-
-/** Current page URL in the browser; build-time fallback on the server. */
-export function getAppShareUrl(): string {
-  const live = getLiveShareUrl();
-  if (live) return live;
-  return process.env.NEXT_PUBLIC_APP_URL ?? "";
-}
-
-/** Origin of the current deployment (for absolute asset URLs). */
-export function getAppOrigin(): string {
-  if (typeof window !== "undefined") {
-    return window.location.origin;
-  }
-  const configured = process.env.NEXT_PUBLIC_APP_URL ?? "";
-  if (!configured) return "";
-  try {
-    return new URL(configured).origin;
-  } catch {
-    return configured.replace(/\/$/, "");
-  }
-}
-
 async function copyTextToClipboard(text: string): Promise<void> {
   if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
     await navigator.clipboard.writeText(text);
@@ -74,7 +27,5 @@ async function copyTextToClipboard(text: string): Promise<void> {
 }
 
 export async function copyShareUrl(): Promise<void> {
-  const url = getAppShareUrl();
-  if (!url) throw new Error("Share URL is unavailable.");
-  await copyTextToClipboard(url);
+  await copyTextToClipboard("https://moon-buddy-6zxk.vercel.app");
 }
