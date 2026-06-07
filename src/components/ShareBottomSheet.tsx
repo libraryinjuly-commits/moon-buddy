@@ -92,16 +92,9 @@ export function ShareBottomSheet({
                 return;
               }
 
-              const currentUrl = window.location.href;
-
-              if (!currentUrl || !/^https?:\/\//.test(currentUrl)) {
-                onError?.(ui.shareKakaoFailed);
-                return;
-              }
-
               setBusy("kakao");
               try {
-                await shareViaKakao(currentUrl);
+                await shareViaKakao();
                 onClose();
               } catch {
                 onError?.(ui.shareKakaoFailed);

@@ -12,22 +12,7 @@ const KAKAO_JS_KEY =
   process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY ??
   "2393598511beea589329761a77b68022";
 
-const DEFAULT_SHARE_IMAGE =
-  "https://images.unsplash.com/photo-1506318137071-a8e63d0e0f53?w=800&h=400&fit=crop";
-
 let sdkLoadPromise: Promise<KakaoSDK> | null = null;
-
-function resolveShareImageUrl(currentUrl: string): string {
-  const custom = process.env.NEXT_PUBLIC_SHARE_IMAGE_URL;
-  if (custom) return custom;
-
-  try {
-    const origin = new URL(currentUrl).origin;
-    return `${origin}/og-share.png`;
-  } catch {
-    return DEFAULT_SHARE_IMAGE;
-  }
-}
 
 function loadKakaoSdk(): Promise<KakaoSDK> {
   if (typeof window === "undefined") {
@@ -83,38 +68,26 @@ function loadKakaoSdk(): Promise<KakaoSDK> {
   return sdkLoadPromise;
 }
 
-/**
- * @param currentUrl - Must be captured in the click handler via window.location.href
- */
-export async function shareViaKakao(currentUrl: string): Promise<void> {
-  if (!currentUrl.trim()) {
-    throw new Error("Share URL is unavailable.");
-  }
-
-  if (!/^https?:\/\//.test(currentUrl)) {
-    throw new Error("Share URL must be an absolute HTTP(S) address.");
-  }
-
+export async function shareViaKakao(): Promise<void> {
   const kakao = await loadKakaoSdk();
-  const imageUrl = resolveShareImageUrl(currentUrl);
 
   kakao.Share.sendDefault({
     objectType: "feed",
     content: {
       title: SHARE_TITLE,
       description: KAKAO_SHARE_DESCRIPTION,
-      imageUrl,
+      imageUrl: "https://moon-buddy-6zxk.vercel.app/og-share.png",
       link: {
-        webUrl: currentUrl,
-        mobileWebUrl: currentUrl,
+        webUrl: "https://moon-buddy-6zxk.vercel.app/",
+        mobileWebUrl: "https://moon-buddy-6zxk.vercel.app/",
       },
     },
     buttons: [
       {
         title: KAKAO_SHARE_BUTTON,
         link: {
-          webUrl: currentUrl,
-          mobileWebUrl: currentUrl,
+          webUrl: "https://moon-buddy-6zxk.vercel.app/",
+          mobileWebUrl: "https://moon-buddy-6zxk.vercel.app/",
         },
       },
     ],
