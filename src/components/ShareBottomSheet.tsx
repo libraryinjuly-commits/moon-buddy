@@ -42,9 +42,15 @@ export function ShareBottomSheet({
       onError?.(ui.shareKakaoUnavailable);
       return;
     }
+    const shareUrl = window.location.href;
+    if (!shareUrl) {
+      onError?.(ui.shareKakaoFailed);
+      return;
+    }
+
     setBusy("kakao");
     try {
-      await shareViaKakao();
+      await shareViaKakao(shareUrl);
       onClose();
     } catch {
       onError?.(ui.shareKakaoFailed);

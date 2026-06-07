@@ -2,12 +2,10 @@ import type { KakaoSDK } from "@/types/kakao";
 
 import {
   getAppOrigin,
-  getLiveShareUrl,
   KAKAO_SHARE_BUTTON,
   KAKAO_SHARE_DESCRIPTION,
   SHARE_TITLE,
 } from "@/lib/share";
-import type { KakaoLinkObject } from "@/types/kakao";
 
 const KAKAO_SDK_URL = "https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js";
 
@@ -25,22 +23,6 @@ function getShareImageUrl(): string {
   if (custom) return custom;
   const origin = getAppOrigin();
   return origin ? `${origin}/og-share.png` : DEFAULT_SHARE_IMAGE;
-}
-
-/** Fresh link object — Kakao SDK may mutate link props; never reuse one instance. */
-function createKakaoLink(url: string): KakaoLinkObject {
-  return {
-    webUrl: url,
-    mobileWebUrl: url,
-  };
-}
-
-function resolveKakaoShareUrl(): string {
-  const url = getLiveShareUrl();
-  if (!url) {
-    throw new Error("Share URL is unavailable.");
-  }
-  return url;
 }
 
 function loadKakaoSdk(): Promise<KakaoSDK> {
@@ -97,11 +79,12 @@ function loadKakaoSdk(): Promise<KakaoSDK> {
   return sdkLoadPromise;
 }
 
-export async function shareViaKakao(): Promise<void> {
-  const kakao = await loadKakaoSdk();
+export async function shareViaKakao(shareUrl: string): Promise<void> {
+  if (!shareUrl.trim()) {
+    throw new Error("Share URL is unavailable.");
+  }
 
-  // Read the live URL immediately before sendDefault — never use build-time env vars.
-  const shareUrl = resolveKakaoShareUrl();
+  const kakao = await loadKakaoSdk();
 
   kakao.Share.sendDefault({
     objectType: "feed",
@@ -109,12 +92,18 @@ export async function shareViaKakao(): Promise<void> {
       title: SHARE_TITLE,
       description: KAKAO_SHARE_DESCRIPTION,
       imageUrl: getShareImageUrl(),
-      link: createKakaoLink(shareUrl),
+      link: {
+        webUrl: shareUrl,
+        mobileWebUrl: shareUrl,
+      },
     },
     buttons: [
       {
         title: KAKAO_SHARE_BUTTON,
-        link: createKakaoLink(shareUrl),
+        link: {
+          webUrl: shareUrl,
+          mobileWebUrl: shareUrl,
+        },
       },
     ],
   });
