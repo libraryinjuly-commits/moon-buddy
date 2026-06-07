@@ -41,6 +41,79 @@ body {
   animation: mascot-breathe 4.5s ease-in-out infinite;
 }
 
+/* NF · Moon Rabbit — gentle hop */
+@keyframes mascot-idle-rabbit {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  45% {
+    transform: translateY(-9px) scale(1.02, 0.98);
+  }
+  55% {
+    transform: translateY(-7px) scale(0.99, 1.01);
+  }
+}
+
+.animate-mascot-idle-rabbit {
+  animation: mascot-idle-rabbit 3.2s ease-in-out infinite;
+}
+
+/* NT · Star Fox — observant sway */
+@keyframes mascot-idle-fox {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-4px) rotate(-2deg);
+  }
+  66% {
+    transform: translateY(-3px) rotate(2deg);
+  }
+}
+
+.animate-mascot-idle-fox {
+  animation: mascot-idle-fox 5s ease-in-out infinite;
+}
+
+/* SJ · Cloud Bear — slow steady breathe */
+@keyframes mascot-idle-bear {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.03, 0.97);
+  }
+}
+
+.animate-mascot-idle-bear {
+  animation: mascot-idle-bear 5.5s ease-in-out infinite;
+}
+
+/* SP · Dream Squirrel — alert twitch */
+@keyframes mascot-idle-squirrel {
+  0%,
+  88%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  6% {
+    transform: translateY(-6px) rotate(-3deg);
+  }
+  12% {
+    transform: translateY(-2px) rotate(2deg);
+  }
+  18% {
+    transform: translateY(-5px) rotate(0deg);
+  }
+}
+
+.animate-mascot-idle-squirrel {
+  animation: mascot-idle-squirrel 2.8s ease-in-out infinite;
+}
+
 .animate-mascot-thank {
   animation: mascot-thank 0.7s ease-out;
 }
@@ -230,6 +303,10 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .animate-mascot-breathe,
+  .animate-mascot-idle-rabbit,
+  .animate-mascot-idle-fox,
+  .animate-mascot-idle-bear,
+  .animate-mascot-idle-squirrel,
   .animate-mascot-thank,
   .animate-mascot-jelly-bounce,
   .animate-speech-fade-in,

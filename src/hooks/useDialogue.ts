@@ -2,13 +2,10 @@
 
 import { useMemo } from "react";
 
+import { resolveTemperament } from "@/lib/companionSpecies";
 import { getDialogue, getThankSpeech } from "@/lib/dialogue";
 import { getBuddyIdentity } from "@/lib/epithets";
-import {
-  getDefaultMascotConfig,
-  getMascotConfig,
-  getTemperament,
-} from "@/lib/mascot";
+import { getDefaultMascotConfig, getMascotConfig } from "@/lib/mascot";
 import { getTemperamentTheme } from "@/lib/mbti";
 import type { CycleInfo, Mood, MoonBuddyData } from "@/types/moonBuddy";
 
@@ -20,8 +17,8 @@ export function useDialogue(
   const { settings } = data;
 
   const temperament = useMemo(
-    () => getTemperament(settings.mbti),
-    [settings.mbti],
+    () => resolveTemperament(settings),
+    [settings.mbti, settings.temperament],
   );
 
   const temperamentTheme = useMemo(

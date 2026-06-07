@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 
 import { LanguageSelector } from "@/components/LanguageSelector";
 import type { LocaleUI } from "@/lib/i18n/types";
+import { CompanionPortrait } from "@/components/CompanionPortrait";
+import { getCompanionSpecies } from "@/lib/companionSpecies";
 import {
   getMbtiTypeTitle,
   getTemperamentFromMbti,
@@ -71,6 +73,7 @@ export function ProfileSetup({
 
   const temperament = getTemperamentFromMbti(mbtiInput || "INFP");
   const theme = getTemperamentTheme(temperament);
+  const species = getCompanionSpecies(temperament);
   const persona = getPersonaDefinition(temperament, languageInput);
   const vocative = getDisplayName(nameInput, languageInput);
   const resolvedBuddyName = resolveCharacterName(
@@ -195,15 +198,30 @@ export function ProfileSetup({
 
         {mbtiInput && selectedMbtiTitle && (
           <div className={`rounded-xl ${accentSoft} px-3 py-2.5`}>
-            <p className={`text-[10px] font-bold ${accentMuted}`}>{mbtiInput}</p>
-            <p className={`mt-0.5 text-xs font-semibold ${accentText}`}>
-              {selectedMbtiTitle}
-            </p>
-            <p className={`mt-0.5 text-xs ${accentMuted}`}>
-              {theme.groupDescription}
-            </p>
-            <p className={`mt-1 text-xs font-medium ${accentText}`}>
-              {persona.personaLabel}
+            <div className="flex items-center gap-3">
+              <div
+                className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full ${theme.accentSoft}`}
+              >
+                <CompanionPortrait
+                  phase="default"
+                  level={1}
+                  temperament={temperament}
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className={`text-[10px] font-bold ${accentMuted}`}>
+                  {mbtiInput} · {theme.groupLabel}
+                </p>
+                <p className={`mt-0.5 text-xs font-semibold ${accentText}`}>
+                  {species.emoji} {species.name[languageInput]}
+                </p>
+                <p className={`mt-0.5 text-xs ${accentMuted}`}>
+                  {species.tagline[languageInput]}
+                </p>
+              </div>
+            </div>
+            <p className={`mt-2 text-xs font-medium ${accentText}`}>
+              {persona.personaLabel} · {previewTitle}
             </p>
           </div>
         )}

@@ -45,8 +45,8 @@ export const TEMPERAMENT_GROUPS: TemperamentGroup[] = ["NT", "NF", "SJ", "SP"];
 export const TEMPERAMENT_THEMES: Record<TemperamentGroup, TemperamentTheme> = {
   NT: {
     group: "NT",
-    groupLabel: "NT · 이성적 분석가",
-    groupDescription: "논리와 전략으로 컨디션을 정리하는 타입",
+    groupLabel: "NT · 별여우",
+    groupDescription: "차분한 관찰과 명확한 말로 마음을 정리해 주는 별여우",
     badgeBg: "bg-slate-700",
     bubbleLabel: "text-slate-500",
     bubbleText: "text-slate-800",
@@ -61,8 +61,8 @@ export const TEMPERAMENT_THEMES: Record<TemperamentGroup, TemperamentTheme> = {
   },
   NF: {
     group: "NF",
-    groupLabel: "NF · 이상주의 중재자",
-    groupDescription: "감정과 공감으로 마음을 돌보는 타입",
+    groupLabel: "NF · 달토끼",
+    groupDescription: "따뜻한 말과 부드러운 위로로 곁을 지키는 달토끼",
     badgeBg: "bg-violet-600",
     bubbleLabel: "text-violet-500",
     bubbleText: "text-violet-900",
@@ -77,8 +77,8 @@ export const TEMPERAMENT_THEMES: Record<TemperamentGroup, TemperamentTheme> = {
   },
   SJ: {
     group: "SJ",
-    groupLabel: "SJ · 현실주의 수호자",
-    groupDescription: "꾸준한 기록과 루틴으로 몸을 지키는 타입",
+    groupLabel: "SJ · 구름곰",
+    groupDescription: "꾸준한 루틴과 든든한 말로 안정감을 지켜 주는 구름곰",
     badgeBg: "bg-teal-700",
     bubbleLabel: "text-teal-600",
     bubbleText: "text-teal-900",
@@ -93,8 +93,8 @@ export const TEMPERAMENT_THEMES: Record<TemperamentGroup, TemperamentTheme> = {
   },
   SP: {
     group: "SP",
-    groupLabel: "SP · 자유로운 탐험가",
-    groupDescription: "몸의 신호에 민감하게 반응하는 타입",
+    groupLabel: "SP · 꿈다람쥐",
+    groupDescription: "호기심 가득한 말로 오늘의 감정을 함께 탐험하는 꿈다람쥐",
     badgeBg: "bg-orange-500",
     bubbleLabel: "text-orange-500",
     bubbleText: "text-orange-900",

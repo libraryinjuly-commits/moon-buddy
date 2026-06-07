@@ -3,6 +3,7 @@
 import { useCallback, useMemo } from "react";
 
 import type { SetMoonBuddyData } from "@/hooks/types";
+import { resolveTemperament } from "@/lib/companionSpecies";
 import {
   calculateStarType,
   createStarMemory,
@@ -36,9 +37,10 @@ export function useStarCollection(
         companionName,
         ascensionDate,
         data.settings.language,
+        resolveTemperament(data.settings),
       );
     },
-    [data.settings.language],
+    [data.settings, data.settings.language],
   );
 
   const setPreferredView = useCallback(

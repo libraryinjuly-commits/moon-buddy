@@ -47,6 +47,10 @@ export interface BuddyIdentity {
   level: number;
   nextEpithet: string | null;
   nextEpithetLevel: number | null;
+  speciesName: string;
+  speciesEmoji: string;
+  speciesTagline: string;
+  temperament: TemperamentGroup;
 }
 
 export interface TemperamentTheme {

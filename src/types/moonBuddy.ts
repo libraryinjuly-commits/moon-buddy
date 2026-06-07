@@ -1,5 +1,7 @@
 import type { CompanionState, StarCollectionState } from "@/types/companion";
 
+export type TemperamentGroup = "NT" | "NF" | "SJ" | "SP";
+
 export type Mood = "great" | "good" | "okay" | "low" | "bad";
 
 export type LiveMood =
@@ -85,6 +87,8 @@ export interface UserSettings {
   defaultPeriodLength: number;
   userName: string;
   mbti: string;
+  /** Derived from MBTI group; stored for mascot identity and star memories */
+  temperament: TemperamentGroup | "";
   buddyCustomName: string;
   language: Language;
 }

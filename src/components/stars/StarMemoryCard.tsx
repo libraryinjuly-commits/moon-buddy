@@ -1,5 +1,6 @@
 "use client";
 
+import { getCompanionSpecies } from "@/lib/companionSpecies";
 import { getMoodPercentages } from "@/lib/moodScale";
 import type { LocaleContent } from "@/lib/i18n/types";
 import {
@@ -35,6 +36,8 @@ export function StarMemoryCard({
   );
   const starTypeLabel = ui.starTypes[star.starType];
   const dominantLabel = ui.emotionScales[star.dominantEmotion];
+  const species = getCompanionSpecies(star.temperament ?? "NF");
+  const speciesName = species.name[locale.language];
 
   const moodRows = (
     ["great", "good", "okay", "low", "bad"] as const
@@ -51,8 +54,12 @@ export function StarMemoryCard({
           {STAR_TYPE_EMOJI[star.starType]}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-bold text-slate-800">{starTypeLabel}</p>
-          <p className="text-[11px] text-slate-600">{monthLabel}</p>
+          <p className="text-sm font-bold text-slate-800">
+            {species.emoji} {star.companionName}
+          </p>
+          <p className="text-[11px] text-slate-600">
+            {speciesName} · {starTypeLabel} · {monthLabel}
+          </p>
           <p className="mt-1 text-xs leading-relaxed text-slate-700">
             {star.cycleSummary}
           </p>

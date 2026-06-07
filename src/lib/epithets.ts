@@ -54,5 +54,9 @@ export function getBuddyIdentity(
     level: epithetLevel,
     nextEpithet,
     nextEpithetLevel,
+    speciesName: persona.speciesName,
+    speciesEmoji: persona.speciesEmoji,
+    speciesTagline: persona.speciesTagline,
+    temperament,
   };
 }

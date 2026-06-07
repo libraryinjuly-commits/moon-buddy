@@ -9,6 +9,10 @@ import {
   isCycleComplete,
   markAscensionPending,
 } from "@/lib/companionLifecycle";
+import {
+  getCompanionSpecies,
+  resolveTemperament,
+} from "@/lib/companionSpecies";
 import { completeAscension } from "@/lib/starMemory";
 import { getTodayDateString } from "@/lib/storage";
 import type { CycleInfo, MoonBuddyData } from "@/types/moonBuddy";
@@ -49,7 +53,11 @@ export function useCompanion(
 
   const finishAscension = useCallback(() => {
     const today = getTodayDateString();
-    const companionName = data.settings.buddyCustomName.trim() || "Moon Buddy";
+    const temperament = resolveTemperament(data.settings);
+    const species = getCompanionSpecies(temperament);
+    const companionName =
+      data.settings.buddyCustomName.trim() ||
+      species.defaultBuddyName[data.settings.language];
     const activeCycleId =
       data.periodHistory.find((entry) => entry.endDate === null)?.id ??
       data.periodHistory[0]?.id ??
@@ -61,6 +69,7 @@ export function useCompanion(
       today,
       data.settings.language,
       activeCycleId,
+      temperament,
     );
 
     setData((prev) => ({

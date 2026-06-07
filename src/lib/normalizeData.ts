@@ -6,7 +6,9 @@ import { getLivePeriodMessage } from "@/lib/livePeriod";
 import { createPeriodId } from "@/lib/periodHistory";
 import { createNewCompanion } from "@/lib/companionLifecycle";
 import { applyV2Fields } from "@/lib/migrations/v1ToV2";
-import { normalizeMbti } from "@/lib/mbti";
+import { isTemperamentGroup } from "@/lib/companionSpecies";
+import { getTemperamentFromMbti, normalizeMbti } from "@/lib/mbti";
+import type { TemperamentGroup } from "@/types";
 import type {
   DailyMoodLogEntry,
   DailyLiveMoods,
@@ -15,6 +17,7 @@ import type {
   MoonBuddyData,
   PeriodHistoryEntry,
 } from "@/types/moonBuddy";
+import type { StarMemory } from "@/types/companion";
 
 const VALID_LIVE_MOODS = new Set<LiveMood>(LIVE_MOODS);
 
@@ -135,6 +138,19 @@ export const DEFAULT_DATA: MoonBuddyData = {
   settings: getDefaultSettings(),
 };
 
+function normalizeStarMemories(
+  stars: StarMemory[] | undefined,
+  fallbackTemperament: TemperamentGroup | "",
+): StarMemory[] {
+  return (stars ?? []).map((star) => ({
+    ...star,
+    temperament:
+      star.temperament && isTemperamentGroup(star.temperament)
+        ? star.temperament
+        : fallbackTemperament || "NF",
+  }));
+}
+
 export function normalizeData(data: LegacyMoonBuddyData): MoonBuddyData {
   const language = normalizeLanguage(data.settings?.language ?? "KO");
   const periodHistory = normalizePeriodHistory(data);
@@ -166,15 +182,40 @@ export function normalizeData(data: LegacyMoonBuddyData): MoonBuddyData {
         ),
     },
     dailyMoodLogs: normalizeDailyMoodLogs(data),
-    settings: {
-      ...DEFAULT_DATA.settings,
-      ...data.settings,
-      language,
-      mbti: normalizeMbti(data.settings?.mbti ?? ""),
-    },
+    settings: (() => {
+      const mbti = normalizeMbti(data.settings?.mbti ?? "");
+      const temperament =
+        data.settings?.temperament &&
+        isTemperamentGroup(data.settings.temperament)
+          ? data.settings.temperament
+          : mbti
+            ? getTemperamentFromMbti(mbti)
+            : "";
+
+      return {
+        ...DEFAULT_DATA.settings,
+        ...data.settings,
+        language,
+        mbti,
+        temperament,
+      };
+    })(),
     schemaVersion: data.schemaVersion ?? 1,
     companion: data.companion ?? DEFAULT_DATA.companion,
-    starCollection: data.starCollection ?? DEFAULT_DATA.starCollection,
+    starCollection: {
+      ...(data.starCollection ?? DEFAULT_DATA.starCollection),
+      stars: normalizeStarMemories(
+        data.starCollection?.stars,
+        data.settings?.temperament && isTemperamentGroup(data.settings.temperament)
+          ? data.settings.temperament
+          : normalizeMbti(data.settings?.mbti ?? "")
+            ? getTemperamentFromMbti(normalizeMbti(data.settings?.mbti ?? "")!)
+            : "",
+      ),
+      preferredView:
+        data.starCollection?.preferredView ??
+        DEFAULT_DATA.starCollection.preferredView,
+    },
   };
 
   if (base.schemaVersion < 2) {

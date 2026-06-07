@@ -94,6 +94,7 @@ export function getDefaultSettings(): UserSettings {
     defaultPeriodLength: DEFAULT_PERIOD_LENGTH,
     userName: "",
     mbti: "",
+    temperament: "",
     buddyCustomName: "",
     language: "KO",
   };

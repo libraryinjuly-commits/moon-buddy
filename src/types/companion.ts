@@ -1,3 +1,5 @@
+import type { TemperamentGroup } from "@/types";
+
 /** Five-scale emotional energy used for star memories and growth */
 export type EmotionScale = "great" | "good" | "okay" | "low" | "bad";
 
@@ -43,6 +45,7 @@ export interface StarMemory {
   starType: StarType;
   cycleSummary: string;
   companionName: string;
+  temperament: TemperamentGroup;
   moodStatistics: MoodStatistics;
 }
 

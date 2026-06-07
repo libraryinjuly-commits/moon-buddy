@@ -20,6 +20,7 @@ import type {
   StarMemory,
   StarType,
 } from "@/types/companion";
+import type { TemperamentGroup } from "@/types";
 import type { Language, MoonBuddyData } from "@/types/moonBuddy";
 
 const STAGE_DEBUG_PROGRESS: Record<CompanionStage, number> = {
@@ -113,6 +114,7 @@ function buildSampleStar(
   birthDate: string,
   companionName: string,
   language: Language,
+  temperament: TemperamentGroup,
   starTypeOverride?: StarType,
 ): StarMemory {
   const starType = starTypeOverride ?? calculateStarType(profile);
@@ -124,8 +126,9 @@ function buildSampleStar(
     ascensionDate,
     dominantEmotion,
     starType,
-    cycleSummary: generateCycleSummary(starType, language),
+    cycleSummary: generateCycleSummary(starType, language, temperament),
     companionName,
+    temperament,
     moodStatistics: { ...profile },
   };
 }
@@ -146,12 +149,15 @@ export function devGenerateSampleStars(
     "silver_moon",
   ];
 
+  const temperaments: TemperamentGroup[] = ["NF", "NT", "SJ", "SP"];
+
   return Array.from({ length: Math.min(10, Math.max(5, count)) }, (_, index) => {
     const profile = SAMPLE_MOOD_PROFILES[index % SAMPLE_MOOD_PROFILES.length];
     const monthOffset = -(index + 1);
     const ascensionDate = offsetDate(today, monthOffset);
     const birthDate = offsetDate(ascensionDate, -1);
     const companionName = SAMPLE_NAMES[index % SAMPLE_NAMES.length];
+    const temperament = temperaments[index % temperaments.length];
 
     return buildSampleStar(
       profile,
@@ -159,6 +165,7 @@ export function devGenerateSampleStars(
       birthDate,
       companionName,
       language,
+      temperament,
       starTypes[index % starTypes.length],
     );
   });

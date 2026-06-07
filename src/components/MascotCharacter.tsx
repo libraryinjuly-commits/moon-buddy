@@ -6,6 +6,7 @@ import { BuddyTitle } from "@/components/BuddyTitle";
 import { MascotSvg } from "@/components/MascotSvg";
 import { getEvolutionTier, TIER_RING } from "@/lib/evolution";
 import { triggerHapticTap } from "@/lib/haptics";
+import { getSpeciesIdleClass } from "@/lib/companionSpecies";
 import { getTemperamentTheme } from "@/lib/mbti";
 import type { BuddyIdentity, CompanionStage, MascotConfig } from "@/types";
 
@@ -104,11 +105,12 @@ export function MascotCharacter({
     isJellyBouncing,
   ]);
 
+  const idleClass = getSpeciesIdleClass(mascot.temperament);
   const mascotMotionClass = isThanking
     ? "animate-mascot-thank"
     : isJellyBouncing
       ? "animate-mascot-jelly-bounce"
-      : "animate-mascot-breathe";
+      : idleClass;
 
   const avatarSize = compact ? "h-24 w-24" : "h-36 w-36";
   const gapClass = compact ? "gap-2" : "gap-4";
@@ -116,12 +118,17 @@ export function MascotCharacter({
   return (
     <div className={`flex w-full flex-col items-center text-center ${gapClass}`}>
       {showTitle && (
-        <BuddyTitle
-          epithet={buddyIdentity.personaRole}
-          customName={buddyIdentity.customName}
-          epithetClassName={`text-[11px] font-medium leading-snug ${theme.accentMuted}`}
-          nameClassName={`text-xl font-bold leading-tight ${theme.accentText}`}
-        />
+        <div className="flex flex-col items-center gap-0.5">
+          <BuddyTitle
+            epithet={buddyIdentity.personaRole}
+            customName={buddyIdentity.customName}
+            epithetClassName={`text-[11px] font-medium leading-snug ${theme.accentMuted}`}
+            nameClassName={`text-xl font-bold leading-tight ${theme.accentText}`}
+          />
+          <p className={`text-[10px] ${theme.accentMuted}`}>
+            {buddyIdentity.speciesEmoji} {buddyIdentity.speciesName}
+          </p>
+        </div>
       )}
 
       <div className={mascotMotionClass}>
