@@ -29,6 +29,7 @@ interface RecordCalendarProps {
   periodHistory: PeriodHistoryEntry[];
   settings: UserSettings;
   cycleInfo: CycleInfo | null;
+  phaseLabel: string | null;
   liveMoodEmojis: Record<LiveMood, string>;
   language: Language;
   ui: LocaleUI;
@@ -59,6 +60,7 @@ export function RecordCalendar({
   periodHistory,
   settings,
   cycleInfo,
+  phaseLabel,
   liveMoodEmojis,
   language,
   ui,
@@ -143,15 +145,29 @@ export function RecordCalendar({
       </div>
 
       {cycleInfo && (
-        <p className={`mb-2 text-[10px] ${theme.accentMuted}`}>
-          {ui.averageCycleLabel.replace(
-            "{days}",
-            String(cycleInfo.averageCycleLength),
+        <div className={`mb-2 space-y-1 text-[10px] ${theme.accentMuted}`}>
+          {phaseLabel && (
+            <p className={`font-semibold ${theme.accentText}`}>
+              {phaseLabel} · {cycleInfo.dayOfCycle}
+              {ui.dayUnit}
+            </p>
           )}
-        </p>
+          <p>
+            {ui.averageCycleLabel.replace(
+              "{days}",
+              String(cycleInfo.averageCycleLength),
+            )}
+          </p>
+          {cycleInfo.daysUntilNextPeriod != null && (
+            <p>
+              {ui.daysUntilPeriod} {cycleInfo.daysUntilNextPeriod}
+              {ui.daysCountUnit}
+            </p>
+          )}
+        </div>
       )}
 
-      <div className="mb-2 flex items-center gap-3 text-[9px]">
+      <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[9px]">
         <span className="flex items-center gap-1">
           <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
           <span className={theme.accentMuted}>{ui.periodActualLegend}</span>
@@ -159,6 +175,10 @@ export function RecordCalendar({
         <span className="flex items-center gap-1">
           <span className="h-2.5 w-2.5 rounded-full border border-dashed border-rose-300 bg-rose-50" />
           <span className={theme.accentMuted}>{ui.periodPredictedLegend}</span>
+        </span>
+        <span className={`flex items-center gap-1 ${theme.accentMuted}`}>
+          <span aria-hidden>🌿</span>
+          {ui.recordEditMood}
         </span>
       </div>
 

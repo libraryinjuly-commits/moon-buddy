@@ -28,7 +28,8 @@ export function useMoonBuddy() {
     deletePeriod,
     toggleMenstruation,
   } = usePeriodHistory(data, setData, isLoaded);
-  const { todayDominantMood, todayMoodEntries, logLiveMood } = useMood(
+  const { todayDominantMood, todayMoodEntries, logLiveMood, logMoodForDate } =
+    useMood(
     data,
     setData,
     cycleInfo,
@@ -94,6 +95,7 @@ export function useMoonBuddy() {
     addPeriod,
     deletePeriod,
     logLiveMood,
+    logMoodForDate,
     updateSettings,
     updateProfile,
     updateLanguage,

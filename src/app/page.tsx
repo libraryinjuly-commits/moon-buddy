@@ -51,6 +51,7 @@ export default function Home() {
     addPeriod,
     deletePeriod,
     logLiveMood,
+    logMoodForDate,
     updateSettings,
     updateProfile,
     fortuneIsOpenedToday,
@@ -276,6 +277,7 @@ export default function Home() {
             onAddPeriod={addPeriod}
             onDeletePeriod={deletePeriod}
             onSaveSettings={updateSettings}
+            onLogMoodForDate={logMoodForDate}
           />
         )}
 

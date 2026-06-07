@@ -8,6 +8,7 @@ import type {
   CycleInfo,
   CycleInsight,
   DialogueContent,
+  LiveMood,
   MoonBuddyData,
   TemperamentTheme,
   UserSettings,
@@ -33,6 +34,7 @@ interface JourneyTabProps {
   onAddPeriod: (startDate: string, endDate: string | null) => boolean;
   onDeletePeriod: (periodId: string) => void;
   onSaveSettings: (settings: UserSettings) => void;
+  onLogMoodForDate: (date: string, mood: LiveMood) => void;
 }
 
 export function JourneyTab({
@@ -55,6 +57,7 @@ export function JourneyTab({
   onAddPeriod,
   onDeletePeriod,
   onSaveSettings,
+  onLogMoodForDate,
 }: JourneyTabProps) {
   const { ui } = locale;
 
@@ -68,6 +71,30 @@ export function JourneyTab({
           {ui.journeyTabDesc}
         </p>
       </div>
+
+      <section className="px-0.5">
+        <h2 className={`mb-2 text-sm font-bold ${theme.accentText}`}>
+          {ui.journeyTimelineTitle}
+        </h2>
+        <CalendarTab
+          data={data}
+          locale={locale}
+          theme={theme}
+          cycleInfo={cycleInfo}
+          phaseLabel={phaseLabel}
+          selectedDate={selectedCalendarDate}
+          onSelectDate={onSelectDate}
+          onCloseSheet={onCloseSheet}
+          onToggleDayPeriod={onToggleDayPeriod}
+          onStartPeriod={onStartPeriod}
+          onEndPeriod={onEndPeriod}
+          onAddPeriod={onAddPeriod}
+          onDeletePeriod={onDeletePeriod}
+          onSaveSettings={onSaveSettings}
+          onLogMoodForDate={onLogMoodForDate}
+          embedded
+        />
+      </section>
 
       <InsightsTab
         locale={locale}
@@ -84,28 +111,6 @@ export function JourneyTab({
         hideDaysUntil
         rhythmSectionTitle={ui.journeyRhythmTitle}
       />
-
-      <section className="px-0.5">
-        <h2 className={`mb-2 text-sm font-bold ${theme.accentText}`}>
-          {ui.journeyTimelineTitle}
-        </h2>
-        <CalendarTab
-          data={data}
-          locale={locale}
-          theme={theme}
-          cycleInfo={cycleInfo}
-          selectedDate={selectedCalendarDate}
-          onSelectDate={onSelectDate}
-          onCloseSheet={onCloseSheet}
-          onToggleDayPeriod={onToggleDayPeriod}
-          onStartPeriod={onStartPeriod}
-          onEndPeriod={onEndPeriod}
-          onAddPeriod={onAddPeriod}
-          onDeletePeriod={onDeletePeriod}
-          onSaveSettings={onSaveSettings}
-          embedded
-        />
-      </section>
     </div>
   );
 }

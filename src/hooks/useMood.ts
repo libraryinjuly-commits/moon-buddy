@@ -30,10 +30,9 @@ export function useMood(
     return getMoodEntriesForDate(data.dailyMoodLogs, today);
   }, [data.dailyMoodLogs]);
 
-  const logLiveMood = useCallback(
-    (mood: LiveMood): string => {
-      const today = getTodayDateString();
-      const entry = { date: today, mood, timestamp: Date.now() };
+  const appendMoodEntry = useCallback(
+    (date: string, mood: LiveMood, applyCompanionFeed: boolean): string | null => {
+      const entry = { date, mood, timestamp: Date.now() };
       const { settings } = data;
       const temperament = getTemperamentFromMbti(settings.mbti);
       const persona = getPersonaDefinition(temperament, settings.language);
@@ -43,27 +42,31 @@ export function useMood(
       );
 
       setData((prev) => {
-        const { companion: fedCompanion } = applyFeedToCompanion(
-          prev.companion,
-          mood,
-        );
+        let companion = prev.companion;
 
-        const withCycle: typeof fedCompanion = {
-          ...fedCompanion,
-          cycleId: fedCompanion.cycleId ?? prev.periodHistory[0]?.id ?? null,
-        };
+        if (applyCompanionFeed) {
+          const { companion: fedCompanion } = applyFeedToCompanion(
+            prev.companion,
+            mood,
+          );
 
-        const nextCompanion = isAscensionReady(
-          { ...withCycle, ascensionPending: false },
-          cycleInfo,
-        )
-          ? markAscensionPending(withCycle)
-          : withCycle;
+          const withCycle: typeof fedCompanion = {
+            ...fedCompanion,
+            cycleId: fedCompanion.cycleId ?? prev.periodHistory[0]?.id ?? null,
+          };
+
+          companion = isAscensionReady(
+            { ...withCycle, ascensionPending: false },
+            cycleInfo,
+          )
+            ? markAscensionPending(withCycle)
+            : withCycle;
+        }
 
         return {
           ...prev,
           dailyMoodLogs: [...prev.dailyMoodLogs, entry],
-          companion: nextCompanion,
+          companion,
           character: {
             ...prev.character,
             totalMoodLogs: prev.character.totalMoodLogs + 1,
@@ -71,17 +74,36 @@ export function useMood(
         };
       });
 
-      return getLiveMoodReaction(mood, settings.language, temperament, {
-        userName: settings.userName,
-        characterName,
-      });
+      return applyCompanionFeed
+        ? getLiveMoodReaction(mood, settings.language, temperament, {
+            userName: settings.userName,
+            characterName,
+          })
+        : null;
     },
     [data, setData, cycleInfo],
+  );
+
+  const logLiveMood = useCallback(
+    (mood: LiveMood): string => {
+      const today = getTodayDateString();
+      return appendMoodEntry(today, mood, true) ?? "";
+    },
+    [appendMoodEntry],
+  );
+
+  const logMoodForDate = useCallback(
+    (date: string, mood: LiveMood) => {
+      const today = getTodayDateString();
+      appendMoodEntry(date, mood, date === today);
+    },
+    [appendMoodEntry],
   );
 
   return {
     todayDominantMood,
     todayMoodEntries,
     logLiveMood,
+    logMoodForDate,
   };
 }

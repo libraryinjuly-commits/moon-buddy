@@ -139,7 +139,7 @@ export const koLocale: LocaleContent = {
     liveMoodTimelineEmpty: "버튼을 눌러 기분을 남겨보세요!",
     tabHome: "홈",
     tabJourney: "여정",
-    journeyTabDesc: "이번 달의 감정과 나만의 리듬을 돌아보세요.",
+    journeyTabDesc: "캘린더로 생리·기분 기록을 돌아보고, 이번 달 감정과 리듬을 살펴보세요.",
     journeyEmotionTitle: "이번 달의 감정",
     journeyRhythmTitle: "나의 리듬",
     journeyTimelineTitle: "월간 타임라인",

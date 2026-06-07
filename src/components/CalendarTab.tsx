@@ -6,13 +6,20 @@ import { PeriodForm } from "@/components/PeriodForm";
 import { PeriodRecordList } from "@/components/PeriodRecordList";
 import { RecordCalendar } from "@/components/RecordCalendar";
 import type { LocaleContent } from "@/lib/i18n/types";
-import type { CycleInfo, MoonBuddyData, TemperamentTheme, UserSettings } from "@/types";
+import type {
+  CycleInfo,
+  LiveMood,
+  MoonBuddyData,
+  TemperamentTheme,
+  UserSettings,
+} from "@/types";
 
 interface CalendarTabProps {
   data: MoonBuddyData;
   locale: LocaleContent;
   theme: TemperamentTheme;
   cycleInfo: CycleInfo | null;
+  phaseLabel: string | null;
   selectedDate: string | null;
   onSelectDate: (date: string) => void;
   onCloseSheet: () => void;
@@ -22,6 +29,7 @@ interface CalendarTabProps {
   onAddPeriod: (startDate: string, endDate: string | null) => boolean;
   onDeletePeriod: (periodId: string) => void;
   onSaveSettings: (settings: UserSettings) => void;
+  onLogMoodForDate: (date: string, mood: LiveMood) => void;
   embedded?: boolean;
 }
 
@@ -30,6 +38,7 @@ export function CalendarTab({
   locale,
   theme,
   cycleInfo,
+  phaseLabel,
   selectedDate,
   onSelectDate,
   onCloseSheet,
@@ -39,6 +48,7 @@ export function CalendarTab({
   onAddPeriod,
   onDeletePeriod,
   onSaveSettings,
+  onLogMoodForDate,
   embedded = false,
 }: CalendarTabProps) {
   const { ui } = locale;
@@ -56,6 +66,7 @@ export function CalendarTab({
         periodHistory={data.periodHistory}
         settings={data.settings}
         cycleInfo={cycleInfo}
+        phaseLabel={phaseLabel}
         liveMoodEmojis={locale.liveMoodEmojis}
         language={data.settings.language}
         ui={ui}
@@ -87,12 +98,14 @@ export function CalendarTab({
       <PeriodDaySheet
         date={selectedDate}
         periodHistory={data.periodHistory}
-        language={data.settings.language}
-        ui={ui}
+        dailyMoodLogs={data.dailyMoodLogs}
+        settings={data.settings}
+        locale={locale}
         theme={theme}
         onTogglePeriod={onToggleDayPeriod}
         onStartPeriod={onStartPeriod}
         onEndPeriod={onEndPeriod}
+        onLogMood={onLogMoodForDate}
         onClose={onCloseSheet}
       />
     </div>

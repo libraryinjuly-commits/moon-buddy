@@ -1,39 +1,57 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { formatDateByLanguage } from "@/lib/format";
-import type { LocaleUI } from "@/lib/i18n/types";
+import { QuickMoodButtons } from "@/components/QuickMoodButtons";
+import { formatDateByLanguage, formatTimeByLanguage } from "@/lib/format";
+import { getCycleContextForDate } from "@/lib/cycle";
+import { getMoodEntriesForDate } from "@/lib/dailyMood";
+import { formatPeriodDayLabel } from "@/lib/cycleDisplay";
+import type { LocaleContent } from "@/lib/i18n/types";
 import {
   getActivePeriod,
   isDateInPeriodHistory,
 } from "@/lib/periodHistory";
 import { getTodayDateString } from "@/lib/storage";
-import type { Language, PeriodHistoryEntry, TemperamentTheme } from "@/types";
+import type {
+  DailyMoodLogEntry,
+  Language,
+  LiveMood,
+  PeriodHistoryEntry,
+  TemperamentTheme,
+  UserSettings,
+} from "@/types";
 
 interface PeriodDaySheetProps {
   date: string | null;
   periodHistory: PeriodHistoryEntry[];
-  language: Language;
-  ui: LocaleUI;
+  dailyMoodLogs: DailyMoodLogEntry[];
+  settings: UserSettings;
+  locale: LocaleContent;
   theme: TemperamentTheme;
   onTogglePeriod: (date: string) => void;
   onStartPeriod: (date: string) => void;
   onEndPeriod: (date: string) => void;
+  onLogMood: (date: string, mood: LiveMood) => void;
   onClose: () => void;
 }
 
 export function PeriodDaySheet({
   date,
   periodHistory,
-  language,
-  ui,
+  dailyMoodLogs,
+  settings,
+  locale,
   theme,
   onTogglePeriod,
   onStartPeriod,
   onEndPeriod,
+  onLogMood,
   onClose,
 }: PeriodDaySheetProps) {
+  const { ui, phaseLabels, liveMoodLabels, liveMoodEmojis, liveMoodDescriptions } =
+    locale;
+  const language = settings.language;
   const [isPeriod, setIsPeriod] = useState(false);
   const today = getTodayDateString();
 
@@ -41,6 +59,16 @@ export function PeriodDaySheet({
     if (!date) return;
     setIsPeriod(isDateInPeriodHistory(date, periodHistory, today));
   }, [date, periodHistory, today]);
+
+  const moodOptions = useMemo(
+    () =>
+      (Object.keys(liveMoodLabels) as LiveMood[]).map((value) => ({
+        value,
+        emoji: liveMoodEmojis[value],
+        label: liveMoodLabels[value],
+      })),
+    [liveMoodEmojis, liveMoodLabels],
+  );
 
   if (!date) return null;
 
@@ -51,10 +79,29 @@ export function PeriodDaySheet({
     date >= activePeriod.startDate &&
     date <= today;
   const canStart = !activePeriod && !isPeriod;
+  const moodEntries = getMoodEntriesForDate(dailyMoodLogs, activeDate).sort(
+    (a, b) => b.timestamp - a.timestamp,
+  );
+  const cycleContext = getCycleContextForDate(
+    activeDate,
+    periodHistory,
+    settings,
+    today,
+  );
+
+  const cycleStatusLabel = cycleContext
+    ? cycleContext.periodDay
+      ? formatPeriodDayLabel(ui, cycleContext.periodDay)
+      : `${phaseLabels[cycleContext.phase]} · ${cycleContext.dayOfCycle}${ui.dayUnit}`
+    : null;
 
   function handleToggle(nextValue: boolean) {
     setIsPeriod(nextValue);
     onTogglePeriod(activeDate);
+  }
+
+  function handleLogMood(mood: LiveMood) {
+    onLogMood(activeDate, mood);
   }
 
   return (
@@ -64,7 +111,7 @@ export function PeriodDaySheet({
       role="presentation"
     >
       <div
-        className="w-full max-w-sm animate-[modal-pop_0.3s_ease-out] rounded-2xl bg-white p-5 shadow-xl"
+        className="max-h-[85dvh] w-full max-w-sm animate-[modal-pop_0.3s_ease-out] overflow-y-auto rounded-2xl bg-white p-5 shadow-xl"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -74,17 +121,61 @@ export function PeriodDaySheet({
           id="period-day-title"
           className={`text-lg font-bold ${theme.accentText}`}
         >
-          {ui.periodDaySheetTitle}
+          {ui.recordEditTitle}
         </h2>
         <p className={`mt-1 text-sm ${theme.accentMuted}`}>
           {formatDateByLanguage(activeDate, language)}
         </p>
 
+        {cycleStatusLabel && (
+          <p
+            className={`mt-3 rounded-xl px-3 py-2 text-sm font-semibold ${theme.accentSoft} ${theme.accentText}`}
+          >
+            {cycleStatusLabel}
+          </p>
+        )}
+
+        <div className="mt-4">
+          <p className={`mb-2 text-xs font-semibold ${theme.accentText}`}>
+            {ui.recordEditMood}
+          </p>
+          {moodEntries.length === 0 ? (
+            <p className={`mb-2 text-xs ${theme.accentMuted}`}>
+              {ui.liveMoodTimelineEmpty}
+            </p>
+          ) : (
+            <ul className="mb-3 flex flex-col gap-1.5">
+              {moodEntries.map((entry, index) => (
+                <li
+                  key={`${entry.timestamp}-${index}`}
+                  className={`rounded-lg px-3 py-2 ${theme.accentSoft}`}
+                >
+                  <p className={`text-[10px] font-semibold ${theme.accentMuted}`}>
+                    {formatTimeByLanguage(
+                      new Date(entry.timestamp).toISOString(),
+                      language,
+                    )}
+                  </p>
+                  <p className={`text-xs font-medium ${theme.accentText}`}>
+                    <span className="mr-1">{liveMoodEmojis[entry.mood]}</span>
+                    {liveMoodLabels[entry.mood]} · {liveMoodDescriptions[entry.mood]}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+          <QuickMoodButtons
+            options={moodOptions}
+            theme={theme}
+            onSelect={handleLogMood}
+          />
+        </div>
+
         <label
           className={`mt-4 flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-3 py-3 ${theme.accentBorder} ${theme.accentSoft}`}
         >
           <span className={`text-sm font-medium ${theme.accentText}`}>
-            {ui.periodToggleLabel}
+            {ui.recordEditPeriodOn}
           </span>
           <button
             type="button"
