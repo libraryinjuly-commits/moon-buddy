@@ -28,9 +28,11 @@ export function MoonAdviceCard({ title, adviceItems, closing }: MoonAdviceCardPr
         ))}
       </ul>
 
-      <p className="mt-4 rounded-xl bg-violet-50 px-3 py-3 text-sm leading-relaxed text-violet-800">
-        {closing}
-      </p>
+      {closing.trim() && (
+        <p className="mt-4 rounded-xl bg-violet-50 px-3 py-3 text-sm leading-relaxed text-violet-800">
+          {closing}
+        </p>
+      )}
     </section>
   );
 }

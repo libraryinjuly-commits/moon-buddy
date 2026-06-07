@@ -45,9 +45,8 @@ export const TEMPERAMENT_GROUPS: TemperamentGroup[] = ["NT", "NF", "SJ", "SP"];
 export const TEMPERAMENT_THEMES: Record<TemperamentGroup, TemperamentTheme> = {
   NT: {
     group: "NT",
-    buddyName: "달달이",
-    groupLabel: "따뜻한 맹목적 공감파",
-    groupDescription: "무조건 옆에서 안아주는 달달이",
+    groupLabel: "NT · 이성적 분석가",
+    groupDescription: "논리와 전략으로 컨디션을 정리하는 타입",
     badgeBg: "bg-slate-700",
     bubbleLabel: "text-slate-500",
     bubbleText: "text-slate-800",
@@ -62,9 +61,8 @@ export const TEMPERAMENT_THEMES: Record<TemperamentGroup, TemperamentTheme> = {
   },
   NF: {
     group: "NF",
-    buddyName: "달달이",
-    groupLabel: "따뜻한 맹목적 공감파",
-    groupDescription: "무조건 옆에서 안아주는 달달이",
+    groupLabel: "NF · 이상주의 중재자",
+    groupDescription: "감정과 공감으로 마음을 돌보는 타입",
     badgeBg: "bg-violet-600",
     bubbleLabel: "text-violet-500",
     bubbleText: "text-violet-900",
@@ -79,9 +77,8 @@ export const TEMPERAMENT_THEMES: Record<TemperamentGroup, TemperamentTheme> = {
   },
   SJ: {
     group: "SJ",
-    buddyName: "달달이",
-    groupLabel: "따뜻한 맹목적 공감파",
-    groupDescription: "무조건 옆에서 안아주는 달달이",
+    groupLabel: "SJ · 현실주의 수호자",
+    groupDescription: "꾸준한 기록과 루틴으로 몸을 지키는 타입",
     badgeBg: "bg-teal-700",
     bubbleLabel: "text-teal-600",
     bubbleText: "text-teal-900",
@@ -96,9 +93,8 @@ export const TEMPERAMENT_THEMES: Record<TemperamentGroup, TemperamentTheme> = {
   },
   SP: {
     group: "SP",
-    buddyName: "달달이",
-    groupLabel: "따뜻한 맹목적 공감파",
-    groupDescription: "무조건 옆에서 안아주는 달달이",
+    groupLabel: "SP · 자유로운 탐험가",
+    groupDescription: "몸의 신호에 민감하게 반응하는 타입",
     badgeBg: "bg-orange-500",
     bubbleLabel: "text-orange-500",
     bubbleText: "text-orange-900",
@@ -165,6 +161,19 @@ export function getMascotColors(
 
 export function isValidMbti(value: string): value is MbtiType {
   return MBTI_TYPES.includes(value.toUpperCase() as MbtiType);
+}
+
+export function normalizeMbti(value: string): MbtiType | "" {
+  const upper = value.trim().toUpperCase();
+  return isValidMbti(upper) ? upper : "";
+}
+
+export function getMbtiTypeTitle(
+  mbti: string,
+  titles: Record<MbtiType, string>,
+): string {
+  const normalized = normalizeMbti(mbti);
+  return normalized ? titles[normalized] : "";
 }
 
 export const MBTI_BY_GROUP: Record<TemperamentGroup, MbtiType[]> = {

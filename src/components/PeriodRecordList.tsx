@@ -1,9 +1,10 @@
 import { formatDateByLanguage } from "@/lib/format";
 import type { LocaleUI } from "@/lib/i18n/types";
-import type { Language, PeriodRecord, TemperamentTheme } from "@/types";
+import { getTodayDateString } from "@/lib/storage";
+import type { Language, PeriodHistoryEntry, TemperamentTheme } from "@/types";
 
 interface PeriodRecordListProps {
-  periods: PeriodRecord[];
+  periodHistory: PeriodHistoryEntry[];
   language: Language;
   ui: LocaleUI;
   theme: TemperamentTheme;
@@ -11,15 +12,16 @@ interface PeriodRecordListProps {
 }
 
 export function PeriodRecordList({
-  periods,
+  periodHistory,
   language,
   ui,
   theme,
   onDelete,
 }: PeriodRecordListProps) {
-  if (periods.length === 0) return null;
+  if (periodHistory.length === 0) return null;
 
-  const sorted = [...periods].sort((a, b) =>
+  const today = getTodayDateString();
+  const sorted = [...periodHistory].sort((a, b) =>
     b.startDate.localeCompare(a.startDate),
   );
 
@@ -31,18 +33,32 @@ export function PeriodRecordList({
         {ui.recentPeriods}
       </h2>
       <ul className="flex flex-col gap-2">
-        {sorted.map((period) => (
+        {sorted.map((entry) => (
           <li
-            key={period.id}
+            key={entry.id}
             className={`flex items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm ${theme.accentSoft} ${theme.accentText}`}
           >
             <span>
-              {formatDateByLanguage(period.startDate, language)} ~{" "}
-              {formatDateByLanguage(period.endDate, language)}
+              {formatDateByLanguage(entry.startDate, language)}
+              {entry.endDate === null ? (
+                <>
+                  {" "}
+                  ~ <span className="font-semibold text-rose-500">{ui.periodOngoing}</span>
+                </>
+              ) : entry.endDate === entry.startDate ? (
+                ""
+              ) : (
+                <> ~ {formatDateByLanguage(entry.endDate, language)}</>
+              )}
+              {entry.endDate === null && entry.startDate !== today && (
+                <span className={`ml-1 text-xs ${theme.accentMuted}`}>
+                  ({ui.periodDayCount.replace("{day}", String(daysSince(entry.startDate, today) + 1))})
+                </span>
+              )}
             </span>
             <button
               type="button"
-              onClick={() => onDelete(period.id)}
+              onClick={() => onDelete(entry.id)}
               className="shrink-0 rounded-lg px-2 py-1 text-xs font-semibold text-rose-600 transition hover:bg-rose-100 active:scale-95"
             >
               {ui.periodDelete}
@@ -52,4 +68,10 @@ export function PeriodRecordList({
       </ul>
     </section>
   );
+}
+
+function daysSince(startDate: string, endDate: string): number {
+  const start = new Date(`${startDate}T12:00:00`);
+  const end = new Date(`${endDate}T12:00:00`);
+  return Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
 }

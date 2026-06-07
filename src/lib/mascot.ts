@@ -1,38 +1,58 @@
 import { PHASE_LABELS } from "@/lib/constants";
 import {
+  getPersonaDefinition,
+  resolveCharacterName,
+} from "@/lib/persona";
+import {
   getMascotColors,
   getTemperamentFromMbti,
-  getTemperamentTheme,
 } from "@/lib/mbti";
-import type { CyclePhase, MascotConfig, TemperamentGroup } from "@/types";
+import type { CyclePhase, Language, MascotConfig, TemperamentGroup } from "@/types";
+
+interface MascotNameContext {
+  buddyCustomName: string;
+  language: Language;
+}
+
+function resolveMascotBuddyName(
+  temperament: TemperamentGroup,
+  context: MascotNameContext,
+): string {
+  const persona = getPersonaDefinition(temperament, context.language);
+  return resolveCharacterName(context.buddyCustomName, persona.defaultBuddyName);
+}
 
 export function getMascotConfig(
   phase: CyclePhase,
   mbti: string,
+  context: MascotNameContext,
 ): MascotConfig {
   const temperament = getTemperamentFromMbti(mbti);
-  const theme = getTemperamentTheme(temperament);
   const colors = getMascotColors(temperament, phase);
+  const buddyName = resolveMascotBuddyName(temperament, context);
 
   return {
     phase,
     label: PHASE_LABELS[phase],
-    buddyName: theme.buddyName,
+    buddyName,
     bgColor: colors.bgColor,
     ringColor: colors.ringColor,
     temperament,
   };
 }
 
-export function getDefaultMascotConfig(mbti: string): MascotConfig {
+export function getDefaultMascotConfig(
+  mbti: string,
+  context: MascotNameContext,
+): MascotConfig {
   const temperament = getTemperamentFromMbti(mbti);
-  const theme = getTemperamentTheme(temperament);
   const colors = getMascotColors(temperament, "default");
+  const buddyName = resolveMascotBuddyName(temperament, context);
 
   return {
     phase: "default",
-    label: theme.buddyName,
-    buddyName: theme.buddyName,
+    label: buddyName,
+    buddyName,
     bgColor: colors.bgColor,
     ringColor: colors.ringColor,
     temperament,

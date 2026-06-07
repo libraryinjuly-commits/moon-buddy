@@ -5,25 +5,29 @@ import { useMemo } from "react";
 import { useCycle } from "@/hooks/useCycle";
 import { useDialogue } from "@/hooks/useDialogue";
 import { useLivePeriod } from "@/hooks/useLivePeriod";
-import { useLuna } from "@/hooks/useLuna";
+import { useFortuneCookie } from "@/hooks/useFortuneCookie";
 import { useMood } from "@/hooks/useMood";
 import { useMoonBuddyStorage } from "@/hooks/useMoonBuddyStorage";
+import { usePeriodHistory } from "@/hooks/usePeriodHistory";
 import { useSettings } from "@/hooks/useSettings";
 import { getMascotConfig } from "@/lib/mascot";
 
 export function useMoonBuddy() {
   const { data, setData, isLoaded } = useMoonBuddyStorage();
 
-  const { cycleInfo, addPeriod, deletePeriod } = useCycle(data, setData);
-  const { drawCard } = useLuna(data, setData);
+  const { cycleInfo } = useCycle(data, setData);
   const {
-    todayMood,
-    todayLiveEntries,
-    logMood,
-    logLiveMood,
-    updateDayRecord,
-    deleteDayRecord,
-  } = useMood(data, setData);
+    toggleDayPeriod,
+    startPeriod,
+    endPeriod,
+    addPeriod,
+    deletePeriod,
+    toggleMenstruation,
+  } = usePeriodHistory(data, setData, isLoaded);
+  const { todayDominantMood, todayMoodEntries, logLiveMood } = useMood(
+    data,
+    setData,
+  );
   const {
     mascot: baseMascot,
     dialogue,
@@ -31,24 +35,36 @@ export function useMoonBuddy() {
     buddyIdentity,
     temperament,
     temperamentTheme,
-  } = useDialogue(data, cycleInfo, todayMood);
+  } = useDialogue(data, cycleInfo, null);
   const { locale, updateSettings, updateProfile, updateLanguage } = useSettings(
     data,
     setData,
   );
-  const {
-    menstruationStatus,
-    periodDay,
-    characterMessage,
-    toggleMenstruation,
-  } = useLivePeriod(data, setData, isLoaded);
+  const { menstruationStatus, periodDay } = useLivePeriod(data);
+
+  const mascotContext = useMemo(
+    () => ({
+      buddyCustomName: data.settings.buddyCustomName,
+      language: data.settings.language,
+    }),
+    [data.settings.buddyCustomName, data.settings.language],
+  );
 
   const mascot = useMemo(() => {
     if (menstruationStatus === "ON_PERIOD") {
-      return getMascotConfig("menstrual", data.settings.mbti);
+      return getMascotConfig("menstrual", data.settings.mbti, mascotContext);
     }
     return baseMascot;
-  }, [menstruationStatus, baseMascot, data.settings.mbti]);
+  }, [menstruationStatus, baseMascot, data.settings.mbti, mascotContext]);
+
+  const {
+    isOpenedToday: fortuneIsOpenedToday,
+    todayMessage: fortuneTodayMessage,
+    openFortuneCookie,
+  } = useFortuneCookie(data, setData, {
+    characterName: buddyIdentity.customName,
+    temperament,
+  });
 
   return {
     data,
@@ -61,21 +77,22 @@ export function useMoonBuddy() {
     buddyIdentity,
     temperament,
     temperamentTheme,
-    todayMood,
-    todayLiveEntries,
+    todayDominantMood,
+    todayMoodEntries,
     menstruationStatus,
     periodDay,
-    characterMessage,
     toggleMenstruation,
+    toggleDayPeriod,
+    startPeriod,
+    endPeriod,
     addPeriod,
     deletePeriod,
-    logMood,
     logLiveMood,
     updateSettings,
     updateProfile,
     updateLanguage,
-    drawCard,
-    updateDayRecord,
-    deleteDayRecord,
+    fortuneIsOpenedToday,
+    fortuneTodayMessage,
+    openFortuneCookie,
   };
 }

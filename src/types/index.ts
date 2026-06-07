@@ -8,6 +8,8 @@ export type {
   DailyLiveMoods,
   Mood,
   PeriodRecord,
+  PeriodHistoryEntry,
+  DailyMoodLogEntry,
   MoodLog,
   CharacterState,
   CollectedCard,
@@ -19,7 +21,7 @@ export type {
   LivePeriodState,
 } from "@/types/moonBuddy";
 
-export type AppTab = "home" | "calendar" | "gacha" | "report";
+export type AppTab = "home" | "calendar" | "insights" | "profile";
 
 export type MascotPhase = CyclePhase | "default";
 
@@ -27,6 +29,8 @@ export type TemperamentGroup = "NT" | "NF" | "SJ" | "SP";
 
 export interface BuddyIdentity {
   epithet: string;
+  personaRole: string;
+  personaLabel: string;
   customName: string;
   displayTitle: string;
   level: number;
@@ -36,7 +40,6 @@ export interface BuddyIdentity {
 
 export interface TemperamentTheme {
   group: TemperamentGroup;
-  buddyName: string;
   groupLabel: string;
   groupDescription: string;
   badgeBg: string;

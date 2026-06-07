@@ -3,6 +3,7 @@ import type { CharacterState, Mood } from "@/types/moonBuddy";
 
 export const GACHA_COST = 10;
 export const LIVE_MOOD_LUNA = 1;
+export const LIVE_MOOD_EXP = 12;
 
 export const MOOD_EXP: Record<Mood, number> = {
   great: 25,

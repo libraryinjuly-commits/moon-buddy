@@ -1,9 +1,9 @@
 import { formatTimeByLanguage } from "@/lib/format";
 import type { LocaleUI } from "@/lib/i18n/types";
-import type { Language, LiveMood, LiveMoodEntry, TemperamentTheme } from "@/types";
+import type { DailyMoodLogEntry, Language, LiveMood, TemperamentTheme } from "@/types";
 
 interface LiveMoodTimelineProps {
-  entries: LiveMoodEntry[];
+  entries: DailyMoodLogEntry[];
   descriptions: Record<LiveMood, string>;
   emojis: Record<LiveMood, string>;
   language: Language;
@@ -19,9 +19,7 @@ export function LiveMoodTimeline({
   ui,
   theme,
 }: LiveMoodTimelineProps) {
-  const sorted = [...entries].sort(
-    (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime(),
-  );
+  const sorted = [...entries].sort((a, b) => b.timestamp - a.timestamp);
 
   return (
     <div
@@ -39,11 +37,11 @@ export function LiveMoodTimeline({
         <ul className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-0.5">
           {sorted.map((entry, index) => (
             <li
-              key={`${entry.time}-${index}`}
+              key={`${entry.timestamp}-${index}`}
               className={`min-w-0 flex-shrink-0 rounded-lg px-1.5 py-1 ${theme.accentSoft}`}
             >
               <p className={`mb-0.5 text-[8px] font-semibold ${theme.accentMuted}`}>
-                {formatTimeByLanguage(entry.time, language)}
+                {formatTimeByLanguage(new Date(entry.timestamp).toISOString(), language)}
               </p>
               <p
                 className={`break-keep text-[9px] font-medium leading-snug whitespace-normal ${theme.accentText}`}

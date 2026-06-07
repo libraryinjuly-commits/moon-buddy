@@ -3,15 +3,17 @@
 import { useState } from "react";
 
 import { DateInput } from "@/components/DateInput";
+import { getTodayDateString } from "@/lib/storage";
 
 interface PeriodFormProps {
   title: string;
   description: string;
   startLabel: string;
   endLabel: string;
+  ongoingLabel: string;
   saveLabel: string;
   errorMessage: string;
-  onSubmit: (startDate: string, endDate: string) => boolean;
+  onSubmit: (startDate: string, endDate: string | null) => boolean;
 }
 
 export function PeriodForm({
@@ -19,6 +21,7 @@ export function PeriodForm({
   description,
   startLabel,
   endLabel,
+  ongoingLabel,
   saveLabel,
   errorMessage,
   onSubmit,
@@ -26,12 +29,14 @@ export function PeriodForm({
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [error, setError] = useState("");
+  const today = getTodayDateString();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 
-    const success = onSubmit(startDate, endDate);
+    const resolvedEnd = endDate.trim() ? endDate : null;
+    const success = onSubmit(startDate, resolvedEnd);
     if (!success) {
       setError(errorMessage);
       return;
@@ -59,6 +64,11 @@ export function PeriodForm({
           value={endDate}
           onChange={setEndDate}
         />
+        {!endDate && startDate && startDate >= today && (
+          <p className="rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-600">
+            {ongoingLabel}
+          </p>
+        )}
 
         {error && (
           <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">

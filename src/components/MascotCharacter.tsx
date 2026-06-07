@@ -17,6 +17,9 @@ interface MascotCharacterProps {
   thankTrigger?: number;
   compact?: boolean;
   showTitle?: boolean;
+  onSpeechClick?: () => void;
+  speechTapHint?: string;
+  canCycleSpeech?: boolean;
 }
 
 const TIER_GLOW: Record<number, string> = {
@@ -37,6 +40,9 @@ export function MascotCharacter({
   thankTrigger = 0,
   compact = false,
   showTitle = true,
+  onSpeechClick,
+  speechTapHint,
+  canCycleSpeech = false,
 }: MascotCharacterProps) {
   const tier = getEvolutionTier(level);
   const ringClass = TIER_RING[tier];
@@ -69,14 +75,15 @@ export function MascotCharacter({
     ? "animate-mascot-thank"
     : "animate-mascot-breathe";
 
-  const avatarSize = compact ? "h-20 w-20" : "h-36 w-36";
-  const gapClass = compact ? "gap-1.5" : "gap-4";
+  const avatarSize = compact ? "h-24 w-24" : "h-36 w-36";
+  const gapClass = compact ? "gap-2" : "gap-4";
+  const bubbleInteractive = canCycleSpeech && onSpeechClick && !isThanking;
 
   return (
     <div className={`flex w-full flex-col items-center text-center ${gapClass}`}>
       {showTitle && (
         <BuddyTitle
-          epithet={buddyIdentity.epithet}
+          epithet={buddyIdentity.personaRole}
           customName={buddyIdentity.customName}
           epithetClassName={`text-[11px] font-medium leading-snug ${theme.accentMuted}`}
           nameClassName={`text-xl font-bold leading-tight ${theme.accentText}`}
@@ -87,7 +94,11 @@ export function MascotCharacter({
         <div
           className={`relative flex ${avatarSize} items-center justify-center rounded-full ${ringClass} ${mascot.bgColor} ${mascot.ringColor} ${glowClass}`}
         >
-          <MascotSvg phase={mascot.phase} level={level} />
+          <MascotSvg
+            phase={mascot.phase}
+            level={level}
+            temperament={mascot.temperament}
+          />
           <span
             className={`absolute -bottom-2 rounded-full px-2 py-0.5 text-xs font-bold text-white ${theme.badgeBg}`}
           >
@@ -106,17 +117,25 @@ export function MascotCharacter({
         </div>
       </div>
 
-      <div
-        className={`relative w-full rounded-2xl shadow-md ${theme.bubbleBg} ${
-          compact ? "px-2 py-1.5" : "max-w-xs px-4 py-3"
+      <button
+        type="button"
+        onClick={bubbleInteractive ? onSpeechClick : undefined}
+        disabled={!bubbleInteractive}
+        aria-label={bubbleInteractive ? speechTapHint : undefined}
+        className={`relative w-full rounded-2xl text-left shadow-md transition ${theme.bubbleBg} ${
+          compact ? "min-h-[4.5rem] px-2.5 py-2" : "max-w-xs px-4 py-3"
+        } ${
+          bubbleInteractive
+            ? "cursor-pointer active:scale-[0.99] hover:brightness-[0.98]"
+            : "cursor-default"
         }`}
       >
         <div
-          className={`absolute -top-2 left-8 h-4 w-4 rotate-45 ${theme.bubbleBg}`}
+          className={`pointer-events-none absolute -top-2 left-8 h-4 w-4 rotate-45 ${theme.bubbleBg}`}
         />
         {!compact && (
           <BuddyTitle
-            epithet={buddyIdentity.epithet}
+            epithet={buddyIdentity.personaRole}
             customName={buddyIdentity.customName}
             epithetClassName={`text-left text-[10px] font-medium leading-snug ${theme.bubbleLabel}`}
             nameClassName={`text-left text-sm font-bold leading-tight ${theme.bubbleText}`}
@@ -125,13 +144,18 @@ export function MascotCharacter({
         )}
         <p
           key={isThanking ? "thank" : `speech-${speechAnimKey}`}
-          className={`text-left leading-snug ${theme.bubbleText} ${
-            compact ? "text-[10px] line-clamp-4" : "mt-2 text-sm leading-relaxed"
+          className={`leading-snug ${theme.bubbleText} ${
+            compact
+              ? "text-[11px] leading-relaxed break-keep whitespace-normal"
+              : "mt-2 text-sm leading-relaxed"
           } ${!isThanking ? "animate-speech-fade-in" : ""}`}
         >
           {isThanking ? thankSpeech : speech}
         </p>
-      </div>
+        {bubbleInteractive && compact && speechTapHint && (
+          <p className={`mt-1 text-[8px] ${theme.bubbleLabel}`}>{speechTapHint}</p>
+        )}
+      </button>
     </div>
   );
 }

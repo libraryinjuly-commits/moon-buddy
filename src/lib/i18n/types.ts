@@ -1,3 +1,4 @@
+import type { MbtiTypeTitles } from "@/lib/mbtiTitles";
 import type { SpeechVariants } from "@/lib/pickVariant";
 import type {
   CycleInsight,
@@ -37,6 +38,19 @@ export interface LocaleUI {
   profileSaved: string;
   withBuddy: string;
   buddyPersona: string;
+  shareCopiedToast: string;
+  fortuneCookieLabel: string;
+  fortuneCookieOpenedLabel: string;
+  fortuneCookieTitle: string;
+  fortuneCookieSubtitle: string;
+  fortuneCookieOpenedHint: string;
+  fortuneCookieClose: string;
+  insightFabLabel: string;
+  insightSheetTitle: string;
+  insightSheetClose: string;
+  analysisReportTitle: string;
+  customAdviceTitle: string;
+  buddyAdviceFallback: string;
   todayStatus: string;
   dayUnit: string;
   daysCountUnit: string;
@@ -100,14 +114,34 @@ export interface LocaleUI {
   liveMoodTimelineEmpty: string;
   tabHome: string;
   tabCalendar: string;
+  tabInsights: string;
+  insightsTabDesc: string;
+  insightMoodLogs: string;
+  insightMoodDays: string;
+  insightTopMood: string;
+  conditionGuideTip: string;
   tabGacha: string;
-  tabReport: string;
+  tabProfile: string;
+  profileEditTitle: string;
+  profileEditDesc: string;
+  profileReportTitle: string;
   livePeriodSwitchTitle: string;
   livePeriodOn: string;
   livePeriodOff: string;
   livePeriodDayUnit: string;
   livePeriodStartButton: string;
   livePeriodEndButton: string;
+  periodDaySheetTitle: string;
+  periodToggleLabel: string;
+  periodStartOnDay: string;
+  periodEndOnDay: string;
+  periodActualLegend: string;
+  periodPredictedLegend: string;
+  periodOngoing: string;
+  periodOngoingHint: string;
+  periodDayCount: string;
+  averageCycleLabel: string;
+  speechTapHint: string;
 }
 
 export interface LocaleContent {
@@ -120,6 +154,7 @@ export interface LocaleContent {
   liveMoodEmojis: Record<LiveMood, string>;
   liveMoodDescriptions: Record<LiveMood, string>;
   epithets: Record<number, string>;
+  mbtiTypeTitles: MbtiTypeTitles;
   welcomeGuide: string;
   welcomeSpeech: Record<TemperamentGroup, SpeechVariants>;
   thankSpeech: Record<TemperamentGroup, SpeechVariants>;

@@ -4,17 +4,14 @@ import { CharacterStats } from "@/components/CharacterStats";
 import { ConditionGuide } from "@/components/ConditionGuide";
 import { CyclePhaseBadge } from "@/components/CyclePhaseBadge";
 import { CycleSettings } from "@/components/CycleSettings";
-import { LanguageSelector } from "@/components/LanguageSelector";
 import { MascotCharacter } from "@/components/MascotCharacter";
 import { MoonAdviceCard } from "@/components/MoonAdviceCard";
-import { MoodLogger } from "@/components/MoodLogger";
 import { PeriodForm } from "@/components/PeriodForm";
 import { PeriodRecordList } from "@/components/PeriodRecordList";
 import { ProfileSetup } from "@/components/ProfileSetup";
 import { TodayStatusCard } from "@/components/TodayStatusCard";
 import { useMoonBuddy } from "@/hooks/useMoonBuddy";
 import { getCycleInsight } from "@/lib/cycleInsights";
-import type { Mood } from "@/types";
 
 export function MoonBuddyApp() {
   const {
@@ -27,13 +24,11 @@ export function MoonBuddyApp() {
     thankSpeech,
     buddyIdentity,
     temperamentTheme,
-    todayMood,
+    todayDominantMood,
     addPeriod,
     deletePeriod,
-    logMood,
     updateSettings,
     updateProfile,
-    updateLanguage,
   } = useMoonBuddy();
 
   if (!isLoaded) {
@@ -52,33 +47,19 @@ export function MoonBuddyApp() {
     data.settings.language,
   );
   const phaseLabel = cycleInfo ? locale.phaseLabels[cycleInfo.phase] : null;
-  const moodLabel = todayMood ? locale.moodLabels[todayMood] : null;
-  const moodOptions = (["great", "good", "okay", "low", "bad"] as Mood[]).map(
-    (mood) => ({
-      value: mood,
-      label: locale.moodLabels[mood],
-      emoji: locale.moodEmojis[mood],
-    }),
-  );
+  const moodLabel = todayDominantMood
+    ? locale.liveMoodLabels[todayDominantMood]
+    : null;
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-6 px-4 py-6 pb-10">
-      <LanguageSelector
-        language={data.settings.language}
-        label={ui.languageLabel}
-        onChange={updateLanguage}
-        accentBorder={temperamentTheme.accentBorder}
-        accentText={temperamentTheme.accentText}
-        accentButton={temperamentTheme.accentButton}
-      />
-
       <ProfileSetup
         userName={data.settings.userName}
         mbti={data.settings.mbti}
         buddyCustomName={data.settings.buddyCustomName}
         language={data.settings.language}
         ui={ui}
-        levelOneEpithet={locale.epithets[1]}
+        mbtiTypeTitles={locale.mbtiTypeTitles}
         onSave={updateProfile}
         accentBorder={temperamentTheme.accentBorder}
         accentMuted={temperamentTheme.accentMuted}
@@ -119,7 +100,6 @@ export function MoonBuddyApp() {
         guide={dialogue.guide}
         phase={cycleInfo?.phase ?? null}
         phaseLabel={phaseLabel}
-        mood={todayMood}
         moodLabel={moodLabel}
       />
 
@@ -140,19 +120,12 @@ export function MoonBuddyApp() {
         ui={ui}
       />
 
-      <MoodLogger
-        title={ui.todayMood}
-        description={ui.todayMoodDesc}
-        moodOptions={moodOptions}
-        todayMood={todayMood}
-        onLogMood={logMood}
-      />
-
       <PeriodForm
         title={ui.periodRecord}
         description={ui.periodRecordDesc}
         startLabel={ui.periodStart}
         endLabel={ui.periodEnd}
+        ongoingLabel={ui.periodOngoingHint}
         saveLabel={ui.periodSave}
         errorMessage={ui.periodError}
         onSubmit={addPeriod}
@@ -161,7 +134,7 @@ export function MoonBuddyApp() {
       <CycleSettings settings={data.settings} ui={ui} onSave={updateSettings} />
 
       <PeriodRecordList
-        periods={data.periods}
+        periodHistory={data.periodHistory}
         language={data.settings.language}
         ui={ui}
         theme={temperamentTheme}

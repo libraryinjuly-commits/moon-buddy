@@ -1,10 +1,12 @@
-import type { AppTab } from "@/types";
-import type { TemperamentTheme } from "@/types";
+import type { ReactNode } from "react";
+
+import type { AppTab, TemperamentTheme } from "@/types";
 
 interface TabItem {
   id: AppTab;
-  emoji: string;
   label: string;
+  emoji?: string;
+  icon?: ReactNode;
 }
 
 interface TabBarProps {
@@ -32,7 +34,13 @@ export function TabBar({ activeTab, tabs, theme, onChange }: TabBarProps) {
                 isActive ? theme.accentText : theme.accentMuted
               }`}
             >
-              <span className="text-lg leading-none">{tab.emoji}</span>
+              {tab.icon ? (
+                <span className="flex h-[18px] w-[18px] items-center justify-center [&>svg]:h-[18px] [&>svg]:w-[18px]">
+                  {tab.icon}
+                </span>
+              ) : (
+                <span className="text-lg leading-none">{tab.emoji}</span>
+              )}
               <span
                 className={`text-[9px] font-bold leading-none ${
                   isActive ? theme.accentText : ""

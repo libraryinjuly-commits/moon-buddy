@@ -1,11 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_KR } from "next/font/google";
+import { DM_Sans, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 
 const notoSansKr = Noto_Sans_KR({
   variable: "--font-noto-sans-kr",
   subsets: ["latin"],
   weight: ["400", "600", "700", "800"],
+});
+
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +32,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${notoSansKr.variable} h-full antialiased`}>
+    <html
+      lang="ko"
+      className={`${notoSansKr.variable} ${dmSans.variable} h-full antialiased`}
+    >
       <body className="h-full overflow-hidden bg-gradient-to-br from-slate-300 via-slate-200 to-violet-200/70 font-sans text-violet-950">
         <div className="flex h-dvh w-full items-stretch justify-center overflow-hidden md:py-3">
           {children}

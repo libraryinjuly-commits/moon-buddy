@@ -29,26 +29,34 @@ export function useDialogue(
     [temperament],
   );
 
+  const mascotContext = useMemo(
+    () => ({
+      buddyCustomName: settings.buddyCustomName,
+      language: settings.language,
+    }),
+    [settings.buddyCustomName, settings.language],
+  );
+
   const buddyIdentity = useMemo(
     () =>
       getBuddyIdentity(
         data.character.level,
         settings.buddyCustomName,
-        temperamentTheme.buddyName,
+        temperament,
         settings.language,
       ),
     [
       data.character.level,
       settings.buddyCustomName,
       settings.language,
-      temperamentTheme.buddyName,
+      temperament,
     ],
   );
 
   const mascot = useMemo(() => {
-    if (!cycleInfo) return getDefaultMascotConfig(settings.mbti);
-    return getMascotConfig(cycleInfo.phase, settings.mbti);
-  }, [cycleInfo, settings.mbti]);
+    if (!cycleInfo) return getDefaultMascotConfig(settings.mbti, mascotContext);
+    return getMascotConfig(cycleInfo.phase, settings.mbti, mascotContext);
+  }, [cycleInfo, settings.mbti, mascotContext]);
 
   const dialogue = useMemo(
     () =>

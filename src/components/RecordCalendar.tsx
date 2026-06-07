@@ -2,36 +2,68 @@
 
 import { useMemo, useState } from "react";
 
+import { getDominantMoodByDate } from "@/lib/dailyMood";
 import { formatMonthYear } from "@/lib/format";
 import type { LocaleUI } from "@/lib/i18n/types";
 import {
+  getDatePeriodVisual,
+  getMonthDateRange,
   getMonthGrid,
-  getMoodForDate,
-  hasDayRecord,
-  isDateInPeriod,
+  getPredictedPeriodDates,
   toDateString,
-} from "@/lib/periodDays";
+  type PeriodVisualState,
+} from "@/lib/periodHistory";
 import { getTodayDateString } from "@/lib/storage";
-import type { Language, MoodLog, PeriodRecord, TemperamentTheme } from "@/types";
+import type {
+  CycleInfo,
+  DailyMoodLogEntry,
+  Language,
+  LiveMood,
+  PeriodHistoryEntry,
+  TemperamentTheme,
+  UserSettings,
+} from "@/types";
 
 interface RecordCalendarProps {
-  moodLogs: MoodLog[];
-  periods: PeriodRecord[];
-  moodEmojis: Record<MoodLog["mood"], string>;
+  dailyMoodLogs: DailyMoodLogEntry[];
+  periodHistory: PeriodHistoryEntry[];
+  settings: UserSettings;
+  cycleInfo: CycleInfo | null;
+  liveMoodEmojis: Record<LiveMood, string>;
   language: Language;
   ui: LocaleUI;
   theme: TemperamentTheme;
-  onSelectRecordedDay: (date: string) => void;
+  onSelectDay: (date: string) => void;
+}
+
+function getPeriodBarClass(visual: PeriodVisualState): string {
+  if (visual.type === "none") return "";
+
+  const tone =
+    visual.type === "actual"
+      ? "bg-rose-400"
+      : "border border-dashed border-rose-300 bg-rose-50";
+
+  const shape = {
+    single: "mx-1 rounded-full",
+    start: "ml-1 rounded-l-full rounded-r-none",
+    middle: "rounded-none",
+    end: "mr-1 rounded-r-full rounded-l-none",
+  }[visual.position];
+
+  return `${tone} ${shape}`;
 }
 
 export function RecordCalendar({
-  moodLogs,
-  periods,
-  moodEmojis,
+  dailyMoodLogs,
+  periodHistory,
+  settings,
+  cycleInfo,
+  liveMoodEmojis,
   language,
   ui,
   theme,
-  onSelectRecordedDay,
+  onSelectDay,
 }: RecordCalendarProps) {
   const today = getTodayDateString();
   const initial = new Date(`${today}T12:00:00`);
@@ -42,6 +74,22 @@ export function RecordCalendar({
     () => getMonthGrid(viewYear, viewMonth),
     [viewYear, viewMonth],
   );
+
+  const dominantMoods = useMemo(
+    () => getDominantMoodByDate(dailyMoodLogs),
+    [dailyMoodLogs],
+  );
+
+  const predictedDates = useMemo(() => {
+    const range = getMonthDateRange(viewYear, viewMonth);
+    return getPredictedPeriodDates(
+      periodHistory,
+      settings,
+      range.start,
+      range.end,
+      today,
+    );
+  }, [periodHistory, settings, viewYear, viewMonth, today]);
 
   function goPrevMonth() {
     if (viewMonth === 0) {
@@ -78,7 +126,9 @@ export function RecordCalendar({
           >
             ‹
           </button>
-          <span className={`min-w-[7rem] text-center text-sm font-medium ${theme.accentText}`}>
+          <span
+            className={`min-w-[7rem] text-center text-sm font-medium ${theme.accentText}`}
+          >
             {formatMonthYear(viewYear, viewMonth, language)}
           </span>
           <button
@@ -92,6 +142,26 @@ export function RecordCalendar({
         </div>
       </div>
 
+      {cycleInfo && (
+        <p className={`mb-2 text-[10px] ${theme.accentMuted}`}>
+          {ui.averageCycleLabel.replace(
+            "{days}",
+            String(cycleInfo.averageCycleLength),
+          )}
+        </p>
+      )}
+
+      <div className="mb-2 flex items-center gap-3 text-[9px]">
+        <span className="flex items-center gap-1">
+          <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+          <span className={theme.accentMuted}>{ui.periodActualLegend}</span>
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="h-2.5 w-2.5 rounded-full border border-dashed border-rose-300 bg-rose-50" />
+          <span className={theme.accentMuted}>{ui.periodPredictedLegend}</span>
+        </span>
+      </div>
+
       <div className="mb-1 grid grid-cols-7 gap-1">
         {ui.weekdayShort.map((label) => (
           <div
@@ -103,39 +173,51 @@ export function RecordCalendar({
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-y-1">
         {days.map((date) => {
           const dateStr = toDateString(date);
           const inCurrentMonth = date.getMonth() === viewMonth;
-          const mood = getMoodForDate(dateStr, moodLogs);
-          const isPeriod = isDateInPeriod(dateStr, periods);
-          const hasRecord = hasDayRecord(dateStr, moodLogs, periods);
+          const dominantMood = dominantMoods.get(dateStr) ?? null;
+          const visual = getDatePeriodVisual(
+            dateStr,
+            periodHistory,
+            predictedDates,
+            today,
+          );
           const isToday = dateStr === today;
+          const periodBarClass = getPeriodBarClass(visual);
 
           return (
             <button
               key={dateStr}
               type="button"
-              disabled={!hasRecord}
-              onClick={() => hasRecord && onSelectRecordedDay(dateStr)}
-              className={`relative flex aspect-square flex-col items-center justify-center rounded-lg text-xs transition active:scale-95 disabled:cursor-default ${
+              onClick={() => onSelectDay(dateStr)}
+              className={`relative flex aspect-square flex-col items-center justify-center text-xs transition active:scale-95 ${
                 inCurrentMonth ? theme.accentText : `${theme.accentMuted} opacity-40`
-              } ${
-                hasRecord
-                  ? `cursor-pointer ${theme.accentSoft} hover:ring-2 hover:ring-violet-300`
-                  : "bg-transparent"
-              } ${isToday ? "ring-2 ring-violet-400" : ""} ${
-                isPeriod ? "bg-rose-100/80" : ""
-              }`}
+              } ${isToday ? "z-[1] ring-2 ring-violet-400 ring-offset-1" : ""}`}
             >
-              <span className="font-medium">{date.getDate()}</span>
-              {mood && (
-                <span className="text-[10px] leading-none">
-                  {moodEmojis[mood]}
+              {periodBarClass && (
+                <span
+                  className={`absolute inset-x-0 top-1/2 h-7 -translate-y-1/2 ${periodBarClass}`}
+                  aria-hidden
+                />
+              )}
+              {dominantMood && (
+                <span className="absolute right-0.5 top-0.5 z-[2] text-[9px] leading-none opacity-90">
+                  {liveMoodEmojis[dominantMood]}
                 </span>
               )}
-              {isPeriod && !mood && (
-                <span className="text-[8px] leading-none text-rose-500">●</span>
+              <span
+                className={`relative z-[1] font-medium ${
+                  visual.type === "actual" ? "text-white" : ""
+                }`}
+              >
+                {date.getDate()}
+              </span>
+              {visual.type === "actual" && !dominantMood && (
+                <span className="relative z-[1] text-[8px] leading-none text-white/90">
+                  ●
+                </span>
               )}
             </button>
           );

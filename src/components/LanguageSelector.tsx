@@ -10,7 +10,9 @@ interface LanguageSelectorProps {
   accentBorder: string;
   accentText: string;
   accentButton: string;
+  accentMuted?: string;
   compact?: boolean;
+  showNativeLabels?: boolean;
 }
 
 export function LanguageSelector({
@@ -20,18 +22,24 @@ export function LanguageSelector({
   accentBorder,
   accentText,
   accentButton,
+  accentMuted,
   compact = false,
+  showNativeLabels = false,
 }: LanguageSelectorProps) {
   return (
     <div
-      className={`flex items-center justify-between border ${accentBorder} bg-white/80 shadow-sm ${
+      className={`flex flex-col gap-2 border ${accentBorder} bg-white/80 shadow-sm ${
         compact ? "rounded-xl px-2.5 py-1.5" : "rounded-2xl px-4 py-3"
-      }`}
+      } ${showNativeLabels ? "" : "flex-row items-center justify-between"}`}
     >
-      <span className={`font-medium ${accentText} ${compact ? "text-[10px]" : "text-sm"}`}>
+      <span
+        className={`font-medium ${accentText} ${
+          compact ? "text-[10px]" : "text-sm"
+        }`}
+      >
         {label}
       </span>
-      <div className="flex gap-1">
+      <div className={`flex gap-1.5 ${showNativeLabels ? "w-full" : ""}`}>
         {LANGUAGES.map((item) => {
           const isSelected = language === item.code;
           return (
@@ -39,15 +47,19 @@ export function LanguageSelector({
               key={item.code}
               type="button"
               onClick={() => onChange(item.code)}
-              className={`rounded-lg font-semibold transition active:scale-95 ${
-                compact ? "px-2 py-1 text-[10px]" : "px-3 py-1.5 text-xs"
+              className={`rounded-xl font-semibold transition active:scale-95 ${
+                showNativeLabels
+                  ? "flex-1 px-2 py-2.5 text-xs"
+                  : compact
+                    ? "px-2 py-1 text-[10px]"
+                    : "px-3 py-1.5 text-xs"
               } ${
                 isSelected
-                  ? `${accentButton} text-white`
+                  ? `${accentButton} text-white shadow-sm`
                   : `border ${accentBorder} bg-white ${accentText} hover:opacity-80`
               }`}
             >
-              {item.code}
+              {showNativeLabels ? item.label : item.code}
             </button>
           );
         })}

@@ -1,4 +1,4 @@
-import type { CyclePhase, Mood } from "@/types";
+import type { CyclePhase } from "@/types";
 
 interface ConditionGuideProps {
   title: string;
@@ -6,7 +6,6 @@ interface ConditionGuideProps {
   guide: string;
   phase: CyclePhase | null;
   phaseLabel: string | null;
-  mood: Mood | null;
   moodLabel: string | null;
 }
 
@@ -16,7 +15,6 @@ export function ConditionGuide({
   guide,
   phase,
   phaseLabel,
-  mood,
   moodLabel,
 }: ConditionGuideProps) {
   return (
@@ -28,7 +26,7 @@ export function ConditionGuide({
             {phaseLabel}
           </span>
         )}
-        {mood && moodLabel && (
+        {moodLabel && (
           <span className="rounded-full bg-fuchsia-100 px-2 py-0.5 text-xs font-medium text-fuchsia-700">
             {moodTagLabel} · {moodLabel}
           </span>
