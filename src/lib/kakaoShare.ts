@@ -1,11 +1,12 @@
 import type { KakaoSDK } from "@/types/kakao";
 
 import {
-  getAppShareUrl,
+  getAppOrigin,
   KAKAO_SHARE_BUTTON,
   KAKAO_SHARE_DESCRIPTION,
   SHARE_TITLE,
 } from "@/lib/share";
+import type { KakaoLinkObject } from "@/types/kakao";
 
 const KAKAO_SDK_URL = "https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js";
 
@@ -21,8 +22,19 @@ let sdkLoadPromise: Promise<KakaoSDK> | null = null;
 function getShareImageUrl(): string {
   const custom = process.env.NEXT_PUBLIC_SHARE_IMAGE_URL;
   if (custom) return custom;
-  const origin = getAppShareUrl();
+  const origin = getAppOrigin();
   return origin ? `${origin}/og-share.png` : DEFAULT_SHARE_IMAGE;
+}
+
+/** Feed card + button links — always the live page URL the user is on. */
+function getKakaoShareLink(): KakaoLinkObject {
+  if (typeof window === "undefined") {
+    const fallback = process.env.NEXT_PUBLIC_APP_URL ?? "";
+    return { mobileWebUrl: fallback, webUrl: fallback };
+  }
+
+  const url = window.location.href;
+  return { mobileWebUrl: url, webUrl: url };
 }
 
 function loadKakaoSdk(): Promise<KakaoSDK> {
@@ -81,13 +93,11 @@ function loadKakaoSdk(): Promise<KakaoSDK> {
 
 export async function shareViaKakao(): Promise<void> {
   const kakao = await loadKakaoSdk();
-  const url = getAppShareUrl();
+  const link = getKakaoShareLink();
 
-  if (!url) {
+  if (!link.webUrl || !link.mobileWebUrl) {
     throw new Error("Share URL is unavailable.");
   }
-
-  const link = { mobileWebUrl: url, webUrl: url };
 
   kakao.Share.sendDefault({
     objectType: "feed",

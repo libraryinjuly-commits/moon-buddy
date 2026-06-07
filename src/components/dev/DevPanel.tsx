@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 
+import { isDevelopmentEnvironment } from "@/lib/isQA";
 import type { CompanionStage, CompanionState } from "@/types/companion";
 
 interface DevPanelProps {
@@ -13,6 +14,7 @@ interface DevPanelProps {
   onSetStage: (stage: CompanionStage) => void;
   onTriggerAscension: () => void;
   onGenerateSampleStars: () => void;
+  onCreateNewCompanion: () => void;
   onResetCompanion: () => void;
   onResetAllData: () => void;
 }
@@ -25,7 +27,7 @@ const STAGE_OPTIONS: { stage: CompanionStage; label: string }[] = [
   { stage: "star_spirit", label: "Star Spirit" },
 ];
 
-function DevButton({
+function QAButton({
   children,
   onClick,
   variant = "default",
@@ -37,7 +39,8 @@ function DevButton({
   const styles = {
     default:
       "border-white/15 bg-white/10 text-white hover:bg-white/20",
-    danger: "border-rose-400/40 bg-rose-500/20 text-rose-100 hover:bg-rose-500/35",
+    danger:
+      "border-rose-400/40 bg-rose-500/20 text-rose-100 hover:bg-rose-500/35",
     accent:
       "border-amber-300/40 bg-amber-400/20 text-amber-50 hover:bg-amber-400/35",
   };
@@ -62,16 +65,19 @@ export function DevPanel({
   onSetStage,
   onTriggerAscension,
   onGenerateSampleStars,
+  onCreateNewCompanion,
   onResetCompanion,
   onResetAllData,
 }: DevPanelProps) {
   if (!open) return null;
 
+  const panelTitle = isDevelopmentEnvironment() ? "Dev Panel" : "QA Panel";
+
   return (
     <div className="fixed inset-0 z-[80] flex items-end justify-end p-3 md:items-center md:p-6">
       <button
         type="button"
-        aria-label="Close dev panel overlay"
+        aria-label="Close QA panel overlay"
         className="absolute inset-0 bg-black/25"
         onClick={onClose}
       />
@@ -79,12 +85,12 @@ export function DevPanel({
       <div
         role="dialog"
         aria-modal
-        aria-label="Development panel"
+        aria-label={panelTitle}
         className="relative max-h-[80dvh] w-full max-w-sm overflow-y-auto rounded-2xl border border-white/20 bg-slate-900/90 p-4 text-white shadow-2xl backdrop-blur-xl"
       >
         <div className="mb-3 flex items-center justify-between gap-2">
           <div>
-            <h2 className="text-sm font-bold">Dev Panel</h2>
+            <h2 className="text-sm font-bold">{panelTitle}</h2>
             <p className="text-[10px] text-white/60">
               {companion.currentStage} · {companion.growthProgress}% ·{" "}
               {starCount} stars
@@ -104,9 +110,9 @@ export function DevPanel({
             Growth Progress
           </p>
           <div className="flex flex-wrap gap-1.5">
-            <DevButton onClick={() => onAddGrowth(10)}>+10</DevButton>
-            <DevButton onClick={() => onAddGrowth(25)}>+25</DevButton>
-            <DevButton onClick={() => onAddGrowth(50)}>+50</DevButton>
+            <QAButton onClick={() => onAddGrowth(10)}>+10</QAButton>
+            <QAButton onClick={() => onAddGrowth(25)}>+25</QAButton>
+            <QAButton onClick={() => onAddGrowth(50)}>+50</QAButton>
           </div>
         </section>
 
@@ -116,9 +122,9 @@ export function DevPanel({
           </p>
           <div className="flex flex-wrap gap-1.5">
             {STAGE_OPTIONS.map(({ stage, label }) => (
-              <DevButton key={stage} onClick={() => onSetStage(stage)}>
+              <QAButton key={stage} onClick={() => onSetStage(stage)}>
                 {label}
-              </DevButton>
+              </QAButton>
             ))}
           </div>
         </section>
@@ -127,33 +133,44 @@ export function DevPanel({
           <p className="text-[10px] font-semibold uppercase tracking-wide text-white/50">
             Ascension
           </p>
-          <DevButton variant="accent" onClick={onTriggerAscension}>
+          <QAButton variant="accent" onClick={onTriggerAscension}>
             Trigger Ascension
-          </DevButton>
+          </QAButton>
         </section>
 
         <section className="mb-3 space-y-1.5">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-white/50">
             Star Collection
           </p>
-          <DevButton onClick={onGenerateSampleStars}>
+          <QAButton onClick={onGenerateSampleStars}>
             Generate Sample Stars (8)
-          </DevButton>
+          </QAButton>
         </section>
 
         <section className="space-y-1.5 border-t border-white/10 pt-3">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-white/50">
-            Reset
+            Companion
           </p>
           <div className="flex flex-wrap gap-1.5">
-            <DevButton variant="danger" onClick={onResetCompanion}>
-              Reset Companion
-            </DevButton>
-            <DevButton variant="danger" onClick={onResetAllData}>
-              Reset All Data
-            </DevButton>
+            <QAButton onClick={onCreateNewCompanion}>
+              Create New Companion
+            </QAButton>
+            <QAButton variant="danger" onClick={onResetCompanion}>
+              Reset Current Companion
+            </QAButton>
           </div>
         </section>
+
+        {isDevelopmentEnvironment() && (
+          <section className="mt-3 space-y-1.5 border-t border-white/10 pt-3">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-white/50">
+              Danger Zone (dev only)
+            </p>
+            <QAButton variant="danger" onClick={onResetAllData}>
+              Reset All Data
+            </QAButton>
+          </section>
+        )}
       </div>
     </div>
   );

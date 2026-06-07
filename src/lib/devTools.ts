@@ -170,6 +170,21 @@ export function devResetCompanion(
   return createNewCompanion(getTodayDateString(), cycleId);
 }
 
+/** Keeps companion id; wipes growth and mood stats for the current cycle. */
+export function devResetCompanionInPlace(
+  companion: CompanionState,
+): CompanionState {
+  return {
+    ...companion,
+    currentStage: "seed",
+    growthProgress: 0,
+    currentForm: "seed",
+    totalFeeds: 0,
+    moodStatistics: { great: 0, good: 0, okay: 0, low: 0, bad: 0 },
+    ascensionPending: false,
+  };
+}
+
 export function devResetAllData(): MoonBuddyData {
   return { ...DEFAULT_DATA };
 }

@@ -6,7 +6,7 @@ import { createPortal } from "react-dom";
 import { DevPanel } from "@/components/dev/DevPanel";
 import { FloatingDebugButton } from "@/components/dev/FloatingDebugButton";
 import { useDevTools } from "@/hooks/useDevTools";
-import { useIsDev } from "@/hooks/useIsDev";
+import { useIsQA } from "@/hooks/useIsQA";
 import type { SetMoonBuddyData } from "@/hooks/types";
 import type { CompanionState } from "@/types/companion";
 import type { Language } from "@/types/moonBuddy";
@@ -28,14 +28,14 @@ export function DevTools({
 }: DevToolsProps) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const isDev = useIsDev();
-  const dev = useDevTools(setData, language);
+  const isQA = useIsQA();
+  const qa = useDevTools(setData, language);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!isDev || !mounted) return null;
+  if (!isQA || !mounted) return null;
 
   const panel = (
     <DevPanel
@@ -43,16 +43,17 @@ export function DevTools({
       companion={companion}
       starCount={starCount}
       onClose={() => setOpen(false)}
-      onAddGrowth={dev.addGrowth}
-      onSetStage={dev.setStage}
+      onAddGrowth={qa.addGrowth}
+      onSetStage={qa.setStage}
       onTriggerAscension={() => {
-        dev.triggerAscension(onTriggerAscension);
+        qa.triggerAscension(onTriggerAscension);
         setOpen(false);
       }}
-      onGenerateSampleStars={dev.generateSampleStars}
-      onResetCompanion={dev.resetCompanion}
+      onGenerateSampleStars={qa.generateSampleStars}
+      onCreateNewCompanion={qa.createNewCompanion}
+      onResetCompanion={qa.resetCompanion}
       onResetAllData={() => {
-        dev.resetAllData();
+        qa.resetAllData();
         setOpen(false);
       }}
     />

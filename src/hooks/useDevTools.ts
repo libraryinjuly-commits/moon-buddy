@@ -9,6 +9,7 @@ import {
   devPrepareAscension,
   devResetAllData,
   devResetCompanion,
+  devResetCompanionInPlace,
   devSetStage,
 } from "@/lib/devTools";
 import type { CompanionStage } from "@/types/companion";
@@ -60,7 +61,7 @@ export function useDevTools(
     }));
   }, [setData, language]);
 
-  const resetCompanion = useCallback(() => {
+  const createNewCompanion = useCallback(() => {
     setData((prev) => ({
       ...prev,
       companion: devResetCompanion(
@@ -72,7 +73,19 @@ export function useDevTools(
     }));
   }, [setData]);
 
+  const resetCompanion = useCallback(() => {
+    setData((prev) => ({
+      ...prev,
+      companion: devResetCompanionInPlace(prev.companion),
+      character: { level: 1, exp: 0, totalMoodLogs: 0 },
+    }));
+  }, [setData]);
+
   const resetAllData = useCallback(() => {
+    const confirmed = window.confirm(
+      "Reset ALL Moon Buddy data? This cannot be undone.",
+    );
+    if (!confirmed) return;
     setData(devResetAllData());
   }, [setData]);
 
@@ -81,6 +94,7 @@ export function useDevTools(
     setStage,
     triggerAscension,
     generateSampleStars,
+    createNewCompanion,
     resetCompanion,
     resetAllData,
   };

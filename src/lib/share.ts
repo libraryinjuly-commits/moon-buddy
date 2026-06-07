@@ -9,17 +9,27 @@ export const KAKAO_SHARE_DESCRIPTION =
 
 export const KAKAO_SHARE_BUTTON = "문버디 만나러 가기";
 
-export const SYSTEM_SHARE_TEXT =
-  "호르몬 때문에 힘들 때, 나만의 달달이에게 위로받아 보세요";
-
+/** Current page URL in the browser; build-time fallback on the server. */
 export function getAppShareUrl(): string {
   if (typeof window !== "undefined") {
-    return process.env.NEXT_PUBLIC_APP_URL ?? window.location.href;
+    return window.location.href;
   }
   return process.env.NEXT_PUBLIC_APP_URL ?? "";
 }
 
-export type ShareResult = "shared" | "copied" | "cancelled";
+/** Origin of the current deployment (for absolute asset URLs). */
+export function getAppOrigin(): string {
+  if (typeof window !== "undefined") {
+    return window.location.origin;
+  }
+  const configured = process.env.NEXT_PUBLIC_APP_URL ?? "";
+  if (!configured) return "";
+  try {
+    return new URL(configured).origin;
+  } catch {
+    return configured.replace(/\/$/, "");
+  }
+}
 
 async function copyTextToClipboard(text: string): Promise<void> {
   if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
@@ -42,33 +52,4 @@ export async function copyShareUrl(): Promise<void> {
   const url = getAppShareUrl();
   if (!url) throw new Error("Share URL is unavailable.");
   await copyTextToClipboard(url);
-}
-
-export async function shareViaSystem(): Promise<ShareResult> {
-  const url = getAppShareUrl();
-  if (!url) throw new Error("Share URL is unavailable.");
-
-  if (typeof navigator === "undefined" || typeof navigator.share !== "function") {
-    throw new Error("System share is not supported.");
-  }
-
-  try {
-    await navigator.share({
-      title: SHARE_TITLE,
-      text: SYSTEM_SHARE_TEXT,
-      url,
-    });
-    return "shared";
-  } catch (error) {
-    if (error instanceof DOMException && error.name === "AbortError") {
-      return "cancelled";
-    }
-    throw error;
-  }
-}
-
-export function isSystemShareAvailable(): boolean {
-  return (
-    typeof navigator !== "undefined" && typeof navigator.share === "function"
-  );
 }

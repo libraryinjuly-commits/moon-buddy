@@ -1,14 +1,10 @@
 "use client";
 
-import { Link2, Share2, X } from "lucide-react";
+import { Link2, X } from "lucide-react";
 import { useState } from "react";
 
 import { isKakaoShareAvailable, shareViaKakao } from "@/lib/kakaoShare";
-import {
-  copyShareUrl,
-  isSystemShareAvailable,
-  shareViaSystem,
-} from "@/lib/share";
+import { copyShareUrl } from "@/lib/share";
 import type { LocaleUI } from "@/lib/i18n/types";
 
 interface ShareBottomSheetProps {
@@ -22,7 +18,7 @@ interface ShareBottomSheetProps {
 function KakaoIcon() {
   return (
     <span
-      className="flex h-6 w-6 items-center justify-center rounded-md bg-[#3C1E1E] text-[10px] font-black text-[#FEE500]"
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#3C1E1E] text-[10px] font-black text-[#FEE500]"
       aria-hidden
     >
       TALK
@@ -70,22 +66,6 @@ export function ShareBottomSheet({
     }
   }
 
-  async function handleSystemShare() {
-    if (!isSystemShareAvailable()) {
-      onError?.(ui.shareSystemUnavailable);
-      return;
-    }
-    setBusy("system");
-    try {
-      const result = await shareViaSystem();
-      if (result !== "cancelled") onClose();
-    } catch {
-      onError?.(ui.shareSystemFailed);
-    } finally {
-      setBusy(null);
-    }
-  }
-
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center">
       <button
@@ -99,12 +79,12 @@ export function ShareBottomSheet({
         role="dialog"
         aria-modal="true"
         aria-labelledby="share-sheet-title"
-        className="relative w-full max-w-[450px] animate-[sheet-rise_0.35s_ease-out] rounded-t-3xl border-t border-white/15 bg-gradient-to-b from-slate-900/96 via-indigo-950/96 to-slate-950/98 px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4 shadow-2xl backdrop-blur-xl"
+        className="relative w-full max-w-[450px] animate-[sheet-rise_0.35s_ease-out] rounded-t-3xl border-t border-white/15 bg-gradient-to-b from-slate-900/96 via-indigo-950/96 to-slate-950/98 px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-5 shadow-2xl backdrop-blur-xl"
       >
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-5 flex items-center justify-between">
           <h2
             id="share-sheet-title"
-            className="text-sm font-bold tracking-tight text-white/95"
+            className="text-base font-bold tracking-tight text-white/95"
           >
             {ui.shareSheetTitle}
           </h2>
@@ -118,39 +98,29 @@ export function ShareBottomSheet({
           </button>
         </div>
 
-        <div className="flex flex-col gap-2.5">
+        <div className="flex min-h-[9.5rem] flex-col justify-center gap-3">
           <button
             type="button"
             onClick={handleKakao}
             disabled={busy !== null}
-            className="flex w-full items-center gap-3 rounded-2xl bg-[#FEE500] px-4 py-3.5 text-left font-bold text-[#191919] shadow-lg transition active:scale-[0.99] disabled:opacity-60"
+            className="flex w-full min-h-[3.75rem] items-center gap-3.5 rounded-2xl bg-[#FEE500] px-4 py-4 text-left font-bold text-[#191919] shadow-lg shadow-[#FEE500]/20 transition active:scale-[0.99] disabled:opacity-60"
           >
             <KakaoIcon />
-            <span className="text-sm">{ui.shareKakao}</span>
+            <span className="text-[15px] leading-snug">{ui.shareKakao}</span>
           </button>
 
           <button
             type="button"
             onClick={handleCopyLink}
             disabled={busy !== null}
-            className="flex w-full items-center gap-3 rounded-2xl border border-white/12 bg-white/10 px-4 py-3.5 text-left text-white/95 backdrop-blur-md transition active:scale-[0.99] disabled:opacity-60"
+            className="flex w-full min-h-[3.75rem] items-center gap-3.5 rounded-2xl border border-white/15 bg-white/10 px-4 py-4 text-left text-white/95 backdrop-blur-md transition active:scale-[0.99] disabled:opacity-60"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/12">
               <Link2 className="h-5 w-5" strokeWidth={2} aria-hidden />
             </span>
-            <span className="text-sm font-semibold">{ui.shareCopyLink}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleSystemShare}
-            disabled={busy !== null}
-            className="flex w-full items-center gap-3 rounded-2xl border border-white/12 bg-white/8 px-4 py-3.5 text-left text-white/90 backdrop-blur-md transition active:scale-[0.99] disabled:opacity-60"
-          >
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10">
-              <Share2 className="h-5 w-5" strokeWidth={2} aria-hidden />
+            <span className="text-[15px] font-semibold leading-snug">
+              {ui.shareCopyLink}
             </span>
-            <span className="text-sm font-semibold">{ui.shareSystem}</span>
           </button>
         </div>
       </div>
