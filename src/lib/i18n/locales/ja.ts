@@ -588,6 +588,17 @@ export const jaLocale: LocaleContent = {
     liveMoodTimelineTitle: "今日のリアルタイム気分",
     liveMoodTimelineEmpty: "ボタンを押して気分を記録しよう！",
     tabHome: "ホーム",
+    tabCondition: "コンディション",
+    conditionTabDesc: "今のリズムとコンディションを一緒に見ていきましょう。",
+    conditionRhythmTitle: "私のリズム",
+    conditionTodayTitle: "今日のコンディション",
+    conditionGuideSectionTitle: "コンディションガイド",
+    conditionScoreLabel: "コンディションスコア",
+    conditionScoreHint:
+      "直近7日間の気分記録に基づく参考値です。医学的な診断ではありません。",
+    conditionMoodTrend: "最近の感情パターン",
+    conditionWellnessDisclaimer:
+      "すべての案内は一般的なウェルネスアドバイスです。体調が優れない場合は専門家にご相談ください。",
     tabJourney: "旅路",
     journeyTabDesc: "今月の感情と自分だけのリズムを振り返りましょう。",
     journeyEmotionTitle: "今月の感情",

@@ -117,6 +117,15 @@ export interface LocaleUI {
   liveMoodTimelineTitle: string;
   liveMoodTimelineEmpty: string;
   tabHome: string;
+  tabCondition: string;
+  conditionTabDesc: string;
+  conditionRhythmTitle: string;
+  conditionTodayTitle: string;
+  conditionGuideSectionTitle: string;
+  conditionScoreLabel: string;
+  conditionScoreHint: string;
+  conditionMoodTrend: string;
+  conditionWellnessDisclaimer: string;
   tabJourney: string;
   journeyTabDesc: string;
   journeyEmotionTitle: string;

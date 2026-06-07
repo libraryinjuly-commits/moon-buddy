@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles, Star, User } from "lucide-react";
+import { HeartPulse, Star, User } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { AscensionModal } from "@/components/companion/AscensionModal";
@@ -8,7 +8,7 @@ import { DevTools } from "@/components/dev/DevTools";
 import { AppHeader } from "@/components/AppHeader";
 import { CharacterRoom } from "@/components/CharacterRoom";
 import { StarCollectionPage } from "@/components/stars/StarCollectionPage";
-import { JourneyTab } from "@/components/JourneyTab";
+import { ConditionTab } from "@/components/ConditionTab";
 import { ProfileTab } from "@/components/ProfileTab";
 import { TabBar } from "@/components/TabBar";
 import { useBuddySpeech } from "@/hooks/useBuddySpeech";
@@ -81,14 +81,14 @@ export default function Home() {
     () => [
       { id: "home" as const, emoji: "🏠", label: ui.tabHome },
       {
+        id: "condition" as const,
+        icon: <HeartPulse strokeWidth={2.25} aria-hidden />,
+        label: ui.tabCondition,
+      },
+      {
         id: "stars" as const,
         icon: <Star strokeWidth={2.25} aria-hidden />,
         label: ui.tabStars,
-      },
-      {
-        id: "journey" as const,
-        icon: <Sparkles strokeWidth={2.25} aria-hidden />,
-        label: ui.tabJourney,
       },
       {
         id: "profile" as const,
@@ -236,12 +236,6 @@ export default function Home() {
               fortuneIsOpenedToday={fortuneIsOpenedToday}
               fortuneTodayMessage={fortuneTodayMessage}
               onOpenFortuneCookie={openFortuneCookie}
-              rhythmMessage={rhythmMessage}
-              cyclePhase={homePhase}
-              phaseLabel={phaseLabel}
-              menstruationStatus={menstruationStatus}
-              periodDay={periodDay}
-              onTogglePeriod={toggleMenstruation}
             />
           </div>
         )}
@@ -256,14 +250,18 @@ export default function Home() {
           />
         )}
 
-        {activeTab === "journey" && (
-          <JourneyTab
+        {activeTab === "condition" && (
+          <ConditionTab
             data={data}
             locale={locale}
             theme={temperamentTheme}
             cycleInfo={cycleInfo}
             cycleInsight={cycleInsight}
+            phase={homePhase}
             phaseLabel={phaseLabel}
+            rhythmMessage={rhythmMessage}
+            menstruationStatus={menstruationStatus}
+            periodDay={periodDay}
             dialogue={dialogue}
             moodLabel={moodLabel}
             moodStats={moodStats}
@@ -278,6 +276,7 @@ export default function Home() {
             onDeletePeriod={deletePeriod}
             onSaveSettings={updateSettings}
             onLogMoodForDate={logMoodForDate}
+            onTogglePeriod={toggleMenstruation}
           />
         )}
 

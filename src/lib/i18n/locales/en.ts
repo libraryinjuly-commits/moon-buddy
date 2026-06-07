@@ -589,6 +589,17 @@ export const enLocale: LocaleContent = {
     liveMoodTimelineTitle: "Today's Live Moods",
     liveMoodTimelineEmpty: "Tap a button to log how you feel!",
     tabHome: "Home",
+    tabCondition: "Condition",
+    conditionTabDesc: "Explore your rhythm and how you're feeling today.",
+    conditionRhythmTitle: "My rhythm",
+    conditionTodayTitle: "Today's condition",
+    conditionGuideSectionTitle: "Condition guide",
+    conditionScoreLabel: "Condition score",
+    conditionScoreHint:
+      "A reference based on your mood logs from the last 7 days. Not a medical diagnosis.",
+    conditionMoodTrend: "Recent emotional patterns",
+    conditionWellnessDisclaimer:
+      "All guidance is general wellness support. Please consult a professional if you feel unwell.",
     tabJourney: "Journey",
     journeyTabDesc: "Reflect on this month's emotions and your personal rhythm.",
     journeyEmotionTitle: "This month's emotions",

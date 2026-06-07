@@ -21,7 +21,7 @@ export type {
   LivePeriodState,
 } from "@/types/moonBuddy";
 
-export type AppTab = "home" | "stars" | "journey" | "profile";
+export type AppTab = "home" | "condition" | "stars" | "profile";
 
 export type {
   CompanionStage,

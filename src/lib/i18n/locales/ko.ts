@@ -138,6 +138,17 @@ export const koLocale: LocaleContent = {
     liveMoodTimelineTitle: "오늘의 실시간 기분",
     liveMoodTimelineEmpty: "버튼을 눌러 기분을 남겨보세요!",
     tabHome: "홈",
+    tabCondition: "컨디션",
+    conditionTabDesc: "지금의 리듬과 컨디션을 함께 살펴보세요.",
+    conditionRhythmTitle: "나의 리듬",
+    conditionTodayTitle: "오늘의 컨디션",
+    conditionGuideSectionTitle: "컨디션 가이드",
+    conditionScoreLabel: "컨디션 점수",
+    conditionScoreHint:
+      "최근 7일 기분 기록을 바탕으로 한 참고 지표예요. 의학적 진단이 아니에요.",
+    conditionMoodTrend: "최근 감정 패턴",
+    conditionWellnessDisclaimer:
+      "모든 안내는 일반적인 웰니스 조언이에요. 몸이 불편하면 전문가와 상담해 주세요.",
     tabJourney: "여정",
     journeyTabDesc: "캘린더로 생리·기분 기록을 돌아보고, 이번 달 감정과 리듬을 살펴보세요.",
     journeyEmotionTitle: "이번 달의 감정",
