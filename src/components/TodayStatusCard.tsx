@@ -37,7 +37,7 @@ export function TodayStatusCard({
             </span>
           )}
         </div>
-        <p className="line-clamp-2 text-[10px] leading-snug text-violet-800">
+        <p className="break-keep text-[10px] leading-snug whitespace-normal text-violet-800">
           {status}
         </p>
         {daysUntilCount != null && (
