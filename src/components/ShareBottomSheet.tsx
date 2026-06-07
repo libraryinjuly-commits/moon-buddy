@@ -1,14 +1,9 @@
 "use client";
 
-import { Link2, X } from "lucide-react";
+import { Link2, Share2, X } from "lucide-react";
 import { useState } from "react";
 
-import {
-  isKakaoShareAvailable,
-  KAKAO_LOG_PREFIX,
-  shareViaKakao,
-} from "@/lib/kakaoShare";
-import { copyShareUrl } from "@/lib/share";
+import { copyShareUrl, shareMoonBuddy } from "@/lib/share";
 import type { LocaleUI } from "@/lib/i18n/types";
 
 interface ShareBottomSheetProps {
@@ -17,17 +12,6 @@ interface ShareBottomSheetProps {
   ui: LocaleUI;
   onCopied: () => void;
   onError?: (message: string) => void;
-}
-
-function KakaoIcon() {
-  return (
-    <span
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#3C1E1E] text-[10px] font-black text-[#FEE500]"
-      aria-hidden
-    >
-      TALK
-    </span>
-  );
 }
 
 export function ShareBottomSheet({
@@ -40,6 +24,24 @@ export function ShareBottomSheet({
   const [busy, setBusy] = useState<string | null>(null);
 
   if (!open) return null;
+
+  async function handleShare() {
+    setBusy("share");
+    try {
+      const result = await shareMoonBuddy();
+      if (result === "copied") {
+        onCopied();
+      }
+      onClose();
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+      onError?.(ui.shareFailed);
+    } finally {
+      setBusy(null);
+    }
+  }
 
   async function handleCopyLink() {
     setBusy("copy");
@@ -90,40 +92,19 @@ export function ShareBottomSheet({
           <button
             type="button"
             disabled={busy !== null}
-            onClick={async () => {
-              console.log(KAKAO_LOG_PREFIX, "Share button clicked", {
-                component: "ShareBottomSheet",
-                pageUrl: window.location.href,
-                pageHost: window.location.hostname,
-              });
-
-              if (!isKakaoShareAvailable()) {
-                console.warn(KAKAO_LOG_PREFIX, "Share unavailable: not in browser");
-                onError?.(ui.shareKakaoUnavailable);
-                return;
-              }
-
-              setBusy("kakao");
-              try {
-                await shareViaKakao();
-                onClose();
-              } catch (error) {
-                console.error(KAKAO_LOG_PREFIX, "Share flow failed", error);
-                onError?.(ui.shareKakaoFailed);
-              } finally {
-                setBusy(null);
-              }
-            }}
-            className="flex w-full min-h-[3.75rem] items-center gap-3.5 rounded-2xl bg-[#FEE500] px-4 py-4 text-left font-bold text-[#191919] shadow-lg shadow-[#FEE500]/20 transition active:scale-[0.99] disabled:opacity-60"
+            onClick={handleShare}
+            className="flex w-full min-h-[3.75rem] items-center gap-3.5 rounded-2xl bg-violet-500 px-4 py-4 text-left font-bold text-white shadow-lg shadow-violet-500/25 transition active:scale-[0.99] disabled:opacity-60"
           >
-            <KakaoIcon />
-            <span className="text-[15px] leading-snug">{ui.shareKakao}</span>
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/15">
+              <Share2 className="h-5 w-5" strokeWidth={2.25} aria-hidden />
+            </span>
+            <span className="text-[15px] leading-snug">{ui.shareApp}</span>
           </button>
 
           <button
             type="button"
-            onClick={handleCopyLink}
             disabled={busy !== null}
+            onClick={handleCopyLink}
             className="flex w-full min-h-[3.75rem] items-center gap-3.5 rounded-2xl border border-white/15 bg-white/10 px-4 py-4 text-left text-white/95 backdrop-blur-md transition active:scale-[0.99] disabled:opacity-60"
           >
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/12">

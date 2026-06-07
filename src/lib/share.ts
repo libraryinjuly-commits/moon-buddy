@@ -1,13 +1,21 @@
-export const SHARE_TITLE =
-  "내 성격에 딱 맞는 생리 주기 공감 메이트, 문버디!";
+export const SHARE_TITLE = "Moon Buddy";
 
-export const SHARE_TEXT =
-  "호르몬 때문에 힘들 때, 나만의 캐릭터에게 위로받아 보세요 🤍";
+export const SHARE_TEXT = "Meet my Moon Buddy companion.";
 
-export const KAKAO_SHARE_DESCRIPTION =
-  "호르몬 때문에 힘들 때, 나만의 달달이에게 위로받아 보세요 🤍";
+export function getShareUrl(): string {
+  if (typeof window === "undefined") {
+    return "";
+  }
+  return window.location.origin;
+}
 
-export const KAKAO_SHARE_BUTTON = "문버디 만나러 가기";
+export function canUseWebShare(): boolean {
+  return (
+    typeof navigator !== "undefined" && typeof navigator.share === "function"
+  );
+}
+
+export type ShareResult = "shared" | "copied";
 
 async function copyTextToClipboard(text: string): Promise<void> {
   if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
@@ -27,5 +35,34 @@ async function copyTextToClipboard(text: string): Promise<void> {
 }
 
 export async function copyShareUrl(): Promise<void> {
-  await copyTextToClipboard("https://moon-buddy-6zxk.vercel.app");
+  const url = getShareUrl();
+  if (!url) {
+    throw new Error("Share URL is unavailable.");
+  }
+  await copyTextToClipboard(url);
+}
+
+export async function shareMoonBuddy(): Promise<ShareResult> {
+  const url = getShareUrl();
+  if (!url) {
+    throw new Error("Share URL is unavailable.");
+  }
+
+  if (canUseWebShare()) {
+    try {
+      await navigator.share({
+        title: SHARE_TITLE,
+        text: SHARE_TEXT,
+        url,
+      });
+      return "shared";
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        throw error;
+      }
+    }
+  }
+
+  await copyShareUrl();
+  return "copied";
 }

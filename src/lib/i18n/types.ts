@@ -44,10 +44,9 @@ export interface LocaleUI {
   shareCopiedToast: string;
   shareSheetTitle: string;
   shareSheetClose: string;
-  shareKakao: string;
+  shareApp: string;
   shareCopyLink: string;
-  shareKakaoUnavailable: string;
-  shareKakaoFailed: string;
+  shareFailed: string;
   shareCopyFailed: string;
   fortuneCookieLabel: string;
   fortuneCookieOpenedLabel: string;
