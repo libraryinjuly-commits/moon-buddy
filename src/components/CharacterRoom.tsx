@@ -1,13 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Companion } from "@/components/companion/Companion";
 import { CompanionGrowthCard } from "@/components/companion/CompanionGrowthCard";
 import { FortuneCookieFloating } from "@/components/FortuneCookieFloating";
 import { QuickMoodButtons } from "@/components/QuickMoodButtons";
-import { getLiveMoodReaction, LIVE_MOODS } from "@/lib/liveMood";
-import { getMascotPhaseForMood } from "@/lib/moodMascot";
+import { getMoodFeedReaction } from "@/lib/moodFeedReaction";
+import { LIVE_MOODS } from "@/lib/liveMood";
 import type { LocaleContent } from "@/lib/i18n/types";
 import type {
   BuddyIdentity,
@@ -25,12 +25,14 @@ interface CharacterRoomProps {
   displayLevel: number;
   growthProgress: number;
   stageProgress: number;
+  starFragments: number;
   ascensionPending?: boolean;
   speech: string;
   liveSpeech: string | null;
   thankSpeech: string;
   buddyIdentity: BuddyIdentity;
   thankTrigger?: number;
+  todayDominantMood: LiveMood | null;
   temperament: TemperamentGroup;
   language: Language;
   userName: string;
@@ -52,12 +54,14 @@ export function CharacterRoom({
   displayLevel,
   growthProgress,
   stageProgress,
+  starFragments,
   ascensionPending,
   speech,
   liveSpeech,
   thankSpeech,
   buddyIdentity,
   thankTrigger,
+  todayDominantMood,
   temperament,
   language,
   userName,
@@ -74,6 +78,16 @@ export function CharacterRoom({
 }: CharacterRoomProps) {
   const { ui } = locale;
   const [selectedMood, setSelectedMood] = useState<LiveMood | null>(null);
+  const [activeMood, setActiveMood] = useState<LiveMood | null>(
+    todayDominantMood,
+  );
+  const [reactionKey, setReactionKey] = useState(0);
+
+  useEffect(() => {
+    if (todayDominantMood) {
+      setActiveMood(todayDominantMood);
+    }
+  }, [todayDominantMood]);
 
   const quickOptions = LIVE_MOODS.map((mood) => ({
     value: mood,
@@ -81,32 +95,27 @@ export function CharacterRoom({
     label: locale.liveMoodLabels[mood],
   }));
 
-  const displayMascot = useMemo(() => {
-    if (!selectedMood) return mascot;
-    return {
-      ...mascot,
-      phase: getMascotPhaseForMood(selectedMood),
-    };
-  }, [mascot, selectedMood]);
-
-  const previewSpeech = useMemo(() => {
-    if (!selectedMood) return null;
-    return getLiveMoodReaction(selectedMood, language, temperament, {
+  const moodFeedSpeech = useMemo(() => {
+    if (!activeMood) return null;
+    return getMoodFeedReaction(activeMood, language, temperament, {
       userName,
       characterName: buddyIdentity.customName,
     });
   }, [
-    selectedMood,
+    activeMood,
     language,
     temperament,
     userName,
     buddyIdentity.customName,
   ]);
 
-  const bubbleSpeech = liveSpeech ?? previewSpeech ?? speech;
+  const bubbleSpeech = liveSpeech ?? moodFeedSpeech ?? speech;
 
   function handleCompleteMood() {
     if (!selectedMood) return;
+
+    setActiveMood(selectedMood);
+    setReactionKey((key) => key + 1);
     onCompleteMood(selectedMood);
   }
 
@@ -122,7 +131,7 @@ export function CharacterRoom({
           ui={locale.ui}
         />
         <Companion
-          mascot={displayMascot}
+          mascot={mascot}
           growthProgress={growthProgress}
           displayLevel={displayLevel}
           companionStage={companionStage}
@@ -131,6 +140,8 @@ export function CharacterRoom({
           buddyIdentity={buddyIdentity}
           thankTrigger={thankTrigger}
           locale={locale}
+          activeMood={activeMood}
+          reactionKey={reactionKey}
           onAscend={onAscend}
           onMascotTap={onMascotTap}
           canCycleSpeech={canCycleSpeech}
@@ -139,9 +150,20 @@ export function CharacterRoom({
       </div>
 
       <div className="flex-shrink-0 px-0.5">
-        <p className={`mb-1.5 text-center text-[10px] font-semibold ${theme.accentText}`}>
-          {ui.moodFeedTitle}
-        </p>
+        <div className="mb-1.5 flex items-center justify-center gap-2">
+          <p className={`text-center text-[10px] font-semibold ${theme.accentText}`}>
+            {ui.moodFeedTitle}
+          </p>
+          <span
+            className={`rounded-full px-2 py-0.5 text-[9px] font-bold ${theme.badgeBg} text-white`}
+            aria-label={ui.starFragmentCountLabel.replace(
+              "{count}",
+              String(starFragments),
+            )}
+          >
+            {ui.starFragmentCountLabel.replace("{count}", String(starFragments))}
+          </span>
+        </div>
         <QuickMoodButtons
           options={quickOptions}
           theme={theme}

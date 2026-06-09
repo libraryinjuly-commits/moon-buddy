@@ -12,7 +12,7 @@ import { StarCollectionPage } from "@/components/stars/StarCollectionPage";
 import { ConditionTab } from "@/components/ConditionTab";
 import { ProfileTab } from "@/components/ProfileTab";
 import { TabBar } from "@/components/TabBar";
-import { Toast } from "@/components/Toast";
+import { StarFragmentToast } from "@/components/StarFragmentToast";
 import { useBuddySpeech } from "@/hooks/useBuddySpeech";
 import { useMoonBuddy } from "@/hooks/useMoonBuddy";
 import { companionStageToDisplayLevel } from "@/lib/companionLifecycle";
@@ -250,7 +250,9 @@ export default function Home() {
               displayLevel={companionStageToDisplayLevel(companion.currentStage)}
               growthProgress={companion.growthProgress}
               stageProgress={stageProgress}
+              starFragments={companion.starFragments}
               ascensionPending={ascensionPending}
+              todayDominantMood={todayDominantMood}
               speech={buddySpeech}
               liveSpeech={liveSpeech}
               thankSpeech={thankSpeech}
@@ -339,7 +341,7 @@ export default function Home() {
         onClose={() => setShowAscension(false)}
       />
 
-      <Toast message={ui.starFragmentToast} visible={toastVisible} />
+      <StarFragmentToast message={ui.starFragmentToast} visible={toastVisible} />
 
       <WeeklyConstellation
         open={showWeeklyConstellation}

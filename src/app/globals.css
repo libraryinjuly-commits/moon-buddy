@@ -221,6 +221,61 @@ body {
   animation: fortune-float 3s ease-in-out infinite;
 }
 
+@keyframes mood-sparkle {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.4));
+  }
+  50% {
+    transform: scale(1.06);
+    filter: drop-shadow(0 0 14px rgba(251, 191, 36, 0.75));
+  }
+}
+
+.animate-mood-sparkle {
+  animation: mood-sparkle 1.6s ease-in-out infinite;
+}
+
+@keyframes star-fragment-toast {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  18% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  82% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+.animate-star-fragment-toast {
+  animation: star-fragment-toast 2.8s ease-out forwards;
+}
+
+@keyframes star-fragment-sparkle {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(12deg);
+  }
+}
+
+.animate-star-fragment-sparkle {
+  animation: star-fragment-sparkle 1.2s ease-in-out infinite;
+}
+
 @keyframes sheet-rise {
   from {
     opacity: 0;
@@ -312,7 +367,10 @@ body {
   .animate-speech-fade-in,
   .animate-bubble-pop,
   .animate-ascension-glow,
-  .animate-ascension-particle {
+  .animate-ascension-particle,
+  .animate-mood-sparkle,
+  .animate-star-fragment-toast,
+  .animate-star-fragment-sparkle {
     animation: none;
   }
 

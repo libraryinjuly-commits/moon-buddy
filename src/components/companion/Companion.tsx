@@ -1,11 +1,12 @@
 "use client";
 
 import { CompanionEvolutionPortrait } from "@/components/companion/CompanionEvolutionPortrait";
+import { CompanionMoodReactionPortrait } from "@/components/companion/CompanionMoodReactionPortrait";
 import { MascotCharacter } from "@/components/MascotCharacter";
 import { MAX_GROWTH_PROGRESS } from "@/lib/companionLifecycle";
 import { getEvolutionVisualStage } from "@/lib/companionEvolution";
 import type { LocaleContent } from "@/lib/i18n/types";
-import type { BuddyIdentity, CompanionStage, MascotConfig } from "@/types";
+import type { BuddyIdentity, CompanionStage, LiveMood, MascotConfig } from "@/types";
 
 interface CompanionProps {
   mascot: MascotConfig;
@@ -21,6 +22,9 @@ interface CompanionProps {
   canCycleSpeech?: boolean;
   mascotTapHint?: string;
   onAscend?: () => void;
+  /** Set after mood log — drives daily reaction portrait + dialogue */
+  activeMood?: LiveMood | null;
+  reactionKey?: number;
 }
 
 export function Companion({
@@ -37,6 +41,8 @@ export function Companion({
   canCycleSpeech,
   mascotTapHint,
   onAscend,
+  activeMood = null,
+  reactionKey = 0,
 }: CompanionProps) {
   const { ui } = locale;
   const visualStage = getEvolutionVisualStage(growthProgress);
@@ -60,10 +66,17 @@ export function Companion({
         canCycleSpeech={canCycleSpeech}
         mascotTapHint={mascotTapHint}
         portrait={
-          <CompanionEvolutionPortrait
-            growthProgress={growthProgress}
-            mascot={mascot}
-          />
+          activeMood ? (
+            <CompanionMoodReactionPortrait
+              key={`mood-${activeMood}-${reactionKey}`}
+              mood={activeMood}
+            />
+          ) : (
+            <CompanionEvolutionPortrait
+              growthProgress={growthProgress}
+              mascot={mascot}
+            />
+          )
         }
       />
 

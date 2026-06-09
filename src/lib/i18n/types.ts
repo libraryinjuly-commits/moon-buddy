@@ -134,6 +134,7 @@ export interface LocaleUI {
   moodFeedTitle: string;
   moodCompleteButton: string;
   starFragmentToast: string;
+  starFragmentCountLabel: string;
   rhythmCardTitle: string;
   rhythmLogHint: string;
   todayRhythm: string;

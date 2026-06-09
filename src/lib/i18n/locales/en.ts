@@ -608,6 +608,7 @@ export const enLocale: LocaleContent = {
     moodFeedTitle: "How are you feeling today?",
     moodCompleteButton: "Save mood log",
     starFragmentToast: "You found today's sparkling star fragment!",
+    starFragmentCountLabel: "Fragments {count}/7",
     rhythmCardTitle: "Today's rhythm",
     rhythmLogHint: "Log only when you need to",
     insightsTabDesc: "Explore your emotional flow and personal rhythm.",

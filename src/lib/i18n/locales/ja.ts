@@ -607,6 +607,7 @@ export const jaLocale: LocaleContent = {
     moodFeedTitle: "今日はどんな気분でしたか？",
     moodCompleteButton: "記録を完了する",
     starFragmentToast: "今日のきらめく星のかけらを見つけました！",
+    starFragmentCountLabel: "星のかけら {count}/7",
     rhythmCardTitle: "今日のリズム",
     rhythmLogHint: "必要なときだけ記録してください",
     insightsTabDesc: "感情の流れと自分のリズムを一緒に見ていきましょう。",

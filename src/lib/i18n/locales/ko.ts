@@ -157,6 +157,7 @@ export const koLocale: LocaleContent = {
     moodFeedTitle: "오늘 어떤 기분이었나요?",
     moodCompleteButton: "기록 완료하기",
     starFragmentToast: "오늘의 반짝이는 별 조각을 찾았어요!",
+    starFragmentCountLabel: "별 조각 {count}/7",
     rhythmCardTitle: "오늘의 리듬",
     rhythmLogHint: "필요할 때만 기록해 주세요",
     insightsTabDesc: "감정의 흐름과 나만의 리듬을 함께 살펴봐요.",

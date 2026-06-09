@@ -9,7 +9,7 @@ import {
   markAscensionPending,
 } from "@/lib/companionLifecycle";
 import { getDominantMoodForDate, getMoodEntriesForDate } from "@/lib/dailyMood";
-import { getLiveMoodReaction } from "@/lib/liveMood";
+import { getMoodFeedReaction } from "@/lib/moodFeedReaction";
 import { getTemperamentFromMbti } from "@/lib/mbti";
 import { resolveCharacterName, getPersonaDefinition } from "@/lib/persona";
 import { getTodayDateString } from "@/lib/storage";
@@ -93,7 +93,7 @@ export function useMood(
       if (!applyCompanionFeed) return null;
 
       return {
-        speech: getLiveMoodReaction(mood, settings.language, temperament, {
+        speech: getMoodFeedReaction(mood, settings.language, temperament, {
           userName: settings.userName,
           characterName,
         }),
