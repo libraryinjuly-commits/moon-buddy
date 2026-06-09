@@ -22,13 +22,8 @@ import { getRhythmBriefMessage } from "@/lib/rhythmMessaging";
 import { getCurrentCycleMoodStats } from "@/lib/insightsStats";
 import { isProfileComplete } from "@/lib/profile";
 import type { AppTab, LiveMood } from "@/types";
-
-const PAGE_BG: Record<string, string> = {
-  NT: "from-slate-50 via-blue-50 to-indigo-100",
-  NF: "from-violet-50 via-fuchsia-50 to-indigo-100",
-  SJ: "from-teal-50 via-emerald-50 to-green-100",
-  SP: "from-orange-50 via-amber-50 to-yellow-100",
-};
+import { PAGE_BG } from "@/lib/pastelTheme";
+import type { MbtiTypeKey } from "@/lib/mbti";
 
 export default function Home() {
   const {
@@ -166,18 +161,14 @@ export default function Home() {
 
   function handleProfileSave(
     userName: string,
-    mbti: string,
+    mbtiType: MbtiTypeKey,
     buddyCustomName: string,
     language: typeof data.settings.language,
   ) {
     const wasOnboarding = !isProfileComplete(data.settings);
-    updateProfile(userName, mbti, buddyCustomName, language);
+    updateProfile(userName, mbtiType, buddyCustomName, language);
 
-    if (
-      wasOnboarding &&
-      userName.trim().length > 0 &&
-      mbti.trim().length > 0
-    ) {
+    if (wasOnboarding && userName.trim().length > 0) {
       setActiveTab("home");
     }
   }
@@ -226,7 +217,7 @@ export default function Home() {
       >
         <AppHeader ui={ui} />
         <div className="flex flex-1 items-center justify-center">
-          <p className="text-violet-600">{ui.loading}</p>
+          <p className="text-[#709BBF]">{ui.loading}</p>
         </div>
         {devTools}
       </div>

@@ -4,7 +4,12 @@ import { useCallback, useMemo } from "react";
 
 import type { SetMoonBuddyData } from "@/hooks/types";
 import { getLocale, normalizeLanguage } from "@/lib/i18n";
-import { getTemperamentFromMbti, normalizeMbti } from "@/lib/mbti";
+import {
+  getTemperamentFromMbti,
+  mbtiTypeToMbti,
+  normalizeMbtiType,
+} from "@/lib/mbti";
+import type { MbtiTypeKey } from "@/lib/mbti";
 import type { Language, MoonBuddyData, UserSettings } from "@/types/moonBuddy";
 
 export function useSettings(data: MoonBuddyData, setData: SetMoonBuddyData) {
@@ -23,20 +28,20 @@ export function useSettings(data: MoonBuddyData, setData: SetMoonBuddyData) {
   const updateProfile = useCallback(
     (
       userName: string,
-      mbti: string,
+      mbtiType: MbtiTypeKey,
       buddyCustomName: string,
       language: Language,
     ) => {
-      const normalizedMbti = normalizeMbti(mbti);
+      const normalizedType = normalizeMbtiType(mbtiType);
+      const mbti = mbtiTypeToMbti(normalizedType);
       setData((prev) => ({
         ...prev,
         settings: {
           ...prev.settings,
           userName,
-          mbti: normalizedMbti,
-          temperament: normalizedMbti
-            ? getTemperamentFromMbti(normalizedMbti)
-            : "",
+          mbti,
+          mbtiType: normalizedType,
+          temperament: getTemperamentFromMbti(mbti),
           buddyCustomName,
           language: normalizeLanguage(language),
         },

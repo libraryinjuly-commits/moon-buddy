@@ -6,8 +6,11 @@ import { Companion } from "@/components/companion/Companion";
 import { CompanionGrowthCard } from "@/components/companion/CompanionGrowthCard";
 import { FortuneCookieFloating } from "@/components/FortuneCookieFloating";
 import { QuickMoodButtons } from "@/components/QuickMoodButtons";
-import { getMoodFeedReaction } from "@/lib/moodFeedReaction";
-import { LIVE_MOODS } from "@/lib/liveMood";
+import { getLiveMoodReaction, LIVE_MOODS } from "@/lib/liveMood";
+import {
+  createMoodInteractionState,
+  type MoodInteractionState,
+} from "@/lib/moodInteraction";
 import type { LocaleContent } from "@/lib/i18n/types";
 import type {
   BuddyIdentity,
@@ -81,7 +84,8 @@ export function CharacterRoom({
   const [activeMood, setActiveMood] = useState<LiveMood | null>(
     todayDominantMood,
   );
-  const [reactionKey, setReactionKey] = useState(0);
+  const [interactionState, setInteractionState] =
+    useState<MoodInteractionState | null>(null);
 
   useEffect(() => {
     if (todayDominantMood) {
@@ -97,7 +101,7 @@ export function CharacterRoom({
 
   const moodFeedSpeech = useMemo(() => {
     if (!activeMood) return null;
-    return getMoodFeedReaction(activeMood, language, temperament, {
+    return getLiveMoodReaction(activeMood, language, temperament, {
       userName,
       characterName: buddyIdentity.customName,
     });
@@ -111,11 +115,16 @@ export function CharacterRoom({
 
   const bubbleSpeech = liveSpeech ?? moodFeedSpeech ?? speech;
 
+  function handleMoodSelect(mood: LiveMood) {
+    setSelectedMood(mood);
+    setActiveMood(mood);
+    setInteractionState(createMoodInteractionState(mood));
+  }
+
   function handleCompleteMood() {
     if (!selectedMood) return;
 
     setActiveMood(selectedMood);
-    setReactionKey((key) => key + 1);
     onCompleteMood(selectedMood);
   }
 
@@ -132,6 +141,7 @@ export function CharacterRoom({
         />
         <Companion
           mascot={mascot}
+          theme={theme}
           growthProgress={growthProgress}
           displayLevel={displayLevel}
           companionStage={companionStage}
@@ -139,9 +149,8 @@ export function CharacterRoom({
           thankSpeech={thankSpeech}
           buddyIdentity={buddyIdentity}
           thankTrigger={thankTrigger}
+          moodInteraction={interactionState}
           locale={locale}
-          activeMood={activeMood}
-          reactionKey={reactionKey}
           onAscend={onAscend}
           onMascotTap={onMascotTap}
           canCycleSpeech={canCycleSpeech}
@@ -168,7 +177,7 @@ export function CharacterRoom({
           options={quickOptions}
           theme={theme}
           selectedMood={selectedMood}
-          onSelect={setSelectedMood}
+          onSelect={handleMoodSelect}
         />
         <button
           type="button"
@@ -181,7 +190,6 @@ export function CharacterRoom({
       </div>
 
       <CompanionGrowthCard
-        stage={companionStage}
         stageProgress={stageProgress}
         growthProgress={growthProgress}
         locale={locale}

@@ -21,9 +21,13 @@ export type {
   LivePeriodState,
 } from "@/types/moonBuddy";
 
+export type { MbtiType, MbtiTypeKey } from "@/lib/mbti";
+export { DEFAULT_MBTI_TYPE, MBTI_TYPES } from "@/lib/mbti";
+
 export type AppTab = "home" | "condition" | "stars" | "profile";
 
 export type {
+  CompanionGenes,
   CompanionStage,
   CompanionState,
   EmotionScale,

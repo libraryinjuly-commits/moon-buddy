@@ -1,12 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { BuddyTitle } from "@/components/BuddyTitle";
+import { GrowthBadge } from "@/components/companion/GrowthBadge";
 import { MascotSvg } from "@/components/MascotSvg";
 import { getEvolutionTier, TIER_RING } from "@/lib/evolution";
 import { triggerHapticTap } from "@/lib/haptics";
 import { getSpeciesIdleClass } from "@/lib/companionSpecies";
+import {
+  getMoodInteractionMotion,
+  getMoodInteractionMotionClass,
+  MOOD_INTERACTION_DURATION_MS,
+  type MoodInteractionState,
+} from "@/lib/moodInteraction";
 import { getTemperamentTheme } from "@/lib/mbti";
 import type { BuddyIdentity, CompanionStage, MascotConfig } from "@/types";
 
@@ -14,6 +21,7 @@ interface MascotCharacterProps {
   mascot: MascotConfig;
   level: number;
   companionStage?: CompanionStage;
+  growthProgress?: number;
   stageLabel?: string;
   speech: string;
   thankSpeech: string;
@@ -24,7 +32,7 @@ interface MascotCharacterProps {
   onMascotTap?: () => void;
   mascotTapHint?: string;
   canCycleSpeech?: boolean;
-  portrait?: ReactNode;
+  moodInteraction?: MoodInteractionState | null;
 }
 
 const TIER_GLOW: Record<number, string> = {
@@ -41,6 +49,7 @@ export function MascotCharacter({
   mascot,
   level,
   companionStage,
+  growthProgress = 0,
   stageLabel,
   speech,
   thankSpeech,
@@ -51,7 +60,7 @@ export function MascotCharacter({
   onMascotTap,
   mascotTapHint,
   canCycleSpeech = false,
-  portrait,
+  moodInteraction = null,
 }: MascotCharacterProps) {
   const tier = getEvolutionTier(level);
   const ringClass = TIER_RING[tier];
@@ -60,17 +69,34 @@ export function MascotCharacter({
 
   const [isThanking, setIsThanking] = useState(false);
   const [isJellyBouncing, setIsJellyBouncing] = useState(false);
+  const [moodMotionClass, setMoodMotionClass] = useState<string | null>(null);
   const [bubblePopKey, setBubblePopKey] = useState(0);
   const prevThankTrigger = useRef(0);
   const prevSpeech = useRef(speech);
   const jellyTimer = useRef<number | undefined>(undefined);
+  const moodMotionTimer = useRef<number | undefined>(undefined);
 
   const canTapMascot =
     canCycleSpeech && Boolean(onMascotTap) && !isThanking && !isJellyBouncing;
 
   useEffect(() => {
-    return () => window.clearTimeout(jellyTimer.current);
+    return () => {
+      window.clearTimeout(jellyTimer.current);
+      window.clearTimeout(moodMotionTimer.current);
+    };
   }, []);
+
+  useEffect(() => {
+    if (!moodInteraction) return;
+
+    const motion = getMoodInteractionMotion(moodInteraction.mood);
+    setMoodMotionClass(getMoodInteractionMotionClass(motion));
+
+    window.clearTimeout(moodMotionTimer.current);
+    moodMotionTimer.current = window.setTimeout(() => {
+      setMoodMotionClass(null);
+    }, MOOD_INTERACTION_DURATION_MS);
+  }, [moodInteraction?.triggerId, moodInteraction?.mood]);
 
   useEffect(() => {
     if (thankTrigger > 0 && thankTrigger !== prevThankTrigger.current) {
@@ -109,10 +135,12 @@ export function MascotCharacter({
 
   const idleClass = getSpeciesIdleClass(mascot.temperament);
   const mascotMotionClass = isThanking
-    ? "animate-mascot-thank"
-    : isJellyBouncing
-      ? "animate-mascot-jelly-bounce"
-      : idleClass;
+    ? "animate-mascot-thank mascot-motion-layer"
+    : moodMotionClass
+      ? `${moodMotionClass} mascot-motion-layer`
+      : isJellyBouncing
+        ? "animate-mascot-jelly-bounce mascot-motion-layer"
+        : `${idleClass} mascot-motion-layer`;
 
   const avatarSize = compact ? "h-24 w-24" : "h-36 w-36";
   const gapClass = compact ? "gap-2" : "gap-4";
@@ -120,17 +148,11 @@ export function MascotCharacter({
   return (
     <div className={`flex w-full flex-col items-center text-center ${gapClass}`}>
       {showTitle && (
-        <div className="flex flex-col items-center gap-0.5">
-          <BuddyTitle
-            epithet={buddyIdentity.personaRole}
-            customName={buddyIdentity.customName}
-            epithetClassName={`text-[11px] font-medium leading-snug ${theme.accentMuted}`}
-            nameClassName={`text-xl font-bold leading-tight ${theme.accentText}`}
-          />
-          <p className={`text-[10px] ${theme.accentMuted}`}>
-            {buddyIdentity.speciesEmoji} {buddyIdentity.speciesName}
-          </p>
-        </div>
+        <p
+          className={`text-2xl font-extrabold leading-tight tracking-tight ${theme.accentText}`}
+        >
+          {buddyIdentity.customName}
+        </p>
       )}
 
       <div className={mascotMotionClass}>
@@ -139,29 +161,23 @@ export function MascotCharacter({
           onClick={handleMascotTap}
           disabled={!canTapMascot}
           aria-label={canTapMascot ? mascotTapHint : undefined}
-          className={`relative flex ${avatarSize} items-center justify-center rounded-full ${ringClass} ${mascot.bgColor} ${mascot.ringColor} ${glowClass} border-0 bg-transparent p-0 transition ${
+          className={`relative flex ${avatarSize} items-center justify-center rounded-full border-0 p-0 transition duration-300 ${ringClass} ${mascot.bgColor} ${mascot.ringColor} ${glowClass} bg-transparent ${
             canTapMascot
               ? "cursor-pointer hover:brightness-[1.03] active:brightness-[0.98]"
               : "cursor-default"
           }`}
         >
-          {portrait ?? (
-            <MascotSvg
-              phase={mascot.phase}
-              level={level}
-              temperament={mascot.temperament}
-            />
-          )}
+          <MascotSvg
+            phase={mascot.phase}
+            level={level}
+            temperament={mascot.temperament}
+          />
+          <GrowthBadge progress={growthProgress} />
           <span
             className={`pointer-events-none absolute -bottom-2 max-w-[5.5rem] truncate rounded-full px-2 py-0.5 text-[10px] font-bold text-white ${theme.badgeBg}`}
           >
             {stageLabel ?? `Lv.${level}`}
           </span>
-          {companionStage === "star_spirit" && (
-            <span className="pointer-events-none absolute -top-2 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-amber-900">
-              ✦
-            </span>
-          )}
           {isThanking && (
             <span className="pointer-events-none absolute -right-1 -top-1 animate-bounce text-sm">
               {theme.thankEmoji}
@@ -170,9 +186,15 @@ export function MascotCharacter({
         </button>
       </div>
 
+      {showTitle && (
+        <p className={`text-[11px] font-medium ${theme.accentMuted}`}>
+          {buddyIdentity.speciesEmoji} {buddyIdentity.speciesName}
+        </p>
+      )}
+
       <div
         key={isThanking ? "thank-bubble" : `bubble-${bubblePopKey}`}
-        className={`relative w-full rounded-2xl text-left shadow-md ${theme.bubbleBg} ${
+        className={`relative w-full rounded-2xl text-left shadow-sm ring-1 ring-black/[0.03] ${theme.bubbleBg} ${
           compact ? "min-h-[4.5rem] px-2.5 py-2" : "max-w-xs px-4 py-3"
         } ${!isThanking ? "animate-bubble-pop" : ""}`}
       >

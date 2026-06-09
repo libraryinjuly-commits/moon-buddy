@@ -25,6 +25,14 @@ export interface MoodStatistics {
   bad: number;
 }
 
+/** Tamagotchi-style procedural sprite genes (part IDs 1–10 + body color) — deprecated, kept for legacy saves */
+export interface CompanionGenes {
+  bodyType: number;
+  eyesType: number;
+  mouthType: number;
+  color: string;
+}
+
 export interface CompanionState {
   id: string;
   birthDate: string;

@@ -1,46 +1,40 @@
-import type { TemperamentGroup } from "@/types";
+/** Four growth stages from progress (0–100%). */
+export type GrowthStage = "sprout" | "bud" | "bloom" | "ascension";
 
-/** Four-band visual evolution driven by growthProgress (0–100). */
-export type EvolutionVisualStage = 1 | 2 | 3 | 4;
-
-export function getEvolutionVisualStage(progress: number): EvolutionVisualStage {
+/** 1단계 새싹 0–25% · 2단계 꽃봉오리 26–50% · 3단계 만개 51–75% · 4단계 별빛 76–100% */
+export function getGrowthStageFromProgress(progress: number): GrowthStage {
   const clamped = Math.min(100, Math.max(0, progress));
-  if (clamped <= 25) return 1;
-  if (clamped <= 50) return 2;
-  if (clamped <= 75) return 3;
-  return 4;
+  if (clamped <= 25) return "sprout";
+  if (clamped <= 50) return "bud";
+  if (clamped <= 75) return "bloom";
+  return "ascension";
 }
 
-/**
- * Dummy asset map — replace `imagePath` with real filenames when art is ready.
- * e.g. `/assets/companions/nf/daldal-stage-1-sprout.png`
- */
-export const EVOLUTION_ASSET_MAP: Record<
-  TemperamentGroup,
-  Record<EvolutionVisualStage, { imagePath: string; placeholderEmoji: string }>
-> = {
-  NF: {
-    1: { imagePath: "/assets/companions/nf/daldal-stage-1-sprout.png", placeholderEmoji: "🌱" },
-    2: { imagePath: "/assets/companions/nf/daldal-stage-2-bud.png", placeholderEmoji: "🌷" },
-    3: { imagePath: "/assets/companions/nf/daldal-stage-3-bloom.png", placeholderEmoji: "🌸" },
-    4: { imagePath: "/assets/companions/nf/daldal-stage-4-pre-ascend.png", placeholderEmoji: "✨" },
-  },
-  NT: {
-    1: { imagePath: "/assets/companions/nt/starfox-stage-1-sprout.png", placeholderEmoji: "🌱" },
-    2: { imagePath: "/assets/companions/nt/starfox-stage-2-bud.png", placeholderEmoji: "🌷" },
-    3: { imagePath: "/assets/companions/nt/starfox-stage-3-bloom.png", placeholderEmoji: "🌸" },
-    4: { imagePath: "/assets/companions/nt/starfox-stage-4-pre-ascend.png", placeholderEmoji: "✨" },
-  },
-  SJ: {
-    1: { imagePath: "/assets/companions/sj/cloudbear-stage-1-sprout.png", placeholderEmoji: "🌱" },
-    2: { imagePath: "/assets/companions/sj/cloudbear-stage-2-bud.png", placeholderEmoji: "🌷" },
-    3: { imagePath: "/assets/companions/sj/cloudbear-stage-3-bloom.png", placeholderEmoji: "🌸" },
-    4: { imagePath: "/assets/companions/sj/cloudbear-stage-4-pre-ascend.png", placeholderEmoji: "✨" },
-  },
-  SP: {
-    1: { imagePath: "/assets/companions/sp/dreamsquirrel-stage-1-sprout.png", placeholderEmoji: "🌱" },
-    2: { imagePath: "/assets/companions/sp/dreamsquirrel-stage-2-bud.png", placeholderEmoji: "🌷" },
-    3: { imagePath: "/assets/companions/sp/dreamsquirrel-stage-3-bloom.png", placeholderEmoji: "🌸" },
-    4: { imagePath: "/assets/companions/sp/dreamsquirrel-stage-4-pre-ascend.png", placeholderEmoji: "✨" },
-  },
-};
+/** Crown badge emoji by progress tier (0–25 / 26–50 / 51–75 / 76–100). */
+export function getGrowthBadgeEmoji(progress: number): string {
+  switch (getGrowthStageFromProgress(progress)) {
+    case "sprout":
+      return "🌱";
+    case "bud":
+      return "🌷";
+    case "bloom":
+      return "🌸";
+    case "ascension":
+      return "✨";
+  }
+}
+
+/** Localized growth stage names shared by Companion badge and growth card. */
+export interface GrowthStageLabels {
+  sprout: string;
+  bud: string;
+  bloom: string;
+  ascension: string;
+}
+
+export function getGrowthStageLabel(
+  progress: number,
+  labels: GrowthStageLabels,
+): string {
+  return labels[getGrowthStageFromProgress(progress)];
+}

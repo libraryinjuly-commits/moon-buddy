@@ -23,7 +23,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#7c3aed",
+  themeColor: "#709BBF",
 };
 
 export default function RootLayout({
@@ -36,7 +36,7 @@ export default function RootLayout({
       lang="ko"
       className={`${notoSansKr.variable} ${dmSans.variable} h-full antialiased`}
     >
-      <body className="h-full overflow-hidden bg-gradient-to-br from-slate-300 via-slate-200 to-violet-200/70 font-sans text-violet-950">
+      <body className="h-full overflow-hidden bg-[#FDFCF5] font-sans text-[#5C5470]">
         <div className="flex h-dvh w-full items-stretch justify-center overflow-hidden md:py-3">
           {children}
         </div>

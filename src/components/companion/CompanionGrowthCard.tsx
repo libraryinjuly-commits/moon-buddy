@@ -1,10 +1,10 @@
 "use client";
 
+import { getGrowthStageLabel } from "@/lib/companionEvolution";
 import type { LocaleContent } from "@/lib/i18n/types";
-import type { CompanionStage, TemperamentTheme } from "@/types";
+import type { TemperamentTheme } from "@/types";
 
 interface CompanionGrowthCardProps {
-  stage: CompanionStage;
   stageProgress: number;
   growthProgress: number;
   locale: LocaleContent;
@@ -13,7 +13,6 @@ interface CompanionGrowthCardProps {
 }
 
 export function CompanionGrowthCard({
-  stage,
   stageProgress,
   growthProgress,
   locale,
@@ -21,11 +20,11 @@ export function CompanionGrowthCard({
   ascensionPending = false,
 }: CompanionGrowthCardProps) {
   const { ui } = locale;
-  const stageLabel = ui.companionStages[stage];
+  const stageLabel = getGrowthStageLabel(growthProgress, ui.growthStageLabels);
 
   return (
     <div
-      className={`rounded-2xl border px-3 py-2 shadow-sm ${theme.accentSoft} ${theme.accentBorder}`}
+      className={`rounded-2xl border px-3 py-2 backdrop-blur-sm bg-white/45 ${theme.accentSoft} ${theme.accentBorder} ${theme.glowClass}`}
     >
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0 text-left">
@@ -37,7 +36,7 @@ export function CompanionGrowthCard({
           </p>
         </div>
         <span
-          className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${theme.badgeBg} text-white`}
+          className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold text-white/95 ${theme.badgeBg}`}
         >
           {ui.companionGrowthNextProgress.replace(
             "{percent}",
@@ -46,9 +45,9 @@ export function CompanionGrowthCard({
         </span>
       </div>
 
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/60">
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#FDFCF5]/70">
         <div
-          className={`h-full rounded-full transition-all duration-500 ${theme.accentButton.split(" ")[0]}`}
+          className={`h-full rounded-full opacity-85 transition-all duration-500 ${theme.accentButton.split(" ")[0]}`}
           style={{ width: `${stageProgress}%` }}
         />
       </div>

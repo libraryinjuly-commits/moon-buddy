@@ -2,6 +2,17 @@
 
 @theme inline {
   --font-sans: var(--font-noto-sans-kr), system-ui, sans-serif;
+  --color-app-main: #709bbf;
+  --color-app-bg: #fdfcf5;
+  --color-pastel-fox: #b2a4d4;
+  --color-pastel-rabbit: #d7c4f2;
+  --color-pastel-bear: #a9def9;
+  --color-pastel-squirrel: #f7c6d7;
+}
+
+:root {
+  --app-main: #709bbf;
+  --app-bg: #fdfcf5;
 }
 
 * {
@@ -10,6 +21,8 @@
 
 body {
   font-family: var(--font-sans);
+  background-color: var(--app-bg);
+  color: #5c5470;
 }
 
 @keyframes mascot-breathe {
@@ -155,6 +168,26 @@ body {
   animation: mascot-jelly-bounce 0.48s cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
+@keyframes growth-badge-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.14);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-growth-badge {
+  animation: growth-badge-in 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
 @keyframes bubble-pop {
   0% {
     opacity: 0.55;
@@ -235,6 +268,79 @@ body {
 
 .animate-mood-sparkle {
   animation: mood-sparkle 1.6s ease-in-out infinite;
+}
+
+@keyframes mood-interaction-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  18% {
+    transform: translateY(-12px);
+  }
+  36% {
+    transform: translateY(0);
+  }
+  52% {
+    transform: translateY(-7px);
+  }
+  68% {
+    transform: translateY(0);
+  }
+  84% {
+    transform: translateY(-3px);
+  }
+}
+
+.animate-mood-interaction-bounce {
+  animation: mood-interaction-bounce 1.5s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+}
+
+@keyframes mood-interaction-shake {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  20% {
+    transform: translateX(-5px) rotate(-1.5deg);
+  }
+  40% {
+    transform: translateX(5px) rotate(1.5deg);
+  }
+  60% {
+    transform: translateX(-3px) rotate(-0.8deg);
+  }
+  80% {
+    transform: translateX(3px) rotate(0.8deg);
+  }
+}
+
+.animate-mood-interaction-shake {
+  animation: mood-interaction-shake 1.5s ease-in-out forwards;
+}
+
+@keyframes mood-interaction-sink {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  35% {
+    transform: translateY(8px) scale(0.94);
+  }
+  55% {
+    transform: translateY(10px) scale(0.92);
+  }
+  75% {
+    transform: translateY(4px) scale(0.97);
+  }
+}
+
+.animate-mood-interaction-sink {
+  animation: mood-interaction-sink 1.5s ease-in-out forwards;
+}
+
+.mascot-motion-layer {
+  transition: transform 0.45s ease-out;
 }
 
 @keyframes star-fragment-toast {
@@ -369,6 +475,9 @@ body {
   .animate-ascension-glow,
   .animate-ascension-particle,
   .animate-mood-sparkle,
+  .animate-mood-interaction-bounce,
+  .animate-mood-interaction-shake,
+  .animate-mood-interaction-sink,
   .animate-star-fragment-toast,
   .animate-star-fragment-sparkle {
     animation: none;

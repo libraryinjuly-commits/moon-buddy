@@ -1,7 +1,7 @@
+import type { GrowthStageLabels } from "@/lib/companionEvolution";
 import type { MbtiTypeTitles } from "@/lib/mbtiTitles";
 import type { SpeechVariants } from "@/lib/pickVariant";
 import type {
-  CompanionStage,
   CycleInsight,
   CyclePhase,
   EmotionScale,
@@ -169,9 +169,8 @@ export interface LocaleUI {
   tabStars: string;
   companionGrowthLabel: string;
   companionGrowthNextProgress: string;
+  growthStageLabels: GrowthStageLabels;
   rhythmCycleLabel: string;
-  companionStages: Record<CompanionStage, string>;
-  evolutionVisualStages: Record<1 | 2 | 3 | 4, string>;
   ascendButton: string;
   weeklyConstellationBadge: string;
   weeklyConstellationTitle: string;

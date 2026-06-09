@@ -1,5 +1,10 @@
 import { DEFAULT_CYCLE_LENGTH, DEFAULT_PERIOD_LENGTH } from "@/lib/constants";
 import {
+  DEFAULT_MBTI_TYPE,
+  getTemperamentFromMbti,
+  mbtiTypeToMbti,
+} from "@/lib/mbti";
+import {
   addDays,
   calculateAverageCycleLength,
   getActivePeriod,
@@ -164,8 +169,9 @@ export function getDefaultSettings(): UserSettings {
     cycleLength: DEFAULT_CYCLE_LENGTH,
     defaultPeriodLength: DEFAULT_PERIOD_LENGTH,
     userName: "",
-    mbti: "",
-    temperament: "",
+    mbti: mbtiTypeToMbti(DEFAULT_MBTI_TYPE),
+    mbtiType: DEFAULT_MBTI_TYPE,
+    temperament: getTemperamentFromMbti(DEFAULT_MBTI_TYPE),
     buddyCustomName: "",
     language: "KO",
   };

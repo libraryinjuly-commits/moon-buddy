@@ -62,7 +62,7 @@ export interface ArchiveAscensionResult {
 }
 
 /**
- * 승천 완료: 별 아카이브에 저장 + 새싹 달달이(0%)로 리셋.
+ * 승천 완료: 별 아카이브에 저장 + 새싹 버디(0%)로 리셋.
  * Supabase 전환 시 이 함수 내부에서 INSERT/UPDATE 호출로 교체.
  */
 export function archiveAscendedStar(

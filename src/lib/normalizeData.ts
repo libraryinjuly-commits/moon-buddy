@@ -10,7 +10,12 @@ import {
 } from "@/lib/companionLifecycle";
 import { applyV2Fields } from "@/lib/migrations/v1ToV2";
 import { isTemperamentGroup } from "@/lib/companionSpecies";
-import { getTemperamentFromMbti, normalizeMbti } from "@/lib/mbti";
+import {
+  getTemperamentFromMbti,
+  mbtiTypeToMbti,
+  normalizeMbti,
+  syncMbtiFields,
+} from "@/lib/mbti";
 import type { TemperamentGroup } from "@/types";
 import type {
   DailyMoodLogEntry,
@@ -186,20 +191,26 @@ export function normalizeData(data: LegacyMoonBuddyData): MoonBuddyData {
     },
     dailyMoodLogs: normalizeDailyMoodLogs(data),
     settings: (() => {
-      const mbti = normalizeMbti(data.settings?.mbti ?? "");
+      const { mbti, mbtiType } = syncMbtiFields(
+        data.settings?.mbti,
+        data.settings?.mbtiType,
+      );
       const temperament =
         data.settings?.temperament &&
         isTemperamentGroup(data.settings.temperament)
           ? data.settings.temperament
           : mbti
             ? getTemperamentFromMbti(mbti)
-            : "";
+            : mbtiType
+              ? getTemperamentFromMbti(mbtiTypeToMbti(mbtiType))
+              : "";
 
       return {
         ...DEFAULT_DATA.settings,
         ...data.settings,
         language,
         mbti,
+        mbtiType,
         temperament,
       };
     })(),

@@ -20,18 +20,19 @@ import {
   getPersonaDefinition,
   resolveCharacterName,
 } from "@/lib/persona";
+import type { MbtiTypeKey } from "@/lib/mbti";
 import type { Language, TemperamentGroup } from "@/types";
 
 interface ProfileSetupProps {
   userName: string;
-  mbti: string;
+  mbtiType: MbtiTypeKey;
   buddyCustomName: string;
   language: Language;
   ui: LocaleUI;
   mbtiTypeTitles: MbtiTypeTitles;
   onSave: (
     userName: string,
-    mbti: string,
+    mbtiType: MbtiTypeKey,
     buddyCustomName: string,
     language: Language,
   ) => void;
@@ -45,7 +46,7 @@ interface ProfileSetupProps {
 
 export function ProfileSetup({
   userName,
-  mbti,
+  mbtiType,
   buddyCustomName,
   language,
   ui,
@@ -59,19 +60,20 @@ export function ProfileSetup({
   variant = "onboarding",
 }: ProfileSetupProps) {
   const [nameInput, setNameInput] = useState(userName);
-  const [mbtiInput, setMbtiInput] = useState(mbti);
+  const [mbtiTypeInput, setMbtiTypeInput] = useState<MbtiTypeKey>(mbtiType);
   const [buddyNameInput, setBuddyNameInput] = useState(buddyCustomName);
   const [languageInput, setLanguageInput] = useState<Language>(language);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     setNameInput(userName);
-    setMbtiInput(mbti);
+    setMbtiTypeInput(mbtiType);
     setBuddyNameInput(buddyCustomName);
     setLanguageInput(language);
-  }, [userName, mbti, buddyCustomName, language]);
+  }, [userName, mbtiType, buddyCustomName, language]);
 
-  const temperament = getTemperamentFromMbti(mbtiInput || "INFP");
+  const mbtiCode = mbtiTypeInput.toUpperCase();
+  const temperament = getTemperamentFromMbti(mbtiCode);
   const theme = getTemperamentTheme(temperament);
   const species = getCompanionSpecies(temperament);
   const persona = getPersonaDefinition(temperament, languageInput);
@@ -81,12 +83,12 @@ export function ProfileSetup({
     persona.defaultBuddyName,
   );
   const previewTitle = formatPersonaTitle(persona.personaRole, resolvedBuddyName);
-  const selectedMbtiTitle = getMbtiTypeTitle(mbtiInput, mbtiTypeTitles);
+  const selectedMbtiTitle = getMbtiTypeTitle(mbtiCode, mbtiTypeTitles);
 
   function handleSave() {
     onSave(
       nameInput.trim(),
-      mbtiInput,
+      mbtiTypeInput,
       buddyNameInput.trim(),
       languageInput,
     );
@@ -165,7 +167,8 @@ export function ProfileSetup({
             {TEMPERAMENT_GROUPS.map((group) => (
               <div key={group} className="grid grid-cols-4 gap-1.5">
                 {MBTI_BY_GROUP[group as TemperamentGroup].map((type) => {
-                  const isSelected = mbtiInput === type;
+                  const typeKey = type.toLowerCase() as MbtiTypeKey;
+                  const isSelected = mbtiTypeInput === typeKey;
                   const typeTitle = mbtiTypeTitles[type];
 
                   return (
@@ -178,7 +181,7 @@ export function ProfileSetup({
                       </p>
                       <button
                         type="button"
-                        onClick={() => setMbtiInput(type)}
+                        onClick={() => setMbtiTypeInput(typeKey)}
                         aria-label={`${type} ${typeTitle}`}
                         className={`rounded-lg border px-1 py-2 text-xs font-semibold transition active:scale-95 ${
                           isSelected
@@ -196,7 +199,7 @@ export function ProfileSetup({
           </div>
         </div>
 
-        {mbtiInput && selectedMbtiTitle && (
+        {mbtiTypeInput && selectedMbtiTitle && (
           <div className={`rounded-xl ${accentSoft} px-3 py-2.5`}>
             <div className="flex items-center gap-3">
               <div
@@ -210,7 +213,7 @@ export function ProfileSetup({
               </div>
               <div className="min-w-0 flex-1">
                 <p className={`text-[10px] font-bold ${accentMuted}`}>
-                  {mbtiInput} · {theme.groupLabel}
+                  {mbtiCode} · {theme.groupLabel}
                 </p>
                 <p className={`mt-0.5 text-xs font-semibold ${accentText}`}>
                   {species.emoji} {species.name[languageInput]}

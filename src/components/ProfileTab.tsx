@@ -3,6 +3,7 @@
 import { ProfileSetup } from "@/components/ProfileSetup";
 import type { LocaleContent } from "@/lib/i18n/types";
 import { isProfileComplete } from "@/lib/profile";
+import type { MbtiTypeKey } from "@/lib/mbti";
 import type { TemperamentTheme, UserSettings } from "@/types";
 
 interface ProfileTabProps {
@@ -11,7 +12,7 @@ interface ProfileTabProps {
   theme: TemperamentTheme;
   onSave: (
     userName: string,
-    mbti: string,
+    mbtiType: MbtiTypeKey,
     buddyCustomName: string,
     language: UserSettings["language"],
   ) => void;
@@ -30,7 +31,7 @@ export function ProfileTab({
     <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pb-1.5">
       <ProfileSetup
         userName={settings.userName}
-        mbti={settings.mbti}
+        mbtiType={settings.mbtiType}
         buddyCustomName={settings.buddyCustomName}
         language={settings.language}
         ui={ui}

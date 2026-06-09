@@ -14,7 +14,7 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({
-  logoColorClass = "text-violet-600",
+  logoColorClass = "text-[#709BBF]",
   ui,
 }: AppHeaderProps) {
   const [sheetOpen, setSheetOpen] = useState(false);

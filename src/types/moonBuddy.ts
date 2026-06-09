@@ -1,4 +1,5 @@
 import type { CompanionState, StarCollectionState } from "@/types/companion";
+import type { MbtiTypeKey } from "@/lib/mbti";
 
 export type TemperamentGroup = "NT" | "NF" | "SJ" | "SP";
 
@@ -86,7 +87,10 @@ export interface UserSettings {
   cycleLength: number;
   defaultPeriodLength: number;
   userName: string;
+  /** Uppercase MBTI code (legacy + temperament derivation) */
   mbti: string;
+  /** Lowercase MBTI key for character growth assets, e.g. `entp`, `intj` */
+  mbtiType: MbtiTypeKey;
   /** Derived from MBTI group; stored for mascot identity and star memories */
   temperament: TemperamentGroup | "";
   buddyCustomName: string;
