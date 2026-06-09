@@ -68,6 +68,7 @@ export function useDevTools(
         prev.periodHistory.find((entry) => entry.endDate === null)?.id ??
           prev.periodHistory[0]?.id ??
           null,
+        prev.starCollection.stars.length,
       ),
       character: { level: 1, exp: 0, totalMoodLogs: 0 },
     }));

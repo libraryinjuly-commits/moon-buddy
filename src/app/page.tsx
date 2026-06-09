@@ -4,6 +4,7 @@ import { HeartPulse, Star, User } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { AscensionModal } from "@/components/companion/AscensionModal";
+import { WeeklyConstellation } from "@/components/companion/WeeklyConstellation";
 import { DevTools } from "@/components/dev/DevTools";
 import { AppHeader } from "@/components/AppHeader";
 import { CharacterRoom } from "@/components/CharacterRoom";
@@ -11,6 +12,7 @@ import { StarCollectionPage } from "@/components/stars/StarCollectionPage";
 import { ConditionTab } from "@/components/ConditionTab";
 import { ProfileTab } from "@/components/ProfileTab";
 import { TabBar } from "@/components/TabBar";
+import { Toast } from "@/components/Toast";
 import { useBuddySpeech } from "@/hooks/useBuddySpeech";
 import { useMoonBuddy } from "@/hooks/useMoonBuddy";
 import { companionStageToDisplayLevel } from "@/lib/companionLifecycle";
@@ -60,6 +62,7 @@ export default function Home() {
     companion,
     stageProgress,
     ascensionPending,
+    beginAscension,
     finishAscension,
     stars,
     starCount,
@@ -74,7 +77,10 @@ export default function Home() {
     null,
   );
   const [liveSpeech, setLiveSpeech] = useState<string | null>(null);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [showWeeklyConstellation, setShowWeeklyConstellation] = useState(false);
   const liveSpeechTimer = useRef<number | undefined>(undefined);
+  const toastTimer = useRef<number | undefined>(undefined);
   const { ui } = locale;
 
   const tabs = useMemo(
@@ -110,6 +116,13 @@ export default function Home() {
       setShowAscension(true);
     }
   }, [ascensionPending]);
+
+  useEffect(() => {
+    return () => {
+      window.clearTimeout(liveSpeechTimer.current);
+      window.clearTimeout(toastTimer.current);
+    };
+  }, []);
 
   const homePhase =
     menstruationStatus === "ON_PERIOD" ? "menstrual" : (cycleInfo?.phase ?? null);
@@ -171,12 +184,28 @@ export default function Home() {
     }
   }
 
-  function handleLiveMood(mood: LiveMood) {
-    const speech = logLiveMood(mood);
+  function showStarFragmentToast() {
+    setToastVisible(true);
+    window.clearTimeout(toastTimer.current);
+    toastTimer.current = window.setTimeout(() => setToastVisible(false), 2800);
+  }
+
+  function handleCompleteMood(mood: LiveMood) {
+    const { speech, constellationComplete } = logLiveMood(mood);
     setThankTrigger((count) => count + 1);
     setLiveSpeech(speech);
+    showStarFragmentToast();
+    if (constellationComplete) {
+      setShowWeeklyConstellation(true);
+    }
     window.clearTimeout(liveSpeechTimer.current);
     liveSpeechTimer.current = window.setTimeout(() => setLiveSpeech(null), 5000);
+  }
+
+  function handleAscend() {
+    if (beginAscension()) {
+      setShowAscension(true);
+    }
   }
 
   const shellClass =
@@ -227,9 +256,13 @@ export default function Home() {
               thankSpeech={thankSpeech}
               buddyIdentity={buddyIdentity}
               thankTrigger={thankTrigger}
+              temperament={temperament}
+              language={data.settings.language}
+              userName={data.settings.userName}
               locale={locale}
               theme={temperamentTheme}
-              onLiveMood={handleLiveMood}
+              onCompleteMood={handleCompleteMood}
+              onAscend={handleAscend}
               onMascotTap={onSpeechTap}
               canCycleSpeech={canCycle}
               mascotTapHint={ui.mascotTapHint}
@@ -304,6 +337,16 @@ export default function Home() {
         theme={temperamentTheme}
         onComplete={() => finishAscension()}
         onClose={() => setShowAscension(false)}
+      />
+
+      <Toast message={ui.starFragmentToast} visible={toastVisible} />
+
+      <WeeklyConstellation
+        open={showWeeklyConstellation}
+        dailyMoodLogs={data.dailyMoodLogs}
+        locale={locale}
+        theme={temperamentTheme}
+        onClose={() => setShowWeeklyConstellation(false)}
       />
 
       {devTools}

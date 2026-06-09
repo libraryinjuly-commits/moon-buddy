@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { BuddyTitle } from "@/components/BuddyTitle";
 import { MascotSvg } from "@/components/MascotSvg";
@@ -24,6 +24,7 @@ interface MascotCharacterProps {
   onMascotTap?: () => void;
   mascotTapHint?: string;
   canCycleSpeech?: boolean;
+  portrait?: ReactNode;
 }
 
 const TIER_GLOW: Record<number, string> = {
@@ -50,6 +51,7 @@ export function MascotCharacter({
   onMascotTap,
   mascotTapHint,
   canCycleSpeech = false,
+  portrait,
 }: MascotCharacterProps) {
   const tier = getEvolutionTier(level);
   const ringClass = TIER_RING[tier];
@@ -143,11 +145,13 @@ export function MascotCharacter({
               : "cursor-default"
           }`}
         >
-          <MascotSvg
-            phase={mascot.phase}
-            level={level}
-            temperament={mascot.temperament}
-          />
+          {portrait ?? (
+            <MascotSvg
+              phase={mascot.phase}
+              level={level}
+              temperament={mascot.temperament}
+            />
+          )}
           <span
             className={`pointer-events-none absolute -bottom-2 max-w-[5.5rem] truncate rounded-full px-2 py-0.5 text-[10px] font-bold text-white ${theme.badgeBg}`}
           >

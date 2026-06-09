@@ -1,16 +1,21 @@
 "use client";
 
+import { useMemo, useState } from "react";
+
+import { Companion } from "@/components/companion/Companion";
 import { CompanionGrowthCard } from "@/components/companion/CompanionGrowthCard";
 import { FortuneCookieFloating } from "@/components/FortuneCookieFloating";
-import { MascotCharacter } from "@/components/MascotCharacter";
 import { QuickMoodButtons } from "@/components/QuickMoodButtons";
-import { LIVE_MOODS } from "@/lib/liveMood";
+import { getLiveMoodReaction, LIVE_MOODS } from "@/lib/liveMood";
+import { getMascotPhaseForMood } from "@/lib/moodMascot";
 import type { LocaleContent } from "@/lib/i18n/types";
 import type {
   BuddyIdentity,
   CompanionStage,
+  Language,
   LiveMood,
   MascotConfig,
+  TemperamentGroup,
   TemperamentTheme,
 } from "@/types";
 
@@ -26,9 +31,13 @@ interface CharacterRoomProps {
   thankSpeech: string;
   buddyIdentity: BuddyIdentity;
   thankTrigger?: number;
+  temperament: TemperamentGroup;
+  language: Language;
+  userName: string;
   locale: LocaleContent;
   theme: TemperamentTheme;
-  onLiveMood: (mood: LiveMood) => void;
+  onCompleteMood: (mood: LiveMood) => void;
+  onAscend?: () => void;
   onMascotTap?: () => void;
   canCycleSpeech?: boolean;
   mascotTapHint?: string;
@@ -49,9 +58,13 @@ export function CharacterRoom({
   thankSpeech,
   buddyIdentity,
   thankTrigger,
+  temperament,
+  language,
+  userName,
   locale,
   theme,
-  onLiveMood,
+  onCompleteMood,
+  onAscend,
   onMascotTap,
   canCycleSpeech,
   mascotTapHint,
@@ -60,13 +73,42 @@ export function CharacterRoom({
   onOpenFortuneCookie,
 }: CharacterRoomProps) {
   const { ui } = locale;
+  const [selectedMood, setSelectedMood] = useState<LiveMood | null>(null);
+
   const quickOptions = LIVE_MOODS.map((mood) => ({
     value: mood,
     emoji: locale.liveMoodEmojis[mood],
     label: locale.liveMoodLabels[mood],
   }));
 
-  const stageLabel = ui.companionStages[companionStage];
+  const displayMascot = useMemo(() => {
+    if (!selectedMood) return mascot;
+    return {
+      ...mascot,
+      phase: getMascotPhaseForMood(selectedMood),
+    };
+  }, [mascot, selectedMood]);
+
+  const previewSpeech = useMemo(() => {
+    if (!selectedMood) return null;
+    return getLiveMoodReaction(selectedMood, language, temperament, {
+      userName,
+      characterName: buddyIdentity.customName,
+    });
+  }, [
+    selectedMood,
+    language,
+    temperament,
+    userName,
+    buddyIdentity.customName,
+  ]);
+
+  const bubbleSpeech = liveSpeech ?? previewSpeech ?? speech;
+
+  function handleCompleteMood() {
+    if (!selectedMood) return;
+    onCompleteMood(selectedMood);
+  }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
@@ -79,17 +121,17 @@ export function CharacterRoom({
           theme={theme}
           ui={locale.ui}
         />
-        <MascotCharacter
-          mascot={mascot}
-          level={displayLevel}
+        <Companion
+          mascot={displayMascot}
+          growthProgress={growthProgress}
+          displayLevel={displayLevel}
           companionStage={companionStage}
-          stageLabel={stageLabel}
-          speech={liveSpeech ?? speech}
+          speech={bubbleSpeech}
           thankSpeech={thankSpeech}
           buddyIdentity={buddyIdentity}
           thankTrigger={thankTrigger}
-          compact
-          showTitle
+          locale={locale}
+          onAscend={onAscend}
           onMascotTap={onMascotTap}
           canCycleSpeech={canCycleSpeech}
           mascotTapHint={mascotTapHint}
@@ -103,8 +145,17 @@ export function CharacterRoom({
         <QuickMoodButtons
           options={quickOptions}
           theme={theme}
-          onSelect={onLiveMood}
+          selectedMood={selectedMood}
+          onSelect={setSelectedMood}
         />
+        <button
+          type="button"
+          disabled={!selectedMood}
+          onClick={handleCompleteMood}
+          className={`mt-2 w-full rounded-xl px-3 py-2.5 text-xs font-bold text-white shadow-sm transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-45 ${theme.accentButton} hover:opacity-95`}
+        >
+          {ui.moodCompleteButton}
+        </button>
       </div>
 
       <CompanionGrowthCard

@@ -194,6 +194,7 @@ export function completeAscension(
   language: Language,
   cycleId: string | null,
   temperament: TemperamentGroup,
+  ascendedCompanionCount: number,
 ): AscensionResult {
   const star = createStarMemory(
     companion,
@@ -202,6 +203,10 @@ export function completeAscension(
     language,
     temperament,
   );
-  const newCompanion = createNewCompanion(ascensionDate, cycleId);
+  const newCompanion = createNewCompanion(
+    ascensionDate,
+    cycleId,
+    ascendedCompanionCount,
+  );
   return { star, newCompanion };
 }

@@ -132,6 +132,8 @@ export interface LocaleUI {
   journeyRhythmTitle: string;
   journeyTimelineTitle: string;
   moodFeedTitle: string;
+  moodCompleteButton: string;
+  starFragmentToast: string;
   rhythmCardTitle: string;
   rhythmLogHint: string;
   todayRhythm: string;
@@ -168,6 +170,14 @@ export interface LocaleUI {
   companionGrowthNextProgress: string;
   rhythmCycleLabel: string;
   companionStages: Record<CompanionStage, string>;
+  evolutionVisualStages: Record<1 | 2 | 3 | 4, string>;
+  ascendButton: string;
+  weeklyConstellationBadge: string;
+  weeklyConstellationTitle: string;
+  weeklyConstellationDesc: string;
+  weeklyConstellationClose: string;
+  weeklyConstellationWeekStart: string;
+  weeklyConstellationWeekEnd: string;
   ascensionReadyHint: string;
   ascensionTitle: string;
   ascensionDialogues: string[];

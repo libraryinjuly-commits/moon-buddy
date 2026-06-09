@@ -35,6 +35,10 @@ export interface CompanionState {
   moodStatistics: MoodStatistics;
   cycleId: string | null;
   ascensionPending: boolean;
+  /** Onboarding fast-track: 3 daily mood logs → 100% growth */
+  isFirstCompanion: boolean;
+  /** Weekly reward fragments; resets after 7 (reward UI handled separately) */
+  starFragments: number;
 }
 
 export interface StarMemory {

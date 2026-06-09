@@ -8,6 +8,7 @@ import {
   isAscensionReady,
   isCycleComplete,
   markAscensionPending,
+  MAX_GROWTH_PROGRESS,
 } from "@/lib/companionLifecycle";
 import {
   getCompanionSpecies,
@@ -39,6 +40,17 @@ export function useCompanion(
     [companion, cycleInfo],
   );
 
+  const beginAscension = useCallback(() => {
+    if (companion.growthProgress < MAX_GROWTH_PROGRESS) return false;
+    if (companion.ascensionPending) return true;
+
+    setData((prev) => ({
+      ...prev,
+      companion: markAscensionPending(prev.companion),
+    }));
+    return true;
+  }, [companion.ascensionPending, companion.growthProgress, setData]);
+
   const checkAscension = useCallback(() => {
     if (companion.ascensionPending) return true;
     if (readyToAscend) {
@@ -63,6 +75,7 @@ export function useCompanion(
       data.periodHistory[0]?.id ??
       null;
 
+    const ascendedCompanionCount = data.starCollection.stars.length + 1;
     const { star, newCompanion } = completeAscension(
       data.companion,
       companionName,
@@ -70,6 +83,7 @@ export function useCompanion(
       data.settings.language,
       activeCycleId,
       temperament,
+      ascendedCompanionCount,
     );
 
     setData((prev) => ({
@@ -91,6 +105,7 @@ export function useCompanion(
     cycleComplete,
     readyToAscend,
     ascensionPending: companion.ascensionPending,
+    beginAscension,
     checkAscension,
     finishAscension,
   };

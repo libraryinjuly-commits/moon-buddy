@@ -1,3 +1,4 @@
+import { DEFAULT_CYCLE_LENGTH } from "@/lib/constants";
 import { liveMoodToEmotionScale, incrementMoodStat } from "@/lib/moodScale";
 import type {
   CompanionStage,
@@ -6,13 +7,10 @@ import type {
 } from "@/types/companion";
 import type { CycleInfo, LiveMood } from "@/types/moonBuddy";
 
-const GROWTH_ENERGY: Record<string, number> = {
-  great: 5,
-  good: 4,
-  okay: 3,
-  low: 3,
-  bad: 4,
-};
+/** Fast-track onboarding: 34% → 68% → 100% over 3 daily logs */
+export const FAST_TRACK_GROWTH_DELTA = 34;
+
+export const MAX_STAR_FRAGMENTS = 7;
 
 const STAGE_THRESHOLDS: Record<CompanionStage, number> = {
   seed: 0,
@@ -41,9 +39,20 @@ export function getStageFromProgress(progress: number): CompanionStage {
   return "seed";
 }
 
-export function getGrowthEnergyForMood(mood: LiveMood): number {
-  const scale = liveMoodToEmotionScale(mood);
-  return GROWTH_ENERGY[scale] ?? 3;
+/** One daily log's share of a full cycle (~28–30 days → 100%). */
+export function getMonthlyCycleGrowthDelta(cycleLength: number): number {
+  const days = Math.max(1, Math.round(cycleLength));
+  return 100 / days;
+}
+
+export function getGrowthDeltaForFeed(
+  companion: CompanionState,
+  cycleLength: number = DEFAULT_CYCLE_LENGTH,
+): number {
+  if (companion.isFirstCompanion) {
+    return FAST_TRACK_GROWTH_DELTA;
+  }
+  return getMonthlyCycleGrowthDelta(cycleLength);
 }
 
 export interface FeedResult {
@@ -53,14 +62,16 @@ export interface FeedResult {
   newStage: CompanionStage;
   stageAdvanced: boolean;
   emotionScale: ReturnType<typeof liveMoodToEmotionScale>;
+  constellationComplete: boolean;
 }
 
 export function applyFeedToCompanion(
   companion: CompanionState,
   mood: LiveMood,
+  cycleLength: number = DEFAULT_CYCLE_LENGTH,
 ): { companion: CompanionState; feed: FeedResult } {
   const emotionScale = liveMoodToEmotionScale(mood);
-  const growthDelta = getGrowthEnergyForMood(mood);
+  const growthDelta = getGrowthDeltaForFeed(companion, cycleLength);
   const previousStage = companion.currentStage;
   const newProgress = Math.min(
     MAX_GROWTH_PROGRESS,
@@ -72,15 +83,18 @@ export function applyFeedToCompanion(
     emotionScale,
   ) as MoodStatistics;
 
-  return {
-    companion: {
+  const { companion: fedCompanion, constellationComplete } =
+    incrementStarFragments({
       ...companion,
       growthProgress: newProgress,
       currentStage: newStage,
       currentForm: newStage,
       totalFeeds: companion.totalFeeds + 1,
       moodStatistics,
-    },
+    });
+
+  return {
+    companion: fedCompanion,
     feed: {
       growthDelta,
       newProgress,
@@ -88,6 +102,7 @@ export function applyFeedToCompanion(
       newStage,
       stageAdvanced: newStage !== previousStage,
       emotionScale,
+      constellationComplete,
     },
   };
 }
@@ -148,9 +163,41 @@ export function companionStageToDisplayLevel(stage: CompanionStage): number {
   return map[stage];
 }
 
+export function incrementStarFragments(
+  companion: CompanionState,
+): { companion: CompanionState; constellationComplete: boolean } {
+  const nextCount = companion.starFragments + 1;
+  const constellationComplete = nextCount >= MAX_STAR_FRAGMENTS;
+  return {
+    companion: {
+      ...companion,
+      starFragments: constellationComplete ? 0 : nextCount,
+    },
+    constellationComplete,
+  };
+}
+
+export function resolveIsFirstCompanion(ascendedCompanionCount: number): boolean {
+  return ascendedCompanionCount === 0;
+}
+
+export function normalizeCompanionState(
+  companion: CompanionState,
+  ascendedCompanionCount: number,
+): CompanionState {
+  return {
+    ...companion,
+    isFirstCompanion:
+      companion.isFirstCompanion ??
+      resolveIsFirstCompanion(ascendedCompanionCount),
+    starFragments: companion.starFragments ?? 0,
+  };
+}
+
 export function createNewCompanion(
   birthDate: string,
   cycleId: string | null = null,
+  ascendedCompanionCount = 0,
 ): CompanionState {
   return {
     id: createCompanionId(),
@@ -162,5 +209,7 @@ export function createNewCompanion(
     moodStatistics: { great: 0, good: 0, okay: 0, low: 0, bad: 0 },
     cycleId,
     ascensionPending: false,
+    isFirstCompanion: resolveIsFirstCompanion(ascendedCompanionCount),
+    starFragments: 0,
   };
 }

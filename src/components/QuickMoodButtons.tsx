@@ -9,12 +9,14 @@ interface QuickMoodOption {
 interface QuickMoodButtonsProps {
   options: QuickMoodOption[];
   theme: TemperamentTheme;
+  selectedMood?: LiveMood | null;
   onSelect: (mood: LiveMood) => void;
 }
 
 export function QuickMoodButtons({
   options,
   theme,
+  selectedMood = null,
   onSelect,
 }: QuickMoodButtonsProps) {
   return (
@@ -24,7 +26,12 @@ export function QuickMoodButtons({
           key={option.value}
           type="button"
           onClick={() => onSelect(option.value)}
-          className={`flex flex-col items-center justify-center gap-0.5 rounded-lg border px-0.5 py-1.5 text-center shadow-sm transition active:scale-95 hover:opacity-90 ${theme.accentBorder} bg-white/90 ${theme.accentText}`}
+          aria-pressed={selectedMood === option.value}
+          className={`flex flex-col items-center justify-center gap-0.5 rounded-lg border px-0.5 py-1.5 text-center shadow-sm transition active:scale-95 hover:opacity-90 ${theme.accentBorder} ${
+            selectedMood === option.value
+              ? `${theme.accentSoft} ring-2 ring-violet-300 ring-offset-1`
+              : "bg-white/90"
+          } ${theme.accentText}`}
         >
           <span className="text-base leading-none">{option.emoji}</span>
           <span className="text-[8px] font-bold leading-tight">

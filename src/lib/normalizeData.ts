@@ -4,7 +4,10 @@ import { syncLivePeriodFromHistory } from "@/lib/livePeriodSync";
 import { LIVE_MOODS, migrateLegacyLiveMood } from "@/lib/liveMood";
 import { getLivePeriodMessage } from "@/lib/livePeriod";
 import { createPeriodId } from "@/lib/periodHistory";
-import { createNewCompanion } from "@/lib/companionLifecycle";
+import {
+  createNewCompanion,
+  normalizeCompanionState,
+} from "@/lib/companionLifecycle";
 import { applyV2Fields } from "@/lib/migrations/v1ToV2";
 import { isTemperamentGroup } from "@/lib/companionSpecies";
 import { getTemperamentFromMbti, normalizeMbti } from "@/lib/mbti";
@@ -201,7 +204,6 @@ export function normalizeData(data: LegacyMoonBuddyData): MoonBuddyData {
       };
     })(),
     schemaVersion: data.schemaVersion ?? 1,
-    companion: data.companion ?? DEFAULT_DATA.companion,
     starCollection: {
       ...(data.starCollection ?? DEFAULT_DATA.starCollection),
       stars: normalizeStarMemories(
@@ -218,9 +220,18 @@ export function normalizeData(data: LegacyMoonBuddyData): MoonBuddyData {
     },
   };
 
-  if (base.schemaVersion < 2) {
-    return applyV2Fields(base);
+  const ascendedCompanionCount = base.starCollection.stars.length;
+  const withCompanion: MoonBuddyData = {
+    ...base,
+    companion: normalizeCompanionState(
+      base.companion ?? DEFAULT_DATA.companion,
+      ascendedCompanionCount,
+    ),
+  };
+
+  if (withCompanion.schemaVersion < 2) {
+    return applyV2Fields(withCompanion);
   }
 
-  return base;
+  return withCompanion;
 }

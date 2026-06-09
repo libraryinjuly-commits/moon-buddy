@@ -1,4 +1,7 @@
-import { getStageFromProgress } from "@/lib/companionLifecycle";
+import {
+  getStageFromProgress,
+  resolveIsFirstCompanion,
+} from "@/lib/companionLifecycle";
 import { emptyMoodStatistics, liveMoodToEmotionScale } from "@/lib/moodScale";
 import { getTodayDateString } from "@/lib/storage";
 import type {
@@ -73,6 +76,8 @@ export function migrateCharacterToCompanion(
     moodStatistics,
     cycleId: inferCycleId(periodHistory),
     ascensionPending: false,
+    isFirstCompanion: resolveIsFirstCompanion(0),
+    starFragments: 0,
   };
 }
 

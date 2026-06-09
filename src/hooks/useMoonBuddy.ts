@@ -107,6 +107,7 @@ export function useMoonBuddy() {
     cycleComplete: companionApi.cycleComplete,
     readyToAscend: companionApi.readyToAscend,
     ascensionPending: companionApi.ascensionPending,
+    beginAscension: companionApi.beginAscension,
     checkAscension: companionApi.checkAscension,
     finishAscension: companionApi.finishAscension,
     stars: starCollectionApi.stars,

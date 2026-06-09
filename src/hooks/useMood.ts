@@ -15,6 +15,11 @@ import { resolveCharacterName, getPersonaDefinition } from "@/lib/persona";
 import { getTodayDateString } from "@/lib/storage";
 import type { CycleInfo, LiveMood, MoonBuddyData } from "@/types/moonBuddy";
 
+export interface MoodLogResult {
+  speech: string;
+  constellationComplete: boolean;
+}
+
 export function useMood(
   data: MoonBuddyData,
   setData: SetMoonBuddyData,
@@ -31,7 +36,11 @@ export function useMood(
   }, [data.dailyMoodLogs]);
 
   const appendMoodEntry = useCallback(
-    (date: string, mood: LiveMood, applyCompanionFeed: boolean): string | null => {
+    (
+      date: string,
+      mood: LiveMood,
+      applyCompanionFeed: boolean,
+    ): MoodLogResult | null => {
       const entry = { date, mood, timestamp: Date.now() };
       const { settings } = data;
       const temperament = getTemperamentFromMbti(settings.mbti);
@@ -41,14 +50,21 @@ export function useMood(
         persona.defaultBuddyName,
       );
 
+      let constellationComplete = false;
+
       setData((prev) => {
         let companion = prev.companion;
 
         if (applyCompanionFeed) {
-          const { companion: fedCompanion } = applyFeedToCompanion(
+          const cycleLength =
+            cycleInfo?.cycleLength ?? prev.settings.cycleLength;
+          const { companion: fedCompanion, feed } = applyFeedToCompanion(
             prev.companion,
             mood,
+            cycleLength,
           );
+
+          constellationComplete = feed.constellationComplete;
 
           const withCycle: typeof fedCompanion = {
             ...fedCompanion,
@@ -74,20 +90,28 @@ export function useMood(
         };
       });
 
-      return applyCompanionFeed
-        ? getLiveMoodReaction(mood, settings.language, temperament, {
-            userName: settings.userName,
-            characterName,
-          })
-        : null;
+      if (!applyCompanionFeed) return null;
+
+      return {
+        speech: getLiveMoodReaction(mood, settings.language, temperament, {
+          userName: settings.userName,
+          characterName,
+        }),
+        constellationComplete,
+      };
     },
     [data, setData, cycleInfo],
   );
 
   const logLiveMood = useCallback(
-    (mood: LiveMood): string => {
+    (mood: LiveMood): MoodLogResult => {
       const today = getTodayDateString();
-      return appendMoodEntry(today, mood, true) ?? "";
+      return (
+        appendMoodEntry(today, mood, true) ?? {
+          speech: "",
+          constellationComplete: false,
+        }
+      );
     },
     [appendMoodEntry],
   );

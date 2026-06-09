@@ -173,8 +173,13 @@ export function devGenerateSampleStars(
 
 export function devResetCompanion(
   cycleId: string | null = null,
+  ascendedCompanionCount = 0,
 ): CompanionState {
-  return createNewCompanion(getTodayDateString(), cycleId);
+  return createNewCompanion(
+    getTodayDateString(),
+    cycleId,
+    ascendedCompanionCount,
+  );
 }
 
 /** Keeps companion id; wipes growth and mood stats for the current cycle. */
@@ -189,6 +194,7 @@ export function devResetCompanionInPlace(
     totalFeeds: 0,
     moodStatistics: { great: 0, good: 0, okay: 0, low: 0, bad: 0 },
     ascensionPending: false,
+    starFragments: 0,
   };
 }
 
