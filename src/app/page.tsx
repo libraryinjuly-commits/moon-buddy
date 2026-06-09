@@ -8,7 +8,7 @@ import { WeeklyConstellation } from "@/components/companion/WeeklyConstellation"
 import { DevTools } from "@/components/dev/DevTools";
 import { AppHeader } from "@/components/AppHeader";
 import { CharacterRoom } from "@/components/CharacterRoom";
-import { StarCollectionPage } from "@/components/stars/StarCollectionPage";
+import { StarArchive } from "@/components/stars/StarArchive";
 import { ConditionTab } from "@/components/ConditionTab";
 import { ProfileTab } from "@/components/ProfileTab";
 import { TabBar } from "@/components/TabBar";
@@ -66,8 +66,6 @@ export default function Home() {
     finishAscension,
     stars,
     starCount,
-    preferredStarView,
-    setPreferredStarView,
   } = useMoonBuddy();
 
   const [activeTab, setActiveTab] = useState<AppTab | null>(null);
@@ -276,12 +274,10 @@ export default function Home() {
         )}
 
         {activeTab === "stars" && (
-          <StarCollectionPage
+          <StarArchive
             stars={stars}
-            preferredView={preferredStarView}
             locale={locale}
             theme={temperamentTheme}
-            onChangeView={setPreferredStarView}
           />
         )}
 
@@ -335,6 +331,7 @@ export default function Home() {
       <AscensionModal
         open={showAscension}
         companionName={buddyIdentity.customName}
+        userName={data.settings.userName}
         locale={locale}
         theme={temperamentTheme}
         onComplete={() => finishAscension()}

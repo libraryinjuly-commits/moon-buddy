@@ -14,7 +14,10 @@ import {
   getCompanionSpecies,
   resolveTemperament,
 } from "@/lib/companionSpecies";
-import { completeAscension } from "@/lib/starMemory";
+import {
+  applyArchiveToMoonBuddyData,
+  archiveAscendedStar,
+} from "@/lib/starArchive";
 import { getTodayDateString } from "@/lib/storage";
 import type { CycleInfo, MoonBuddyData } from "@/types/moonBuddy";
 
@@ -75,28 +78,27 @@ export function useCompanion(
       data.periodHistory[0]?.id ??
       null;
 
-    const ascendedCompanionCount = data.starCollection.stars.length + 1;
-    const { star, newCompanion } = completeAscension(
-      data.companion,
-      companionName,
-      today,
-      data.settings.language,
-      activeCycleId,
-      temperament,
-      ascendedCompanionCount,
-    );
+    let archivedStar: ReturnType<typeof archiveAscendedStar>["star"] | undefined;
 
-    setData((prev) => ({
-      ...prev,
-      companion: newCompanion,
-      starCollection: {
-        ...prev.starCollection,
-        stars: [star, ...prev.starCollection.stars],
-      },
-      character: { level: 1, exp: 0, totalMoodLogs: 0 },
-    }));
+    setData((prev) => {
+      const ascendedCompanionCount = prev.starCollection.stars.length + 1;
+      const archiveResult = archiveAscendedStar(
+        {
+          companion: prev.companion,
+          companionName,
+          ascensionDate: today,
+          language: prev.settings.language,
+          cycleId: activeCycleId,
+          temperament,
+          ascendedCompanionCount,
+        },
+        prev.starCollection.stars,
+      );
+      archivedStar = archiveResult.star;
+      return applyArchiveToMoonBuddyData(prev, archiveResult);
+    });
 
-    return star;
+    return archivedStar;
   }, [data, setData]);
 
   return {

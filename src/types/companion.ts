@@ -56,6 +56,10 @@ export interface StarMemory {
 /** Gallery now; constellation later */
 export type StarCollectionView = "gallery" | "constellation";
 
+/**
+ * Permanent archive of ascended companions (`star_memories` / `ascended_stars`).
+ * Persisted via localStorage today; see `lib/starArchive.ts` for Supabase guide.
+ */
 export interface StarCollectionState {
   stars: StarMemory[];
   preferredView: StarCollectionView;

@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { triggerHapticTap } from "@/lib/haptics";
 import type { LocaleContent } from "@/lib/i18n/types";
+import { applySpeechTemplate } from "@/lib/persona";
 import { STAR_TYPE_EMOJI } from "@/lib/starVisuals";
 import type { StarMemory, TemperamentTheme } from "@/types";
 
@@ -19,6 +20,7 @@ type AscensionPhase =
 interface AscensionModalProps {
   open: boolean;
   companionName: string;
+  userName: string;
   locale: LocaleContent;
   theme: TemperamentTheme;
   onComplete: () => StarMemory | void;
@@ -38,18 +40,29 @@ const PHASE_MS: Record<AscensionPhase, number> = {
 export function AscensionModal({
   open,
   companionName,
+  userName,
   locale,
   theme,
   onComplete,
   onClose,
 }: AscensionModalProps) {
-  const { ui } = locale;
+  const { ui, language } = locale;
   const [phase, setPhase] = useState<AscensionPhase>("darken");
   const [dialogueIndex, setDialogueIndex] = useState(0);
   const hasPersistedStar = useRef(false);
 
   const dialogues = ui.ascensionDialogues.map((line) =>
     line.replace("{companionName}", companionName),
+  );
+
+  const archiveSubtitle = useMemo(
+    () =>
+      applySpeechTemplate(ui.ascensionArchiveSubtitle, {
+        userName,
+        characterName: companionName,
+        language,
+      }),
+    [ui.ascensionArchiveSubtitle, userName, companionName, language],
   );
 
   const advance = useCallback(() => {
@@ -116,11 +129,11 @@ export function AscensionModal({
       className="fixed inset-0 z-[60] flex items-center justify-center overflow-hidden"
       role="dialog"
       aria-modal
-      aria-label={ui.ascensionTitle}
+      aria-label={ui.ascensionArchiveTitle}
     >
       <div
         className={`absolute inset-0 transition-colors duration-700 ${
-          phase === "darken" ? "bg-black/20" : "bg-indigo-950/75"
+          phase === "darken" ? "bg-black/20" : "bg-indigo-950/85"
         }`}
       />
 
@@ -140,7 +153,7 @@ export function AscensionModal({
         </div>
       )}
 
-      <div className="relative z-10 flex flex-col items-center px-6 text-center">
+      <div className="relative z-10 flex max-w-sm flex-col items-center px-6 text-center">
         <div
           className={`relative transition-all duration-1000 ease-out ${
             showFloat ? "-translate-y-8 scale-105" : ""
@@ -171,9 +184,7 @@ export function AscensionModal({
         </div>
 
         {phase === "dialogue" && (
-          <p
-            className={`mt-6 max-w-xs animate-speech-fade-in text-base font-medium leading-relaxed text-white`}
-          >
+          <p className="mt-6 max-w-xs animate-speech-fade-in text-base font-medium leading-relaxed text-white">
             {dialogues[dialogueIndex]}
           </p>
         )}
@@ -185,7 +196,17 @@ export function AscensionModal({
         )}
 
         {phase === "done" && (
-          <p className="mt-4 text-sm text-white/90">{ui.ascensionComplete}</p>
+          <div className="mt-4 animate-speech-fade-in space-y-2">
+            <h2 className="text-base font-bold leading-snug text-white">
+              {ui.ascensionArchiveTitle}
+            </h2>
+            <p className="text-xs leading-relaxed text-indigo-100/90">
+              {archiveSubtitle}
+            </p>
+            <p className="text-[11px] font-medium text-amber-100/90">
+              {ui.ascensionComplete}
+            </p>
+          </div>
         )}
       </div>
 
