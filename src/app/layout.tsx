@@ -17,6 +17,11 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "문 버디",
   description: "감정과 함께 자라는 나만의 동반자, 문 버디.",
+  // PWA를 위해 아래 내용을 추가하세요
+  manifest: "/manifest.json",
+  icons: {
+    apple: "/icon-512.png",
+  },
 };
 
 export const viewport: Viewport = {

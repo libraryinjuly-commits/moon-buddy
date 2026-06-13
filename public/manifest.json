@@ -1,0 +1,16 @@
+{
+    "name": "Moon Buddy",
+    "short_name": "문버디",
+    "description": "감정 기록과 함께 성장하는 나만의 버디",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#FDFCF5",
+    "theme_color": "#709BBF",
+    "icons": [
+      {
+        "src": "/icon-512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
