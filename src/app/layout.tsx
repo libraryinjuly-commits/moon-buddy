@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
+import InstallGuide from "@/components/InstallGuide"; // 안내 컴포넌트 추가
 
 const notoSansKr = Noto_Sans_KR({
   variable: "--font-noto-sans-kr",
@@ -17,7 +18,6 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "문 버디",
   description: "감정과 함께 자라는 나만의 동반자, 문 버디.",
-  // PWA를 위해 아래 내용을 추가하세요
   manifest: "/manifest.json",
   icons: {
     apple: "/icon-512.png",
@@ -45,6 +45,9 @@ export default function RootLayout({
         <div className="flex h-dvh w-full items-stretch justify-center overflow-hidden md:py-3">
           {children}
         </div>
+        
+        {/* 모바일 설치 안내 UI 추가 */}
+        <InstallGuide />
       </body>
     </html>
   );

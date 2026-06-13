@@ -1,0 +1,45 @@
+'use client';
+import { useState, useEffect } from 'react';
+
+export default function InstallGuide() {
+  const [show, setShow] = useState(false);
+  const [isKakao, setIsKakao] = useState(false);
+
+  useEffect(() => {
+    // 1. 이미 앱으로 설치된 경우 숨기기
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    if (isStandalone) return;
+
+    // 2. 카카오톡 환경 체크
+    const ua = navigator.userAgent.toLowerCase();
+    if (ua.includes('kakaotalk')) {
+      setIsKakao(true);
+    }
+    
+    // 3. 브라우저/카카오톡 환경 모두 표시
+    setShow(true);
+  }, []);
+
+  if (!show) return null;
+
+  return (
+    <div className="fixed bottom-0 left-0 w-full bg-white p-4 border-t shadow-lg z-50 text-center">
+      {isKakao ? (
+        <div>
+          <p className="mb-2 text-sm">앱으로 이용하면 더 편리해요!</p>
+          <button 
+            onClick={() => window.open(window.location.href, '_blank')}
+            className="bg-[#709BBF] text-white px-4 py-2 rounded-md w-full font-bold"
+          >
+            브라우저에서 열기
+          </button>
+        </div>
+      ) : (
+        <div className="text-sm">
+          <p className="font-bold mb-1">문버디 설치 안내</p>
+          <p>공유(⎋) 또는 점 3개 메뉴에서 <strong>'홈 화면에 추가'</strong>를 선택하세요!</p>
+        </div>
+      )}
+    </div>
+  );
+}
